@@ -9,11 +9,20 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
+TEST(program_args_tests, test_constructor_empty)
+{
+    appt::program_args args;
+    ASSERT_EQ(args.argc, 0);
+    ASSERT_EQ(args.argv, nullptr);
+    ASSERT_TRUE(args.empty());
+}
+
 TEST(program_args_tests, test_constructor)
 {
     appt::program_args args(argc, argv);
     ASSERT_EQ(args.argc, argc);
     ASSERT_EQ(args.argv, argv);
+    ASSERT_FALSE(args.empty());
 }
 
 TEST(program_args_tests, test_size)

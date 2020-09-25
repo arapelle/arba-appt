@@ -42,11 +42,13 @@ public:
     using iterator = arg_iterator;
     using const_iterator = const arg_iterator;
 
-    program_args(int ac, char** av)
-        : argc(ac), argv(av)
+    inline program_args() = default;
+    inline program_args(int ac, char** av)
+        : argc(ac), argv(ac > 0 ? av : nullptr)
     {}
 
-    std::size_t size() const { return argc; }
+    inline std::size_t size() const { return argc; }
+    inline bool empty() const { return argc == 0; }
     inline const_iterator begin() const { return const_iterator(argv); }
     inline const_iterator end() const { return const_iterator(argv + argc); }
     inline iterator begin() { return iterator(argv); }
@@ -62,8 +64,8 @@ public:
     inline std::filesystem::path program_name() const { return program_path().filename(); }
     inline std::filesystem::path program_stem() const { return program_path().stem(); }
 
-    const std::size_t argc;
-    char**const argv;
+    const std::size_t argc = 0;
+    char**const argv = nullptr;
 };
 }
 }

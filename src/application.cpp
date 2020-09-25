@@ -6,7 +6,11 @@ namespace appt
 {
 
 application::application(int argc, char** argv)
-    : program_args_(argc, argv), resource_manager_(virtual_filesystem_)
+    : application(program_args(argc, argv))
+{}
+
+application::application(const program_args &args)
+    : program_args_(args), resource_manager_(virtual_filesystem_)
 {}
 
 }

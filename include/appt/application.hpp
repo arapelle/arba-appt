@@ -13,8 +13,8 @@ namespace appt
 class application
 {
 public:
-    inline application() : application(0, nullptr) {}
     application(int argc, char** argv);
+    application(const program_args& args = program_args());
 
     inline const program_args& args() const { return program_args_; }
     inline const rsce::resource_manager& resource_manager() const { return resource_manager_; }
