@@ -33,12 +33,16 @@ library_build_options(${PROJECT_NAME} STATIC SHARED EXAMPLE TEST)
 # Headers:
 set(headers
     include/appt/application.hpp
+    include/appt/application_module.hpp
+    include/appt/multi_task_application.hpp
     include/appt/program_args.hpp
 )
 
 # Sources:
 set(sources
     src/application.cpp
+    src/application_module.cpp
+    src/multi_task_application.cpp
 )
 
 # Add C++ library
