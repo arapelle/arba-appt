@@ -1,7 +1,6 @@
 #pragma once
 
 #include "application_module.hpp"
-#include "application.hpp"
 #include <memory>
 #include <thread>
 
@@ -16,7 +15,7 @@ template <typename application_base_type>
 class multi_task<application_base_type> : public application_base_type
 {
 public:
-    using application::application;
+    using application_base_type::application_base_type;
 
     template <typename other_application_type>
     using rebind_t = multi_task<application_base_type, other_application_type>;
@@ -43,6 +42,8 @@ private:
 template <typename application_base_type>
 void multi_task<application_base_type>::init()
 {
+    if (main_module_)
+        main_module_->init();
     for (auto& entry : side_modules_)
         entry.first->init();
 }

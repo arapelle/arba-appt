@@ -1,3 +1,4 @@
+#include <appt/multi_user.hpp>
 #include <appt/multi_task.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
@@ -13,19 +14,21 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::multi_task<appt::application, ut_application>
+class ut_application : public appt::multi_user<appt::multi_task<appt::application>, ut_application>
 {
+    using base_ = appt::multi_user<appt::multi_task<appt::application>, ut_application>;
+
 public:
-    using appt::multi_task<appt::application, ut_application>::multi_task;
+    using base_::multi_user;
 };
 
-TEST(multi_task_application_tests, test_constructor_empty)
+TEST(multi_user_multi_task_application_tests, test_constructor_empty)
 {
     ut_application app;
     ASSERT_TRUE(app.args().empty());
 }
 
-TEST(multi_task_application_tests, test_constructor)
+TEST(multi_user_multi_task_application_tests, test_constructor)
 {
     ut_application app(argc, argv);
     ASSERT_EQ(app.args().argc, argc);
@@ -51,11 +54,11 @@ public:
         ++run_count;
     }
 
-    uint16_t run_count = 0;
     uint16_t init_count = 0;
+    uint16_t run_count = 0;
 };
 
-TEST(multi_task_application_tests, test_side_modules)
+TEST(multi_user_multi_task_application_tests, test_side_modules)
 {
     ut_application app(argc, argv);
     run_count_module& module = app.add_module(std::make_unique<run_count_module>());
@@ -70,7 +73,7 @@ TEST(multi_task_application_tests, test_side_modules)
     ASSERT_EQ(module_2.init_count, 2);
 }
 
-TEST(multi_task_application_tests, test_main_module)
+TEST(multi_user_multi_task_application_tests, test_main_module)
 {
     ut_application app(argc, argv);
     run_count_module& module = app.set_main_module(std::make_unique<run_count_module>());

@@ -34,7 +34,8 @@ library_build_options(${PROJECT_NAME} STATIC SHARED EXAMPLE TEST)
 set(headers
     include/appt/application.hpp
     include/appt/application_module.hpp
-    include/appt/multi_task_application.hpp
+    include/appt/multi_task.hpp
+    include/appt/multi_user.hpp
     include/appt/program_args.hpp
 )
 

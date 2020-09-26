@@ -1,4 +1,4 @@
-#include <appt/multi_task_application.hpp>
+#include <appt/multi_task.hpp>
 #include <iostream>
 
 inline namespace arba
