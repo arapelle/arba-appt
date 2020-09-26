@@ -13,6 +13,9 @@ namespace appt
 class application
 {
 public:
+    template <typename other_application_type>
+    using rebind_t = application;
+
     application(int argc, char** argv);
     application(const program_args& args = program_args());
 

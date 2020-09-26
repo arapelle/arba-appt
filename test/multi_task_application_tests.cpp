@@ -13,15 +13,21 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
+class ut_application : public appt::multi_task<appt::application, ut_application>
+{
+public:
+    using appt::multi_task<appt::application, ut_application>::multi_task;
+};
+
 TEST(multi_task_application_tests, test_constructor_empty)
 {
-    appt::multi_task_application app;
+    ut_application app;
     ASSERT_TRUE(app.args().empty());
 }
 
 TEST(multi_task_application_tests, test_constructor)
 {
-    appt::multi_task_application app(argc, argv);
+    ut_application app(argc, argv);
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
@@ -30,34 +36,44 @@ TEST(multi_task_application_tests, test_constructor)
 // application_module
 //-------------------
 
-class ut_application : public appt::multi_task_application
-{
-public:
-    using appt::multi_task_application::multi_task_application;
-};
-
 class run_count_module : public appt::application_module<ut_application>
 {
 public:
-    using appt::application_module<ut_application>::application_module;
     virtual ~run_count_module() override = default;
 
     virtual void run() override
     {
         ++run_count;
+        std::cout << this << " " << run_count << std::endl;
     }
 
-    uint8_t run_count = 0;
+    uint16_t run_count = 0;
 };
 
-TEST(multi_task_application_tests, test_module)
+TEST(multi_task_application_tests, test_side_modules)
 {
     ut_application app(argc, argv);
-    run_count_module& module = app.add_module(std::make_unique<run_count_module>(app));
+    run_count_module& module = app.add_module(std::make_unique<run_count_module>());
+    run_count_module& module_2 = app.create_module<run_count_module>();
     app.init();
     app.run();
+    app.init();
     app.run();
     ASSERT_EQ(module.run_count, 2);
+    ASSERT_EQ(module_2.run_count, 2);
+}
+
+TEST(multi_task_application_tests, test_main_module)
+{
+    ut_application app(argc, argv);
+    run_count_module& module = app.set_main_module(std::make_unique<run_count_module>());
+    app.init();
+    app.run();
+    run_count_module& module_2 = app.create_main_module<run_count_module>();
+    app.init();
+    app.run();
+    ASSERT_EQ(module.run_count, 1);
+    ASSERT_EQ(module_2.run_count, 1);
 }
 
 int main(int argc, char** argv)
