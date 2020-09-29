@@ -38,6 +38,7 @@ set(headers
     include/appt/multi_user.hpp
     include/appt/program_args.hpp
     include/appt/user.hpp
+    include/appt/user_manager.hpp
     include/appt/util/integer_id_factory.hpp
 )
 
