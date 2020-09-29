@@ -1,4 +1,4 @@
-#include <appt/multi_user.hpp>
+#include <appt/multi_user_application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -13,10 +13,25 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::multi_user<appt::application, ut_application>
+class ut_user : public appt::user
 {
 public:
-    using appt::multi_user<appt::application, ut_application>::multi_user;
+    virtual ~ut_user() = default;
+
+    ut_user(const std::string& name = "") : name(name) {}
+
+    std::string name;
+};
+
+using ut_user_sptr = std::shared_ptr<ut_user>;
+
+class ut_application : public appt::multi_user_application<ut_user, ut_application>
+{
+private:
+    using base_ = appt::multi_user_application<ut_user, ut_application>;
+
+public:
+    using base_::multi_user;
 };
 
 TEST(multi_user_application_tests, test_constructor_empty)

@@ -1,4 +1,4 @@
-#include <appt/multi_user.hpp>
+#include <appt/multi_user_application.hpp>
 #include <appt/multi_task_application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
@@ -14,9 +14,15 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::multi_user<appt::multi_task<appt::application>, ut_application>
+class ut_user : public appt::user
 {
-    using base_ = appt::multi_user<appt::multi_task<appt::application>, ut_application>;
+public:
+    virtual ~ut_user() = default;
+};
+
+class ut_application : public appt::multi_user<ut_user, appt::multi_task<appt::application>, ut_application>
+{
+    using base_ = appt::multi_user<ut_user, appt::multi_task<appt::application>, ut_application>;
 
 public:
     using base_::multi_user;
