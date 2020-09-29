@@ -162,5 +162,8 @@ module_type& multi_task<application_base_type, application_type>::create_main_mo
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
+template <typename application_type = void>
+using multi_task_application = multi_task<application, application_type>;
+
 }
 }
