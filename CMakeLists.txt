@@ -37,6 +37,7 @@ set(headers
     include/appt/multi_task_application.hpp
     include/appt/multi_user.hpp
     include/appt/program_args.hpp
+    include/appt/user.hpp
     include/appt/util/integer_id_factory.hpp
 )
 
@@ -44,7 +45,7 @@ set(headers
 set(sources
     src/application.cpp
     src/application_module.cpp
-    src/multi_task_application.cpp
+    src/user.cpp
 )
 
 # Add C++ library
