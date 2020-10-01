@@ -9,4 +9,5 @@ add_cpp_library_tests(SHARED ${PROJECT_NAME}
                           integer_id_factory_tests.cpp
                           user_manager_tests.cpp
                           user_hash_tests.cpp
+                          user_set_tests.cpp
                       )
