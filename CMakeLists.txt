@@ -39,6 +39,7 @@ set(headers
     include/appt/program_args.hpp
     include/appt/user.hpp
     include/appt/user_manager.hpp
+    include/appt/user_hash.hpp
     include/appt/util/integer_id_factory.hpp
 )
 
