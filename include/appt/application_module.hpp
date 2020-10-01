@@ -17,6 +17,7 @@ public:
     virtual void init() {}
     virtual void run() = 0;
 
+public:
     struct jrunner
     {
         application_module_interface*const module_ptr;
@@ -40,15 +41,9 @@ public:
     explicit application_module(application_type& app);
     virtual ~application_module() override = default;
 
-    const application_type& app() const { return *application_; }
-    application_type& app() { return *application_; }
-    void set_app(application_type& app)
-    {
-        if (application_ && application_ != &app)
-            throw std::runtime_error("Module is already linked to an application.");
-        application_ = &app;
-        app.event_manager().connect(event_box_);
-    }
+    inline const application_type& app() const { return *application_; }
+    inline application_type& app() { return *application_; }
+    void set_app(application_type& app);
 
 protected:
     const evnt::event_box& event_box() const { return event_box_; }
@@ -66,6 +61,15 @@ application_module<app_type>::application_module(application_type& app)
     : application_(&app)
 {
     application_->event_manager().connect(event_box_);
+}
+
+template <class app_type>
+void application_module<app_type>::set_app(application_module::application_type &app)
+{
+    if (application_ && application_ != &app)
+        throw std::runtime_error("Module is already linked to an application.");
+    application_ = &app;
+    app.event_manager().connect(event_box_);
 }
 
 }
