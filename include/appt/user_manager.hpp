@@ -22,7 +22,7 @@ public:
     inline user_manager() {}
     template <typename... args_types>
     std::shared_ptr<user_type> create_user(args_types&&... args);
-    std::shared_ptr<user_type> shared_user(const user_type& user_id);
+    std::shared_ptr<user_type> shared_user(const id_type& user_id);
     void release_user(const id_type& user_id);
     void release_user(std::shared_ptr<user_type>& user_sptr);
 
@@ -50,13 +50,13 @@ std::shared_ptr<user_type> user_manager<user_type>::create_user(args_types&&... 
 }
 
 template <class user_type>
-std::shared_ptr<user_type> user_manager<user_type>::shared_user(const user_type& user_id)
+std::shared_ptr<user_type> user_manager<user_type>::shared_user(const id_type& user_id)
 {
     std::lock_guard lock(mutex_);
     std::weak_ptr<user_type>& user_wptr = users_[user_id];
     if (!user_wptr.expired()) [[likely]]
         return user_wptr.lock();
-    throw std::invalid_argument("The user requested is not valid.");
+    return std::shared_ptr<user_type>();
 }
 
 template <class user_type>
@@ -79,8 +79,10 @@ template <class user_type>
 void user_manager<user_type>::release_user(std::shared_ptr<user_type>& user_sptr)
 {
     id_type id = user_sptr->id();
+    std::size_t use_count = user_sptr.use_count();
     user_sptr.reset();
-    release_user(id);
+    if (use_count == 1)
+        release_user(id);
 }
 
 }

@@ -65,6 +65,16 @@ TEST(user_manager_tests, test_release_user_2)
     ASSERT_EQ(athena_user->name, "Athena");
 }
 
+TEST(user_manager_tests, test_shared_user)
+{
+    appt::user_manager<ut_user> users;
+    ut_user_sptr zeus_user = users.create_user("Zeus");
+    ut_user::id_type zeus_id = zeus_user->id();
+    ASSERT_EQ(users.shared_user(zeus_id), zeus_user);
+    users.release_user(zeus_user);
+    ASSERT_EQ(users.shared_user(zeus_id), nullptr);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
