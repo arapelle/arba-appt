@@ -27,5 +27,7 @@ private:
     id_type id_;
 };
 
+using user_id = user::id_type;
+
 }
 }
