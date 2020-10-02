@@ -8,11 +8,11 @@ inline namespace arba
 namespace appt
 {
 
-class application_module_interface
+class module_interface
 {
 public:
-    application_module_interface();
-    virtual ~application_module_interface() = default;
+    module_interface();
+    virtual ~module_interface() = default;
 
     virtual void init() {}
     virtual void run() = 0;
@@ -20,7 +20,7 @@ public:
 public:
     struct jrunner
     {
-        application_module_interface*const module_ptr;
+        module_interface*const module_ptr;
         ~jrunner();
         void operator()(std::stop_token s_token);
     };
@@ -32,14 +32,14 @@ private:
 
 template <class app_type = application>
 requires std::is_base_of_v<application, app_type>
-class application_module : public application_module_interface
+class module : public module_interface
 {
 public:
     using application_type = app_type;
 
-    application_module() : application_(nullptr) {}
-    explicit application_module(application_type& app);
-    virtual ~application_module() override = default;
+    module() : application_(nullptr) {}
+    explicit module(application_type& app);
+    virtual ~module() override = default;
 
     inline const application_type& app() const { return *application_; }
     inline application_type& app() { return *application_; }
@@ -57,14 +57,14 @@ private:
 // Template methods implementation:
 
 template <class app_type>
-application_module<app_type>::application_module(application_type& app)
+module<app_type>::module(application_type& app)
     : application_(&app)
 {
     application_->event_manager().connect(event_box_);
 }
 
 template <class app_type>
-void application_module<app_type>::set_app(application_module::application_type &app)
+void module<app_type>::set_app(module::application_type &app)
 {
     if (application_ && application_ != &app)
         throw std::runtime_error("Module is already linked to an application.");

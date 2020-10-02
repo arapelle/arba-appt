@@ -1,6 +1,6 @@
 #pragma once
 
-#include "application_module.hpp"
+#include "module.hpp"
 #include <memory>
 #include <thread>
 
@@ -24,11 +24,11 @@ public:
     using rebind_t = multi_task<application_base_type, other_application_type>;
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& set_main_module(std::unique_ptr<module_type>&& module_uptr);
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& add_module(std::unique_ptr<module_type>&& module_uptr);
 
     void init();
@@ -36,9 +36,9 @@ public:
     void stop_side_modules();
 
 private:
-    using application_module_interface_uptr = std::unique_ptr<application_module_interface>;
-    std::vector<std::pair<application_module_interface_uptr, std::jthread>> side_modules_;
-    application_module_interface_uptr main_module_;
+    using module_interface_uptr = std::unique_ptr<module_interface>;
+    std::vector<std::pair<module_interface_uptr, std::jthread>> side_modules_;
+    module_interface_uptr main_module_;
     std::mutex mutex_;
 };
 
@@ -56,7 +56,7 @@ void multi_task<application_base_type>::run()
 {
     for (auto& entry : side_modules_)
     {
-        application_module_interface* module_ptr = entry.first.get();
+        module_interface* module_ptr = entry.first.get();
         entry.second = std::jthread(module_ptr->jthread_runner());
     }
 
@@ -80,7 +80,7 @@ void multi_task<application_base_type>::stop_side_modules()
 
 template <typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_type>::set_main_module(std::unique_ptr<module_type>&& module_uptr)
 {
     if (&module_uptr->app() == nullptr)
@@ -92,7 +92,7 @@ module_type& multi_task<application_type>::set_main_module(std::unique_ptr<modul
 
 template <typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_type>::add_module(std::unique_ptr<module_type>&& module_uptr)
 {
     if (&module_uptr->app() == nullptr)
@@ -111,25 +111,25 @@ public:
     using base_::multi_task;
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& set_main_module(std::unique_ptr<module_type>&& module_uptr);
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& add_module(std::unique_ptr<module_type>&& module_uptr);
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& create_module();
 
     template <typename module_type>
-    requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& create_main_module();
 };
 
 template <typename application_base_type, typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type>&& module_uptr)
 {
     module_uptr->set_app(*static_cast<application_type*>(this));
@@ -138,7 +138,7 @@ module_type& multi_task<application_base_type, application_type>::set_main_modul
 
 template <typename application_base_type, typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type>&& module_uptr)
 {
     module_uptr->set_app(*static_cast<application_type*>(this));
@@ -147,7 +147,7 @@ module_type& multi_task<application_base_type, application_type>::add_module(std
 
 template <typename application_base_type, typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::create_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>();
@@ -156,7 +156,7 @@ module_type& multi_task<application_base_type, application_type>::create_module(
 
 template <typename application_base_type, typename application_type>
 template <typename module_type>
-requires std::is_base_of_v<application_module_interface, module_type> && (!std::is_abstract_v<module_type>)
+requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::create_main_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>();

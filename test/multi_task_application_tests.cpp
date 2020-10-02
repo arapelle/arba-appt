@@ -33,10 +33,10 @@ TEST(multi_task_application_tests, test_constructor)
 }
 
 //-------------------
-// application_module
+// module
 //-------------------
 
-class run_count_module : public appt::application_module<ut_application>
+class run_count_module : public appt::module<ut_application>
 {
 public:
     virtual ~run_count_module() override = default;

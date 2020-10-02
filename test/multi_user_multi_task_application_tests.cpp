@@ -1,6 +1,6 @@
 #include <appt/multi_user_application.hpp>
 #include <appt/multi_task_application.hpp>
-#include <appt/multi_user_application_module.hpp>
+#include <appt/multi_user_module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -49,10 +49,10 @@ TEST(multi_user_multi_task_application_tests, test_constructor)
 }
 
 //-------------------
-// application_module
+// module
 //-------------------
 
-class run_count_module : public appt::application_module<ut_application>
+class run_count_module : public appt::module<ut_application>
 {
 public:
     virtual ~run_count_module() override = default;
@@ -101,7 +101,7 @@ TEST(multi_user_multi_task_application_tests, test_main_module)
     ASSERT_EQ(module_2.init_count, 1);
 }
 
-class multi_user_module : public appt::multi_user_application_module<ut_user, appt::user_sptr_id_hash<ut_user>, ut_application>
+class multi_user_module : public appt::multi_user_module<ut_user, appt::user_sptr_id_hash<ut_user>, ut_application>
 {
 public:
     virtual ~multi_user_module() override = default;
