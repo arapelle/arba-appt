@@ -44,7 +44,7 @@ TEST(user_manager_tests, test_release_user)
     users.create_user();
     ut_user_sptr zeus_user = users.create_user("Zeus");
     ut_user::id_type zeus_id = zeus_user->id();
-    users.release_user(zeus_user);
+    users.reset_user_shared_ptr(zeus_user);
     ut_user_sptr athena_user = users.create_user("Athena");
     ut_user::id_type athena_id = athena_user->id();
     ASSERT_EQ(zeus_id, athena_id);
@@ -58,7 +58,7 @@ TEST(user_manager_tests, test_release_user_2)
     ut_user_sptr zeus_user = users.create_user("Zeus");
     users.create_user("Heracles");
     ut_user::id_type zeus_id = zeus_user->id();
-    users.release_user(zeus_user);
+    users.reset_user_shared_ptr(zeus_user);
     ut_user_sptr athena_user = users.create_user("Athena");
     ut_user::id_type athena_id = athena_user->id();
     ASSERT_EQ(zeus_id, athena_id);
@@ -71,7 +71,7 @@ TEST(user_manager_tests, test_shared_user)
     ut_user_sptr zeus_user = users.create_user("Zeus");
     ut_user::id_type zeus_id = zeus_user->id();
     ASSERT_EQ(users.shared_user(zeus_id), zeus_user);
-    users.release_user(zeus_user);
+    users.reset_user_shared_ptr(zeus_user);
     ASSERT_EQ(users.shared_user(zeus_id), nullptr);
 }
 

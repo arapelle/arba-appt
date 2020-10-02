@@ -24,7 +24,10 @@ public:
     std::shared_ptr<user_type> create_user(args_types&&... args);
     std::shared_ptr<user_type> shared_user(const id_type& user_id);
     void release_user(const id_type& user_id);
-    void release_user(std::shared_ptr<user_type>& user_sptr);
+    void reset_user_shared_ptr(std::shared_ptr<user_type>& user_sptr);
+
+private:
+    void release_user_(const id_type& usr_id, std::weak_ptr<user_type>& user_wptr);
 
 private:
     std::vector<std::weak_ptr<user_type>> users_;
@@ -65,24 +68,29 @@ void user_manager<user_type>::release_user(const id_type& user_id)
     std::lock_guard lock(mutex_);
     std::weak_ptr<user_type>& user_wptr = users_[user_id];
     if (user_wptr.expired()) [[likely]]
-    {
-        user_id_factory_.delete_id(user_id);
-        user_wptr.reset();
-        while ((!users_.empty()) && users_.back().expired())
-            users_.pop_back();
-    }
+        release_user_(user_id, user_wptr);
     else
         throw std::invalid_argument("The user cannot be removed as it is still used.");
 }
 
 template <class user_type>
-void user_manager<user_type>::release_user(std::shared_ptr<user_type>& user_sptr)
+void user_manager<user_type>::reset_user_shared_ptr(std::shared_ptr<user_type>& user_sptr)
 {
-    id_type id = user_sptr->id();
-    std::size_t use_count = user_sptr.use_count();
+    id_type usr_id = user_sptr->id();
+    std::lock_guard lock(mutex_);
+    std::weak_ptr<user_type>& user_wptr = users_[usr_id];
     user_sptr.reset();
-    if (use_count == 1)
-        release_user(id);
+    if (user_wptr.expired()) [[likely]]
+        release_user_(usr_id, user_wptr);
+}
+
+template <class user_type>
+void user_manager<user_type>::release_user_(const id_type& usr_id, std::weak_ptr<user_type>& user_wptr)
+{
+    user_id_factory_.delete_id(usr_id);
+    user_wptr.reset();
+    while ((!users_.empty()) && users_.back().expired())
+        users_.pop_back();
 }
 
 }
