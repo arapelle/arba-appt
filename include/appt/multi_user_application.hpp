@@ -1,7 +1,7 @@
 #pragma once
 
 #include "user_manager.hpp"
-#include "application_module.hpp"
+#include "application.hpp"
 #include <memory>
 
 inline namespace arba
@@ -23,7 +23,7 @@ public:
     using application_base_type::application_base_type;
 
     template <typename other_application_type>
-    using rebind_t = multi_user<application_base_type, other_application_type>;
+    using rebind_t = multi_user<user_type, application_base_type, other_application_type>;
 
     inline const user_manager_type& usr_manager() const { return user_manager_; }
     inline user_manager_type& usr_manager() { return user_manager_; }
