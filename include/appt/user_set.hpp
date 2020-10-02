@@ -37,6 +37,7 @@ public:
     const_iterator find_user(const key_type& key) const;
     iterator find_user(const key_type& key);
     void erase_user(const key_type& key);
+    void clear_users();
 
 private:
     user_manager<user_type>* user_manager_ = nullptr;
@@ -82,12 +83,29 @@ void user_set<user_type, user_sptr_hash>::erase_user(const key_type& key)
     auto iter = find_user(key);
     if (iter != end())
     {
-        auto user_id = (*iter)->id();
-        std::size_t use_count = iter->use_count();
+        std::shared_ptr user_sptr = *iter;
         this->erase(iter);
-        if (user_manager_ && use_count == 1)
-            user_manager_->release_user(user_id);
+        if (user_manager_)
+            user_manager_->reset_user_shared_ptr(user_sptr);
     }
+}
+
+template <class user_type, class user_sptr_hash>
+void user_set<user_type, user_sptr_hash>::clear_users()
+{
+    if (user_manager_)
+    {
+        user_type_sptr sptr_to_reset;
+        while (!empty())
+        {
+            auto begin_iter = begin();
+            std::shared_ptr user_sptr = *begin_iter;
+            this->erase(begin_iter);
+            user_manager_->reset_user_shared_ptr(user_sptr);
+        }
+    }
+    else
+        this->clear();
 }
 
 template <class user_type, class user_sptr_hash>

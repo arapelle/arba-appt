@@ -149,6 +149,27 @@ TEST(user_set_tests, test_user_set_id_with_user_manager)
     ASSERT_EQ(user_manager.shared_user(alpha_id), nullptr);
 }
 
+TEST(user_set_tests, test_clear_users)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    appt::user_set<ut_user, sptr_hash> ut_user_set;
+    ut_user_set.set_user_manager(user_manager);
+
+    ut_user_set.create_user("Elza");
+    ASSERT_NE(ut_user_set.find_user(0), ut_user_set.end());
+    ut_user_set.create_user("Era");
+    ut_user_set.create_user("Emma");
+    ASSERT_EQ(ut_user_set.size(), 3);
+    ASSERT_EQ(user_manager.size(), 3);
+
+    ut_user_set.clear_users();
+    ASSERT_EQ(ut_user_set.find_user(0), ut_user_set.end());
+    ASSERT_EQ(ut_user_set.size(), 0);
+    ASSERT_EQ(user_manager.size(), 0);
+}
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
