@@ -170,6 +170,103 @@ TEST(user_set_tests, test_clear_users)
     ASSERT_EQ(ut_user_set.size(), 0);
     ASSERT_EQ(user_manager.size(), 0);
 }
+
+TEST(user_set_tests, test_destructor)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    {
+        appt::user_set<ut_user, sptr_hash> ut_user_set;
+        ut_user_set.set_user_manager(user_manager);
+        ut_user_set.create_user("Elza");
+        ut_user_set.create_user("Era");
+        ut_user_set.create_user("Emma");
+        ASSERT_EQ(user_manager.size(), 3);
+    }
+
+    ASSERT_EQ(user_manager.size(), 0);
+}
+
+TEST(user_set_tests, test_copy)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    {
+        appt::user_set<ut_user, sptr_hash> ut_user_set;
+        ut_user_set.set_user_manager(user_manager);
+        ut_user_set.create_user("Elza");
+        ut_user_set.create_user("Era");
+        ut_user_set.create_user("Emma");
+        ASSERT_EQ(user_manager.size(), 3);
+
+        appt::user_set<ut_user, sptr_hash> ut_user_set_2(ut_user_set);
+        ASSERT_EQ(ut_user_set.size(), ut_user_set_2.size());
+        ASSERT_EQ(ut_user_set.find_user_sptr(0), ut_user_set_2.find_user_sptr(0));
+        ASSERT_EQ(ut_user_set.find_user_sptr(1), ut_user_set_2.find_user_sptr(1));
+        ASSERT_EQ(ut_user_set.find_user_sptr(2), ut_user_set_2.find_user_sptr(2));
+        ASSERT_EQ(user_manager.size(), 3);
+    }
+
+    ASSERT_EQ(user_manager.size(), 0);
+}
+
+TEST(user_set_tests, test_assignment)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    {
+        appt::user_set<ut_user, sptr_hash> ut_user_set;
+        ut_user_set.set_user_manager(user_manager);
+        ut_user_set.create_user("Elza");
+        ut_user_set.create_user("Era");
+        ut_user_set.create_user("Emma");
+        ASSERT_EQ(user_manager.size(), 3);
+
+        appt::user_set<ut_user, sptr_hash> ut_user_set_2;
+        ut_user_set_2 = ut_user_set;
+        ASSERT_EQ(ut_user_set.size(), ut_user_set_2.size());
+        ASSERT_EQ(ut_user_set.find_user_sptr(0), ut_user_set_2.find_user_sptr(0));
+        ASSERT_EQ(ut_user_set.find_user_sptr(1), ut_user_set_2.find_user_sptr(1));
+        ASSERT_EQ(ut_user_set.find_user_sptr(2), ut_user_set_2.find_user_sptr(2));
+        ASSERT_EQ(user_manager.size(), 3);
+    }
+
+    ASSERT_EQ(user_manager.size(), 0);
+}
+
+TEST(user_set_tests, test_move_assignment)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    {
+        appt::user_set<ut_user, sptr_hash> ut_user_set;
+        ut_user_set.set_user_manager(user_manager);
+        ut_user_set.create_user("Elza");
+        ut_user_set.create_user("Era");
+        ut_user_set.create_user("Emma");
+        ASSERT_EQ(user_manager.size(), 3);
+
+        appt::user_set<ut_user, sptr_hash> ut_user_set_2;
+        ut_user_set_2 = std::move(ut_user_set);
+        ASSERT_EQ(ut_user_set.size(), 0);
+        ASSERT_EQ(ut_user_set_2.size(), 3);
+        ASSERT_EQ(ut_user_set_2.find_user_sptr(0)->name(), "Elza");
+        ASSERT_EQ(ut_user_set_2.find_user_sptr(1)->name(), "Era");
+        ASSERT_EQ(ut_user_set_2.find_user_sptr(2)->name(), "Emma");
+        ASSERT_EQ(user_manager.size(), 3);
+    }
+
+    ASSERT_EQ(user_manager.size(), 0);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
