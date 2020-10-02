@@ -25,6 +25,7 @@ public:
     std::shared_ptr<user_type> shared_user(const id_type& user_id);
     void release_user(const id_type& user_id);
     void reset_user_shared_ptr(std::shared_ptr<user_type>& user_sptr);
+    std::size_t size() const { std::lock_guard lock(mutex_); return user_id_factory_.number_of_valid_id(); }
 
 private:
     void release_user_(const id_type& usr_id, std::weak_ptr<user_type>& user_wptr);
@@ -32,7 +33,7 @@ private:
 private:
     std::vector<std::weak_ptr<user_type>> users_;
     integer_id_factory<id_type> user_id_factory_;
-    std::mutex mutex_;
+    mutable std::mutex mutex_;
 };
 
 // Template methods implementation:

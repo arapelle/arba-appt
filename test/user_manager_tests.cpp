@@ -23,6 +23,7 @@ TEST(user_manager_tests, test_create_user)
     ASSERT_EQ(zeus_user->id(), 1);
     ASSERT_EQ(anonyme_user->name, "");
     ASSERT_EQ(zeus_user->name, "Zeus");
+    ASSERT_EQ(users.size(), 2);
 }
 
 TEST(user_manager_tests, test_release_user_id)
@@ -36,6 +37,7 @@ TEST(user_manager_tests, test_release_user_id)
     ut_user_sptr athena_user = users.create_user("Athena");
     ut_user::id_type athena_id = athena_user->id();
     ASSERT_EQ(zeus_id, athena_id);
+    ASSERT_EQ(users.size(), 2);
 }
 
 TEST(user_manager_tests, test_release_user)
