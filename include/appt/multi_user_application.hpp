@@ -8,6 +8,8 @@ inline namespace arba
 {
 namespace appt
 {
+namespace adec
+{
 
 template <typename user_type, typename application_base_type, typename application_type = void>
 class multi_user;
@@ -41,8 +43,10 @@ public:
     using base_::multi_user;
 };
 
+}
+
 template <typename user_type, typename application_type = void>
-using multi_user_application = multi_user<user_type, application, application_type>;
+using multi_user_application = adec::multi_user<user_type, application, application_type>;
 
 }
 }

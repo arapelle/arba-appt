@@ -8,6 +8,9 @@ inline namespace arba
 {
 namespace appt
 {
+namespace adec
+{
+
 template <typename application_base_type, typename application_type = void>
 class multi_task;
 
@@ -99,8 +102,6 @@ module_type& multi_task<application_type>::add_module(std::unique_ptr<module_typ
     return *module_ptr;
 }
 
-//------------------------------------
-
 template <typename application_base_type, typename application_type>
 class multi_task : public multi_task<typename application_base_type::rebind_t<application_type>>
 {
@@ -162,8 +163,10 @@ module_type& multi_task<application_base_type, application_type>::create_main_mo
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
+}
+
 template <typename application_type = void>
-using multi_task_application = multi_task<application, application_type>;
+using multi_task_application = adec::multi_task<application, application_type>;
 
 }
 }

@@ -27,9 +27,9 @@ public:
     std::string name_;
 };
 
-class ut_application : public appt::multi_task<appt::multi_user<ut_user, appt::application>, ut_application>
+class ut_application : public appt::adec::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>
 {
-    using base_ = appt::multi_task<appt::multi_user<ut_user, appt::application>, ut_application>;
+    using base_ = appt::adec::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>;
 
 public:
     using base_::multi_task;
