@@ -43,6 +43,7 @@ set(headers
     include/appt/user_set.hpp
     include/appt/user_hash.hpp
     include/appt/util/integer_id_factory.hpp
+    include/appt/util/duration.hpp
 )
 
 # Sources:
