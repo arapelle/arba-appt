@@ -10,4 +10,5 @@ add_cpp_library_tests(SHARED ${PROJECT_NAME}
                           user_manager_tests.cpp
                           user_hash_tests.cpp
                           user_set_tests.cpp
+                          loop_module_tests.cpp
                       )

@@ -37,6 +37,8 @@ set(headers
     include/appt/multi_task_application.hpp
     include/appt/multi_user_application.hpp
     include/appt/multi_user_module.hpp
+    include/appt/loop.hpp
+    include/appt/loop_module.hpp
     include/appt/program_args.hpp
     include/appt/user.hpp
     include/appt/user_manager.hpp
