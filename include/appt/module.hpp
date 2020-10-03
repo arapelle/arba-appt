@@ -26,6 +26,10 @@ public:
     };
     jrunner jthread_runner();
 
+protected:
+    inline const std::stop_token& stop_token() const { return stop_token_; }
+    inline std::stop_token& stop_token() { return stop_token_; }
+
 private:
     std::stop_token stop_token_;
 };
