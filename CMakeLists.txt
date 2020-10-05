@@ -38,8 +38,10 @@ set(headers
     include/appt/user/user.hpp
     include/appt/application/multi_task_application.hpp
     include/appt/application/decorator/multi_task.hpp
+    include/appt/application/decorator/toolkit.hpp
     include/appt/application/decorator/multi_user.hpp
     include/appt/application/application.hpp
+    include/appt/application/program.hpp
     include/appt/application/multi_user_application.hpp
     include/appt/application/program_args.hpp
     include/appt/application/module/loop_module.hpp
@@ -53,7 +55,7 @@ set(headers
 
 # Sources:
 set(sources
-    src/application.cpp
+    src/program.cpp
     src/module.cpp
     src/user.cpp
 )
