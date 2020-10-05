@@ -1,8 +1,10 @@
 #include <iostream>
-#include <appt/appt.hpp>
+#include <appt/application/program_args.hpp>
 
-int main()
+int main(int argc, char** argv)
 {
-    std::cout << module_name() << std::endl;
+    appt::program_args args(argc, argv);
+    for (const std::string_view& arg : args)
+        std::cout << arg << std::endl;
     return EXIT_SUCCESS;
 }

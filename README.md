@@ -53,10 +53,19 @@ cmake -P cmake_uninstall.cmake
 
 # How to use
 
-## Example - Use a simple *application*
+## Example - Print program arguments
 
 ```c++
+#include <iostream>
+#include <appt/application/program_args.hpp>
 
+int main(int argc, char** argv)
+{
+    appt::program_args args(argc, argv);
+    for (const std::string_view& arg : args)
+        std::cout << arg << std::endl;
+    return EXIT_SUCCESS;
+}
 ```
 
 ## Example - Using *appt* in a CMake project
