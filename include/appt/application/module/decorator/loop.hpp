@@ -1,15 +1,13 @@
 #pragma once
 
-#include "util/duration.hpp"
+#include <appt/util/duration.hpp>
 #include <chrono>
 #include <thread>
 #include <cstdint>
 
 inline namespace arba
 {
-namespace appt
-{
-namespace mdec
+namespace appt::mdec // module_decorator
 {
 
 template <typename module_base_type, typename module_type>
@@ -74,6 +72,5 @@ std::chrono::nanoseconds loop<module_base_type, module_type>::compute_loop_durat
     return std::chrono::nanoseconds(static_cast<intmax_t>(1000./frequency_)*1000000);
 }
 
-}
 }
 }

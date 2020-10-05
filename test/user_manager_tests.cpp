@@ -1,4 +1,4 @@
-#include <appt/user_manager.hpp>
+#include <appt/user/user_manager.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 

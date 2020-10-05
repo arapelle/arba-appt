@@ -1,4 +1,4 @@
-#include <appt/application.hpp>
+#include <appt/application/application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 

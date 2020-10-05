@@ -1,14 +1,11 @@
 #pragma once
 
-#include "user_manager.hpp"
-#include "application.hpp"
+#include <appt/user/user_manager.hpp>
 #include <memory>
 
 inline namespace arba
 {
-namespace appt
-{
-namespace adec
+namespace appt::adec // application_decorator
 {
 
 template <typename user_type, typename application_base_type, typename application_type = void>
@@ -42,11 +39,6 @@ class multi_user : public multi_user<user_type, typename application_base_type::
 public:
     using base_::multi_user;
 };
-
-}
-
-template <typename user_type, typename application_type = void>
-using multi_user_application = adec::multi_user<user_type, application, application_type>;
 
 }
 }

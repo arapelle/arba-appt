@@ -1,4 +1,4 @@
-#include <appt/multi_user_application.hpp>
+#include <appt/application/multi_user_application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 

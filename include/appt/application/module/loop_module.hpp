@@ -1,6 +1,6 @@
 #pragma once
 
-#include "loop.hpp"
+#include "decorator/loop.hpp"
 #include "module.hpp"
 
 inline namespace arba

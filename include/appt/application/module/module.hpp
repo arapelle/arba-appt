@@ -1,6 +1,6 @@
 #pragma once
 
-#include "application.hpp"
+#include <appt/application/application.hpp>
 #include <thread>
 
 inline namespace arba

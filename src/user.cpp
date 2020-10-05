@@ -1,4 +1,4 @@
-#include <appt/user.hpp>
+#include <appt/user/user.hpp>
 #include <stdexcept>
 
 inline namespace arba

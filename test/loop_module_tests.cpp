@@ -1,5 +1,5 @@
-#include <appt/multi_task_application.hpp>
-#include <appt/loop_module.hpp>
+#include <appt/application/multi_task_application.hpp>
+#include <appt/application/module/loop_module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 

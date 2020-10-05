@@ -1,4 +1,4 @@
-#include <appt/user_hash.hpp>
+#include <appt/user/user_hash.hpp>
 #include <gtest/gtest.h>
 #include <unordered_set>
 #include <cstdlib>

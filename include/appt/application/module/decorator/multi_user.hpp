@@ -1,15 +1,12 @@
 #pragma once
 
-#include "multi_user_application.hpp"
-#include "module.hpp"
-#include "user_set.hpp"
+#include <appt/application/module/multi_user_module.hpp>
+#include <appt/user/user_set.hpp>
 #include <memory>
 
 inline namespace arba
 {
-namespace appt
-{
-namespace mdec // module_decorator
+namespace appt::mdec // module_decorator
 {
 
 template <typename user_type, typename user_sptr_hash, typename module_base_type>
@@ -47,17 +44,6 @@ void multi_user<user_type, user_sptr_hash, module_base_type>::set_app(multi_user
     this->module_base_type::set_app(app);
     users_.set_user_manager(app.usr_manager());
 }
-
-}
-
-template <typename user_type, typename user_sptr_hash, typename app_type = application>
-class multi_user_module : public mdec::multi_user<user_type, user_sptr_hash, module<app_type>>
-{
-    using base_ = mdec::multi_user<user_type, user_sptr_hash, module<app_type>>;
-
-public:
-    using base_::multi_user;
-};
 
 }
 }

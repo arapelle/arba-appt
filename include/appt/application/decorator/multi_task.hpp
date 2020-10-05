@@ -1,14 +1,12 @@
 #pragma once
 
-#include "module.hpp"
+#include <appt/application/module/module.hpp>
 #include <memory>
 #include <thread>
 
 inline namespace arba
 {
-namespace appt
-{
-namespace adec
+namespace appt::adec // application_decorator
 {
 
 template <typename application_base_type, typename application_type = void>
@@ -162,11 +160,6 @@ module_type& multi_task<application_base_type, application_type>::create_main_mo
     std::unique_ptr module_uptr = std::make_unique<module_type>();
     return set_main_module<module_type>(std::move(module_uptr));
 }
-
-}
-
-template <typename application_type = void>
-using multi_task_application = adec::multi_task<application, application_type>;
 
 }
 }

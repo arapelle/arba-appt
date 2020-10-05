@@ -32,18 +32,21 @@ library_build_options(${PROJECT_NAME} STATIC SHARED EXAMPLE TEST)
 
 # Headers:
 set(headers
-    include/appt/application.hpp
-    include/appt/module.hpp
-    include/appt/multi_task_application.hpp
-    include/appt/multi_user_application.hpp
-    include/appt/multi_user_module.hpp
-    include/appt/loop.hpp
-    include/appt/loop_module.hpp
-    include/appt/program_args.hpp
-    include/appt/user.hpp
-    include/appt/user_manager.hpp
-    include/appt/user_set.hpp
-    include/appt/user_hash.hpp
+    include/appt/user/user_manager.hpp
+    include/appt/user/user_hash.hpp
+    include/appt/user/user_set.hpp
+    include/appt/user/user.hpp
+    include/appt/application/multi_task_application.hpp
+    include/appt/application/decorator/multi_task.hpp
+    include/appt/application/decorator/multi_user.hpp
+    include/appt/application/application.hpp
+    include/appt/application/multi_user_application.hpp
+    include/appt/application/program_args.hpp
+    include/appt/application/module/loop_module.hpp
+    include/appt/application/module/decorator/loop.hpp
+    include/appt/application/module/decorator/multi_user.hpp
+    include/appt/application/module/multi_user_module.hpp
+    include/appt/application/module/module.hpp
     include/appt/util/integer_id_factory.hpp
     include/appt/util/duration.hpp
 )

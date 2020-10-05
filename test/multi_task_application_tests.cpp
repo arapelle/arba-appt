@@ -1,4 +1,4 @@
-#include <appt/multi_task_application.hpp>
+#include <appt/application/multi_task_application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
