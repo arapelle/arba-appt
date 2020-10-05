@@ -20,7 +20,6 @@ public:
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         app().stop_side_modules();
-        std::cout << "TIME IS UP" << std::endl;
     }
 };
 
@@ -31,20 +30,22 @@ public:
 
     virtual void init() override
     {
+        ++init_count;
     }
 
     void run_loop(appt::seconds delta_time)
     {
         ++run_count;
-        std::cout << delta_time.to_milliseconds() << "     " << delta_time.to_seconds() << "     " << delta_time.count() << std::endl;
     }
 
     virtual void finish() override
     {
-        std::cout << "run_loop_count: " << run_count << std::endl;
+        ++finish_count;
     }
 
+    uint16_t init_count = 0;
     uint16_t run_count = 0;
+    uint16_t finish_count = 0;
 };
 
 TEST(multi_task_application_tests, test_side_modules)
@@ -55,8 +56,10 @@ TEST(multi_task_application_tests, test_side_modules)
     loop_module.set_frequency(60);
     app.init();
     app.run();
+    ASSERT_EQ(loop_module.init_count, 1);
     ASSERT_GE(loop_module.run_count, 60);
     ASSERT_LT(loop_module.run_count, 65);
+    ASSERT_EQ(loop_module.finish_count, 1);
 }
 
 int main(int argc, char** argv)
