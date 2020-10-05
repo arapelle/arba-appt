@@ -32,6 +32,15 @@ private:
 
 public:
     using base_::multi_user;
+
+    void run()
+    {
+        std::vector<std::string> names{ "Alpha", "Beta", "Gamma" };
+        for (const auto& name : names)
+            users.push_back(usr_manager().create_user(name));
+    }
+
+    std::vector<std::shared_ptr<ut_user>> users;
 };
 
 TEST(multi_user_application_tests, test_constructor_empty)
@@ -45,6 +54,20 @@ TEST(multi_user_application_tests, test_constructor)
     ut_application app(argc, argv);
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
+}
+
+TEST(multi_user_application_tests, test_run)
+{
+    ut_application app(argc, argv);
+    app.run();
+    ASSERT_EQ(app.usr_manager().size(), 3);
+    std::shared_ptr user_sptr = app.usr_manager().shared_user(0);
+    ASSERT_NE(user_sptr, nullptr);
+    ASSERT_EQ(user_sptr->name, "Alpha");
+    user_sptr = app.usr_manager().shared_user(1);
+    ASSERT_EQ(user_sptr->name, "Beta");
+    user_sptr = app.usr_manager().shared_user(2);
+    ASSERT_EQ(user_sptr->name, "Gamma");
 }
 
 int main(int argc, char** argv)
