@@ -26,6 +26,7 @@ public:
 class ut_loop_module : public appt::loop_module<ut_loop_module, ut_application>
 {
 public:
+    ut_loop_module() : appt::loop_module<ut_loop_module, ut_application>("ut_loop_module") {}
     virtual ~ut_loop_module() override = default;
 
     virtual void init() override
@@ -51,8 +52,10 @@ public:
 TEST(multi_task_application_tests, test_side_modules)
 {
     ut_application app;
-    app.create_main_module<ut_times_up_module>();
+    ut_times_up_module& times_up_module = app.create_main_module<ut_times_up_module>();
+    ASSERT_EQ(times_up_module.name(), "module_0");
     ut_loop_module& loop_module = app.create_module<ut_loop_module>();
+    ASSERT_EQ(loop_module.name(), "ut_loop_module");
     loop_module.set_frequency(60);
     app.init();
     app.run();
