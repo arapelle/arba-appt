@@ -40,6 +40,7 @@ set(headers
     include/appt/application/decorator/multi_task.hpp
     include/appt/application/decorator/toolkit.hpp
     include/appt/application/decorator/multi_user.hpp
+    include/appt/application/decorator/logging.hpp
     include/appt/application/application_logger.hpp
     include/appt/application/application.hpp
     include/appt/application/program.hpp
