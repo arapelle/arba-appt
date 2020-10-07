@@ -46,6 +46,7 @@ set(headers
     include/appt/application/multi_user_application.hpp
     include/appt/application/program_args.hpp
     include/appt/application/module/loop_module.hpp
+    include/appt/application/module/module_logger.hpp
     include/appt/application/module/decorator/loop.hpp
     include/appt/application/module/decorator/multi_user.hpp
     include/appt/application/module/multi_user_module.hpp
