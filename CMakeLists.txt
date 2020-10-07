@@ -50,6 +50,7 @@ set(headers
     include/appt/application/module/multi_user_module.hpp
     include/appt/application/module/module.hpp
     include/appt/util/time_point_to_string.hpp
+    include/appt/util/console_file_logger.hpp
     include/appt/util/integer_id_factory.hpp
     include/appt/util/duration.hpp
     include/appt/util/logger_helper.hpp
@@ -57,6 +58,7 @@ set(headers
 
 # Sources:
 set(sources
+    src/console_file_logger.cpp
     src/logger_helper.cpp
     src/program.cpp
     src/module.cpp
