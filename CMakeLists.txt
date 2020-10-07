@@ -52,10 +52,12 @@ set(headers
     include/appt/util/time_point_to_string.hpp
     include/appt/util/integer_id_factory.hpp
     include/appt/util/duration.hpp
+    include/appt/util/logger_helper.hpp
 )
 
 # Sources:
 set(sources
+    src/logger_helper.cpp
     src/program.cpp
     src/module.cpp
     src/user.cpp
