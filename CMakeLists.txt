@@ -50,6 +50,7 @@ set(headers
     include/appt/application/module/module_logger.hpp
     include/appt/application/module/decorator/loop.hpp
     include/appt/application/module/decorator/multi_user.hpp
+    include/appt/application/module/decorator/logging.hpp
     include/appt/application/module/multi_user_module.hpp
     include/appt/application/module/module.hpp
     include/appt/util/time_point_to_string.hpp
