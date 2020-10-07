@@ -6,6 +6,11 @@ namespace appt
 {
 
 module_interface::module_interface()
+    : name_(std::string("module_") + std::to_string(new_module_index_()))
+{}
+
+module_interface::module_interface(std::string name)
+    : name_(std::move(name))
 {}
 
 module_interface::jrunner module_interface::jthread_runner()

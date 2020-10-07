@@ -19,6 +19,7 @@ Libraries:
 - [vlfs](https://github.com/arapelle/vlfs) 0.1.0
 - [rsce](https://github.com/arapelle/rsce) 0.1.0
 - [evnt](https://github.com/arapelle/evnt) 0.1.0
+- [spdlog](https://github.com/gabime/spdlog) 1.8
 - [Google Test](https://github.com/google/googletest) 1.10 or later (only for testing)
 
 ## Clone
