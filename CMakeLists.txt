@@ -49,6 +49,7 @@ set(headers
     include/appt/application/module/decorator/multi_user.hpp
     include/appt/application/module/multi_user_module.hpp
     include/appt/application/module/module.hpp
+    include/appt/util/time_point_to_string.hpp
     include/appt/util/integer_id_factory.hpp
     include/appt/util/duration.hpp
 )
@@ -58,6 +59,7 @@ set(sources
     src/program.cpp
     src/module.cpp
     src/user.cpp
+    src/time_point_to_string.cpp
 )
 
 # Add C++ library
