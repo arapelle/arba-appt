@@ -67,6 +67,7 @@ add_cpp_library(${PROJECT_NAME} ${PROJECT_NAME}_BUILD_SHARED_LIB ${PROJECT_NAME}
     NAMESPACE arba::
     CXX_STANDARD 20
     INCLUDE_DIRECTORIES include
+    INPUT_VERSION_HEADER "${CMAKE_CURRENT_LIST_DIR}/include.in/version.hpp"
     OUTPUT_VERSION_HEADER "version.hpp"
     HEADERS ${headers}
     SOURCES ${sources}
