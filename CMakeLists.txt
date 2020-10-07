@@ -87,7 +87,8 @@ endif()
 if(NOT TARGET arba::evnt)
     find_package(evnt 0.1 REQUIRED CONFIG)
 endif()
-cpp_library_targets_link_libraries(${PROJECT_NAME} PUBLIC arba::rsce arba::evnt)
+find_package(spdlog 1.8 REQUIRED CONFIG)
+cpp_library_targets_link_libraries(${PROJECT_NAME} PUBLIC arba::rsce arba::evnt spdlog::spdlog)
 
 # Install package
 install_package(${PROJECT_NAME}
