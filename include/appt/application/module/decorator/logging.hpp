@@ -14,9 +14,10 @@ class logging : public module_base_type
 {
 private:
     using base_ = module_base_type;
-    using application_type = typename base_::application_type;
 
 public:
+    using application_type = typename module_base_type::application_type;
+
     logging() {}
     explicit logging(std::string name) : base_(std::move(name)) {}
     explicit logging(application_type& app) : base_(app), logger_(std::make_shared<module_logger_type>(*this)) {}
