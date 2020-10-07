@@ -12,8 +12,10 @@ class module_interface
 {
 public:
     module_interface();
+    module_interface(std::string name);
     virtual ~module_interface() = default;
 
+    const std::string& name() const { return name_; }
     virtual void init() {}
     virtual void run() = 0;
 
@@ -31,6 +33,14 @@ protected:
     inline std::stop_token& stop_token() { return stop_token_; }
 
 private:
+    std::size_t new_module_index_()
+    {
+        static std::size_t index = 0;
+        return index++;
+    }
+
+private:
+    std::string name_;
     std::stop_token stop_token_;
 };
 
@@ -42,7 +52,9 @@ public:
     using application_type = app_type;
 
     module() : application_(nullptr) {}
+    explicit module(std::string name) : module_interface(std::move(name)), application_(nullptr) {}
     explicit module(application_type& app);
+    module(std::string name, application_type& app);
     virtual ~module() override = default;
 
     inline const application_type& app() const { return *application_; }
@@ -63,6 +75,13 @@ private:
 template <class app_type>
 module<app_type>::module(application_type& app)
     : application_(&app)
+{
+    application_->event_manager().connect(event_box_);
+}
+
+template <class app_type>
+module<app_type>::module(std::string name, application_type& app)
+    : module_interface(std::move(name)), application_(&app)
 {
     application_->event_manager().connect(event_box_);
 }
