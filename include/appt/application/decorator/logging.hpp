@@ -2,6 +2,7 @@
 
 #include <appt/application/application_logger.hpp>
 #include <appt/application/program_args.hpp>
+#include <appt/util/logger_helper.hpp>
 #include <spdlog/spdlog.h>
 
 inline namespace arba
