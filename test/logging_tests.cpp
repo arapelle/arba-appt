@@ -44,10 +44,10 @@ public:
     }
 };
 
-class first_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<first_module, application>>
+class first_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<application, first_module>>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<first_module, application>>;
+    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<application, first_module>>;
 
 public:
     first_module() : base_("first_module") {}
@@ -64,10 +64,10 @@ public:
     }
 };
 
-class second_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<second_module, application>>
+class second_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<application, second_module>>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<second_module, application>>;
+    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<application, second_module>>;
 
 public:
     second_module() : base_("second_module") {}

@@ -19,8 +19,8 @@ public:
     using user_set = appt::user_set<user_type, user_sptr_hash>;
     using application_type = typename module_base_type::application_type;
 
-    template <typename other_application_type>
-    using rebind_t = multi_user<user_type, user_sptr_hash, module_base_type, other_application_type>;
+    template <typename other_module_type>
+    using rebind_t = multi_user<user_type, user_sptr_hash, module_base_type, other_module_type>;
 
     multi_user() {}
     explicit multi_user(std::string name) : module_base_type(std::move(name)) {}

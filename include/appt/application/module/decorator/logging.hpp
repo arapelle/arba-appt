@@ -21,8 +21,8 @@ private:
 public:
     using application_type = typename module_base_type::application_type;
 
-    template <typename other_application_type>
-    using rebind_t = logging<module_logger_type, module_base_type, other_application_type>;
+    template <typename other_module_type>
+    using rebind_t = logging<module_logger_type, module_base_type, other_module_type>;
 
     logging() {}
     explicit logging(std::string name) : base_(std::move(name)) {}

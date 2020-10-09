@@ -17,8 +17,8 @@ template <typename module_base_type>
 class loop<module_base_type> : public module_base_type
 {
 public:
-    template <typename other_application_type>
-    using rebind_t = loop<module_base_type, other_application_type>;
+    template <typename other_module_type>
+    using rebind_t = loop<module_base_type, other_module_type>;
 
     using module_base_type::module_base_type;
 
