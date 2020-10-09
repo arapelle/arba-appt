@@ -10,16 +10,37 @@ inline namespace arba
 namespace appt::mdec // module_decorator
 {
 
-template <typename module_base_type, typename module_type>
-class loop : public module_base_type
+template <typename module_base_type, typename module_type = void>
+class loop;
+
+template <typename module_base_type>
+class loop<module_base_type> : public module_base_type
 {
+public:
+    template <typename other_application_type>
+    using rebind_t = loop<module_base_type, other_application_type>;
+
+    using module_base_type::module_base_type;
+
+protected:
+    virtual ~loop() override = default;
+};
+
+template <typename module_base_type, typename module_type>
+class loop : public loop<typename module_base_type::rebind_t<module_type>>
+{
+private:
+    using base_ = loop<typename module_base_type::rebind_t<module_type>>;
+
 private:
     const module_type& self_() const { return static_cast<module_type&>(*this); }
     module_type& self_() { return static_cast<module_type&>(*this); }
 
 public:
-    using application_type = typename module_base_type::application_type;
-    using module_base_type::module_base_type;
+    using application_type = typename base_::application_type;
+    using base_::base_;
+
+    virtual ~loop() override = default;
 
     virtual void run() override;
     virtual void finish() {}

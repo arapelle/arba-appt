@@ -9,14 +9,20 @@ inline namespace arba
 namespace appt::mdec
 {
 
+template <class module_logger_type, class module_base_type, class module_type = void>
+class logging;
+
 template <class module_logger_type, class module_base_type>
-class logging : public module_base_type
+class logging<module_logger_type, module_base_type> : public module_base_type
 {
 private:
     using base_ = module_base_type;
 
 public:
     using application_type = typename module_base_type::application_type;
+
+    template <typename other_application_type>
+    using rebind_t = logging<module_logger_type, module_base_type, other_application_type>;
 
     logging() {}
     explicit logging(std::string name) : base_(std::move(name)) {}
@@ -41,6 +47,17 @@ public:
 
 private:
     std::shared_ptr<spdlog::logger> logger_;
+};
+
+template <class module_logger_type, class module_base_type, class module_type>
+class logging : public logging<module_logger_type, typename module_base_type::rebind_t<module_type>>
+{
+private:
+    using base_ = logging<module_logger_type, typename module_base_type::rebind_t<module_type>>;
+
+public:
+    using base_::base_;
+    virtual ~logging() override = default;
 };
 
 }
