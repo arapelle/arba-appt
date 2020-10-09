@@ -19,7 +19,7 @@ private:
 
 public:
     template <typename other_module_type>
-    using rebind_t = loop_module<other_module_type, app_type>;
+    using rebind_t = loop_module<app_type, other_module_type>;
 
 public:
     using base_::base_;
@@ -31,6 +31,10 @@ class loop_module : public mdec::loop<module<app_type>, module_type>
 {
 private:
     using base_ = mdec::loop<module<app_type>, module_type>;
+
+public:
+    template <typename other_module_type>
+    using rebind_t = loop_module;
 
 public:
     using base_::base_;
