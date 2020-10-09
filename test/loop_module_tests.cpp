@@ -23,10 +23,10 @@ public:
     }
 };
 
-class ut_loop_module : public appt::loop_module<ut_loop_module, ut_application>
+class ut_loop_module : public appt::loop_module<ut_application, ut_loop_module>
 {
 public:
-    ut_loop_module() : appt::loop_module<ut_loop_module, ut_application>("ut_loop_module") {}
+    ut_loop_module() : appt::loop_module<ut_application, ut_loop_module>("ut_loop_module") {}
     virtual ~ut_loop_module() override = default;
 
     virtual void init() override

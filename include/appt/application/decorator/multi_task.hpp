@@ -16,10 +16,10 @@ template <typename application_base_type>
 class multi_task<application_base_type> : public application_base_type
 {
 public:
-    using application_base_type::application_base_type;
-
     template <typename other_application_type>
     using rebind_t = multi_task<application_base_type, other_application_type>;
+
+    using application_base_type::application_base_type;
 
     template <typename module_type>
     requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)

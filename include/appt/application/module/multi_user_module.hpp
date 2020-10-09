@@ -16,7 +16,12 @@ class multi_user_module : public mdec::multi_user<user_type, user_sptr_hash, mod
     using base_ = mdec::multi_user<user_type, user_sptr_hash, module<app_type>>;
 
 public:
+    template <typename other_module_type>
+    using rebind_t = multi_user_module;
+
+public:
     using base_::multi_user;
+    virtual ~multi_user_module() override = default;
 };
 
 }

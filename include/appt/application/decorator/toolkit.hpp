@@ -10,15 +10,18 @@ inline namespace arba
 namespace appt::adec // application_decorator
 {
 
-template <class application_type>
-class toolkit : public application_type
+template <class application_base_type, typename application_type = void>
+class toolkit;
+
+template <class application_base_type>
+class toolkit<application_base_type> : public application_base_type
 {
 public:
     template <typename other_application_type>
-    using rebind_t = toolkit;
+    using rebind_t = toolkit<application_base_type, other_application_type>;
 
     toolkit(int argc, char** argv) : toolkit(program_args(argc, argv)) {}
-    toolkit(const program_args& args = program_args()) : application_type(args), resource_manager_(virtual_filesystem_) {}
+    toolkit(const program_args& args = program_args()) : application_base_type(args), resource_manager_(virtual_filesystem_) {}
 
     inline const rsce::resource_manager& resource_manager() const { return resource_manager_; }
     inline       rsce::resource_manager& resource_manager() { return resource_manager_; }
@@ -31,6 +34,16 @@ private:
     rsce::resource_manager resource_manager_;
     vlfs::virtual_filesystem virtual_filesystem_;
     evnt::event_manager event_manager_;
+};
+
+template <class application_base_type, typename application_type>
+class toolkit : public toolkit<typename application_base_type::rebind_t<application_type>>
+{
+private:
+    using base_ = toolkit<typename application_base_type::rebind_t<application_type>>;
+
+public:
+    using base_::base_;
 };
 
 }

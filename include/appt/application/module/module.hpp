@@ -49,6 +49,9 @@ requires std::is_base_of_v<application, app_type>
 class module : public module_interface
 {
 public:
+    template <typename other_application_type>
+    using rebind_t = module;
+
     using application_type = app_type;
 
     module() : application_(nullptr) {}
