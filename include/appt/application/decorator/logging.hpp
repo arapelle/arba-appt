@@ -10,13 +10,19 @@ inline namespace arba
 namespace appt::adec
 {
 
+template <class application_logger_type, class application_base_type, class application_type = void>
+class logging;
+
 template <class application_logger_type, class application_base_type>
-class logging : public application_base_type
+class logging<application_logger_type, application_base_type> : public application_base_type
 {
 private:
     using base_ = application_base_type;
 
 public:
+    template <typename other_application_type>
+    using rebind_t = logging<application_logger_type, application_base_type, other_application_type>;
+
     logging(int argc, char** argv) : logging(appt::program_args(argc, argv)) {}
     explicit logging(const appt::program_args& args = appt::program_args())
         : base_(args),
@@ -39,6 +45,16 @@ public:
 private:
     std::filesystem::path log_dir_;
     std::shared_ptr<spdlog::logger> logger_;
+};
+
+template <class application_logger_type, class application_base_type, class application_type>
+class logging : public logging<application_logger_type, typename application_base_type::rebind_t<application_type>>
+{
+private:
+    using base_ = logging<application_logger_type, typename application_base_type::rebind_t<application_type>>;
+
+public:
+    using base_::base_;
 };
 
 }
