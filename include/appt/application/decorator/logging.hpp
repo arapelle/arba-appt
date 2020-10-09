@@ -31,6 +31,7 @@ public:
     {
         log_dir_ = log_dir;
         logger_ = std::make_shared<application_logger_type>(*this);
+        spdlog::register_logger(logger_);
     }
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
