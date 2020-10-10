@@ -55,7 +55,6 @@ private:
 
 public:
     using base_::base_;
-    virtual ~logging() override = default;
 };
 
 }
