@@ -67,10 +67,13 @@ public:
 protected:
     const evnt::event_box& event_box() const { return event_box_; }
     evnt::event_box& event_box() { return event_box_; }
+    const evnt::event_manager& event_manager() const { return event_manager_; }
+    evnt::event_manager& event_manager() { return event_manager_; }
 
 private:
     application_type* application_;
     evnt::event_box event_box_;
+    evnt::event_manager event_manager_;
 };
 
 // Template methods implementation:
