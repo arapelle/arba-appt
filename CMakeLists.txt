@@ -15,7 +15,7 @@ set_build_type_if_undefined()
 # C++ PROJECT
 
 project(appt
-        VERSION 0.6
+        VERSION 0.7
         DESCRIPTION "A C++ library providing application objects embedding useful tools."
         HOMEPAGE_URL "https://github.com/arapelle/appt"
         LANGUAGES CXX)
@@ -96,7 +96,7 @@ if(NOT TARGET arba::rsce)
     find_package(rsce 0.1 REQUIRED CONFIG)
 endif()
 if(NOT TARGET arba::evnt)
-    find_package(evnt 0.1 REQUIRED CONFIG)
+    find_package(evnt 0.2 REQUIRED CONFIG)
 endif()
 find_package(spdlog 1.8 REQUIRED CONFIG)
 cpp_library_targets_link_libraries(${PROJECT_NAME} PUBLIC arba::rsce arba::evnt spdlog::spdlog)

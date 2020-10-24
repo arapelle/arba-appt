@@ -12,4 +12,5 @@ add_cpp_library_tests(SHARED ${PROJECT_NAME}
                           user_set_tests.cpp
                           loop_module_tests.cpp
                           logging_tests.cpp
+                          event_forwarding_tests.cpp
                       )
