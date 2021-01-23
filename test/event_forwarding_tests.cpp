@@ -33,12 +33,13 @@ public:
 
     virtual void run() override
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         ++run_count;
         event_manager().emit(event_box());
         if (run_count == 1)
         {
             event_manager().emit(ut_event{"local"});
-            app().event_manager().emit(ut_event{"global"});;
+            app().event_manager().emit(ut_event{"global"});
         }
     }
 
