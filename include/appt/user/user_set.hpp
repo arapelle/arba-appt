@@ -158,7 +158,8 @@ std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args
         user_sptr = user_manager_->create_user(std::forward<args_types>(args)...);
     else
         user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
-    this->insert(user_sptr);
+    if (user_sptr)
+        this->insert(user_sptr);
     return user_sptr;
 }
 

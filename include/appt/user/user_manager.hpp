@@ -26,6 +26,8 @@ public:
     void release_user(const id_type& user_id);
     void reset_user_shared_ptr(std::shared_ptr<user_type>& user_sptr);
     std::size_t size() const { std::lock_guard lock(mutex_); return user_id_factory_.number_of_valid_id(); }
+    std::size_t max_number_of_users() const { std::lock_guard lock(mutex_); return max_number_of_users_; }
+    void set_max_number_of_users(std::size_t max_count) { std::lock_guard lock(mutex_); max_number_of_users_ = max_count; }
 
 private:
     void release_user_(const id_type& usr_id, std::weak_ptr<user_type>& user_wptr);
@@ -33,6 +35,7 @@ private:
 private:
     std::vector<std::weak_ptr<user_type>> users_;
     integer_id_factory<id_type> user_id_factory_;
+    std::size_t max_number_of_users_ = std::numeric_limits<std::size_t>::max();
     mutable std::mutex mutex_;
 };
 
@@ -44,6 +47,8 @@ std::shared_ptr<user_type> user_manager<user_type>::create_user(args_types&&... 
 {
     std::lock_guard lock(mutex_);
     std::shared_ptr user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
+    if (user_id_factory_.number_of_valid_id() == max_number_of_users_)
+        return nullptr;
     id_type id = user_id_factory_.new_id();
     user_sptr->set_id(id);
     if (id < users_.size())
