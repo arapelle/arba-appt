@@ -46,9 +46,9 @@ template <typename... args_types>
 std::shared_ptr<user_type> user_manager<user_type>::create_user(args_types&&... args)
 {
     std::lock_guard lock(mutex_);
-    std::shared_ptr user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
     if (user_id_factory_.number_of_valid_id() == max_number_of_users_)
         return nullptr;
+    std::shared_ptr user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
     id_type id = user_id_factory_.new_id();
     user_sptr->set_id(id);
     if (id < users_.size())

@@ -136,7 +136,6 @@ void user_set<user_type, user_sptr_hash>::clear_users()
 {
     if (user_manager_)
     {
-        user_type_sptr sptr_to_reset;
         while (!empty())
         {
             auto begin_iter = begin();
