@@ -38,7 +38,7 @@ public:
     user_set& operator=(const user_set& other);
     user_set& operator=(user_set&& other);
 
-    inline auto insert_user(const user_type_sptr& user_sptr) { return this->insert(user_sptr); }
+    inline auto insert_user(const user_type_sptr& user_sptr);
     inline void erase_user(const_iterator iter) { this->erase(iter); }
 
     template <typename... args_types>
@@ -49,9 +49,21 @@ public:
     void erase_user(const key_type& key);
     void clear_users();
 
+    std::size_t max_number_of_users() const { return max_number_of_users_; }
+    void set_max_number_of_users(std::size_t max_count) { max_number_of_users_ = max_count; }
+
 private:
     user_manager<user_type>* user_manager_ = nullptr;
+    std::size_t max_number_of_users_ = std::numeric_limits<std::size_t>::max();
 };
+
+template <class user_type, class user_sptr_hash>
+inline auto user_set<user_type, user_sptr_hash>::insert_user(const user_type_sptr& user_sptr)
+{
+    if (this->size() < max_number_of_users_)
+        return this->insert(user_sptr);
+    return std::make_pair(this->end(), false);
+}
 
 template <class user_type, class user_sptr_hash>
 void user_set<user_type, user_sptr_hash>::set_user_manager(user_manager<user_type>& usr_manager)
@@ -136,7 +148,6 @@ void user_set<user_type, user_sptr_hash>::clear_users()
 {
     if (user_manager_)
     {
-        user_type_sptr sptr_to_reset;
         while (!empty())
         {
             auto begin_iter = begin();
@@ -153,13 +164,18 @@ template <class user_type, class user_sptr_hash>
 template <typename... args_types>
 std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args_types&&... args)
 {
-    user_type_sptr user_sptr;
-    if (user_manager_)
-        user_sptr = user_manager_->create_user(std::forward<args_types>(args)...);
-    else
-        user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
-    this->insert(user_sptr);
-    return user_sptr;
+    if (this->size() < max_number_of_users_)
+    {
+        user_type_sptr user_sptr;
+        if (user_manager_)
+            user_sptr = user_manager_->create_user(std::forward<args_types>(args)...);
+        else
+            user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
+        if (user_sptr)
+            this->insert(user_sptr);
+        return user_sptr;
+    }
+    return nullptr;
 }
 
 }

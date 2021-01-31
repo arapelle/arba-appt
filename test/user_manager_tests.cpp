@@ -24,6 +24,24 @@ TEST(user_manager_tests, test_create_user)
     ASSERT_EQ(anonyme_user->name, "");
     ASSERT_EQ(zeus_user->name, "Zeus");
     ASSERT_EQ(users.size(), 2);
+    ASSERT_EQ(users.max_number_of_users(), std::numeric_limits<std::size_t>::max());
+}
+
+TEST(user_manager_tests, test_max_number_of_users)
+{
+    appt::user_manager<ut_user> users;
+    users.set_max_number_of_users(2);
+    ASSERT_EQ(users.max_number_of_users(), 2);
+    ut_user_sptr athena_user = users.create_user("Athena");
+    ut_user_sptr zeus_user = users.create_user("Zeus");
+    ASSERT_EQ(athena_user->id(), 0);
+    ASSERT_EQ(zeus_user->id(), 1);
+    ASSERT_EQ(athena_user->name, "Athena");
+    ASSERT_EQ(zeus_user->name, "Zeus");
+    ASSERT_EQ(users.size(), 2);
+    ut_user_sptr null_user = users.create_user("Hades");
+    ASSERT_EQ(null_user, nullptr);
+    ASSERT_EQ(users.size(), 2);
 }
 
 TEST(user_manager_tests, test_release_user_id)
