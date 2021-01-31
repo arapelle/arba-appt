@@ -123,6 +123,40 @@ TEST(user_set_tests, test_user_set_mem)
     ASSERT_TRUE(iter == ut_user_set.end());
 }
 
+TEST(user_set_tests, test_user_set_max_number_of_users)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_set<ut_user, sptr_hash> ut_user_set;
+    ut_user_set.set_max_number_of_users(3);
+    ut_user_sptr alpha_user = ut_user_set.create_user("Alpha");
+    ut_user_sptr beta_user = ut_user_set.create_user("Beta");
+    ut_user_sptr lambda_user = ut_user_set.create_user("Lambda");
+    ut_user_sptr omega_user = ut_user_set.create_user("Omega");
+    ASSERT_NE(alpha_user, nullptr);
+    ASSERT_NE(beta_user, nullptr);
+    ASSERT_NE(lambda_user, nullptr);
+    ASSERT_EQ(omega_user, nullptr);
+
+    ASSERT_EQ(ut_user_set.size(), 3);
+}
+
+TEST(user_set_tests, test_user_set_max_number_of_users_2)
+{
+    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+
+    appt::user_set<ut_user, sptr_hash> ut_user_set;
+    ut_user_set.set_max_number_of_users(3);
+    ut_user_set.insert_user(std::make_shared<ut_user>("Alpha"));
+    ut_user_set.insert_user(std::make_shared<ut_user>("Beta"));
+    ut_user_set.insert_user(std::make_shared<ut_user>("Lambda"));
+    auto res = ut_user_set.insert_user(std::make_shared<ut_user>("Omega"));
+    ASSERT_EQ(res.first, ut_user_set.end());
+    ASSERT_FALSE(res.second);
+
+    ASSERT_EQ(ut_user_set.size(), 3);
+}
+
 TEST(user_set_tests, test_user_set_id_with_user_manager)
 {
     using sptr_hash = appt::user_sptr_id_hash<ut_user>;
