@@ -1,4 +1,5 @@
 #include <appt/user/user_hash.hpp>
+#include <appt/user/user_manager.hpp>
 #include <gtest/gtest.h>
 #include <unordered_set>
 #include <cstdlib>
@@ -37,12 +38,13 @@ TEST(user_hash_tests, test_user_sptr_id_hash)
 {
     using sptr_hash = appt::user_sptr_id_hash<ut_user>;
 
-    std::shared_ptr user_sptr = std::make_shared<ut_user>("Namae");
-    user_sptr->set_id(6);
+    appt::user_manager<ut_user> user_manager;
+    std::shared_ptr user_sptr = user_manager.create_user("Namae");
 
     sptr_hash s_hash;
-    ASSERT_EQ(s_hash.user_id(*user_sptr), 6);
-    ASSERT_EQ(s_hash(user_sptr), 6);
+    ASSERT_EQ(s_hash.user_id(*user_sptr), 0);
+    ASSERT_EQ(s_hash(user_sptr), 0);
+    ASSERT_EQ(s_hash(nullptr), std::numeric_limits<std::size_t>::max());
 }
 
 TEST(user_hash_tests, test_user_sptr_name_hash)
@@ -50,7 +52,6 @@ TEST(user_hash_tests, test_user_sptr_name_hash)
     using sptr_hash = appt::user_sptr_name_hash<ut_user>;
 
     std::shared_ptr user_sptr = std::make_shared<ut_user>("Namae");
-    user_sptr->set_id(6);
 
     sptr_hash s_hash;
     ASSERT_EQ(s_hash.user_id(*user_sptr), "Namae");
@@ -63,7 +64,6 @@ TEST(user_hash_tests, test_user_2_sptr_name_hash)
     using sptr_hash = appt::user_sptr_name_hash<ut_user_2>;
 
     std::shared_ptr user_sptr = std::make_shared<ut_user_2>("Namae");
-    user_sptr->set_id(6);
 
     sptr_hash s_hash;
     ASSERT_EQ(s_hash.user_id(*user_sptr), "Namae");
@@ -76,7 +76,6 @@ TEST(user_hash_tests, test_user_sptr_mem_fn_hash)
     using sptr_hash = appt::user_sptr_mem_fn_hash<ut_user, std::string, &ut_user::name>;
 
     std::shared_ptr user_sptr = std::make_shared<ut_user>("Namae");
-    user_sptr->set_id(6);
 
     sptr_hash s_hash;
     ASSERT_EQ(s_hash.user_id(*user_sptr), "Namae");
@@ -89,7 +88,6 @@ TEST(user_hash_tests, test_user_sptr_mem_hash)
     using sptr_hash = appt::user_sptr_mem_hash<ut_user_2, std::string, &ut_user_2::name>;
 
     std::shared_ptr user_sptr = std::make_shared<ut_user_2>("Namae");
-    user_sptr->set_id(6);
 
     sptr_hash s_hash;
     ASSERT_EQ(s_hash.user_id(*user_sptr), "Namae");

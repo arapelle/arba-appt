@@ -37,24 +37,6 @@ using ut_user_2_sptr = std::shared_ptr<ut_user_2>;
 
 //--------------------------------------------------------------------------------
 
-TEST(user_set_tests, test_user_set_id)
-{
-    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
-
-    appt::user_set<ut_user, sptr_hash> ut_user_set;
-    std::shared_ptr user_sptr = std::make_shared<ut_user>("Zeus");
-    user_sptr->set_id(6);
-    appt::user::id_type id = user_sptr->id();
-    ut_user_set.insert_user(user_sptr);
-    ut_user_set.insert_user(std::make_shared<ut_user>("Athena"));
-    auto iter = ut_user_set.find_user(id);
-    ASSERT_TRUE(iter != ut_user_set.end());
-    ASSERT_EQ((*iter)->id(), id);
-    ut_user_set.erase_user(id);
-    iter = ut_user_set.find_user(id);
-    ASSERT_TRUE(iter == ut_user_set.end());
-}
-
 TEST(user_set_tests, test_user_set_name)
 {
     using sptr_hash = appt::user_sptr_name_hash<ut_user>;

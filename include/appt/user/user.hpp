@@ -18,10 +18,15 @@ public:
 public:
     user() : id_(bad_id) {}
     inline const id_type& id() const { return id_; }
-    void set_id(id_type id);
-    void unset_id();
     inline bool operator==(const user& rhs) const = default;
     inline bool operator!=(const user& rhs) const = default;
+
+private:
+    template <class user_type>
+    requires std::is_base_of_v<user, user_type>
+    friend class user_manager;
+    void set_id(id_type id);
+    void unset_id();
 
 private:
     id_type id_;
