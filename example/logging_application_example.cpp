@@ -1,7 +1,6 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include <appt/application/application.hpp>
-#include <appt/util/logger_helper.hpp>
 #include <appt/application/decorator/logging.hpp>
 
 namespace example
