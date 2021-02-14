@@ -29,6 +29,7 @@ public:
     using user_set_container::end;
     using user_set_container::cbegin;
     using user_set_container::cend;
+    using user_set_container::reserve;
     using iterator = user_set_container::iterator;
     using const_iterator = user_set_container::const_iterator;
 
