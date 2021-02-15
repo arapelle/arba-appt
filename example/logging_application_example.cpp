@@ -20,7 +20,7 @@ public:
 
     void run()
     {
-        SPDLOG_LOGGER_TRACE(logger(), "trace");
+        SPDLOG_LOGGER_TRACE(logger(), __PRETTY_FUNCTION__);
         SPDLOG_LOGGER_INFO(logger(), "info");
     }
 };
