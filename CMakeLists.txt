@@ -57,6 +57,7 @@ set(headers
     include/appt/util/console_file_logger.hpp
     include/appt/util/integer_id_factory.hpp
     include/appt/util/duration.hpp
+    include/appt/util/logging_macro.hpp
     include/appt/util/logger_helper.hpp
 )
 
