@@ -57,6 +57,7 @@ public:
     virtual void finish() override
     {
         std::cout << "consumer finished" << std::endl;
+        app().stop_side_modules();
     }
 
     void receive(number_event& event)

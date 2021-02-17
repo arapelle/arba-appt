@@ -59,10 +59,7 @@ void multi_task<application_base_type>::run()
     }
 
     if (main_module_)
-    {
         main_module_->run();
-        stop_side_modules();
-    }
 
     for (auto& entry : side_modules_)
         entry.second.join();

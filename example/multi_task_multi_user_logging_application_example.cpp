@@ -10,7 +10,6 @@
 #include <appt/application/module/decorator/loop.hpp>
 #include <appt/util/logging_macro.hpp>
 #include <random>
-#include <iostream>
 
 namespace example
 {
@@ -107,6 +106,7 @@ public:
     virtual void finish() override
     {
         ARBA_APPT_LOGGER_TRACE(logger());
+        app().stop_side_modules();
     }
 
     void receive(number_event& event)
