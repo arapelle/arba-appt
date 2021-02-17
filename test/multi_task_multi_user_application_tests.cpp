@@ -1,7 +1,8 @@
 #include <appt/application/application.hpp>
 #include <appt/application/decorator/multi_task.hpp>
 #include <appt/application/decorator/multi_user.hpp>
-#include <appt/application/module/multi_user_module.hpp>
+#include <appt/application/module/module.hpp>
+#include <appt/application/module/decorator/multi_user.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -102,7 +103,7 @@ TEST(multi_user_multi_task_application_tests, test_main_module)
     ASSERT_EQ(module_2.init_count, 1);
 }
 
-class multi_user_module : public appt::multi_user_module<ut_user, appt::user_sptr_id_hash<ut_user>, ut_application>
+class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>>
 {
 public:
     virtual ~multi_user_module() override = default;
