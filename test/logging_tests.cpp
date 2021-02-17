@@ -1,6 +1,6 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <appt/application/multi_task_application.hpp>
+#include <appt/application/decorator/multi_task.hpp>
 #include <appt/application/module/loop_module.hpp>
 #include <appt/application/decorator/logging.hpp>
 #include <appt/application/module/decorator/logging.hpp>
@@ -16,10 +16,22 @@ char** argv = cs_args.data();
 
 namespace ut
 {
-class application : public appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>
+class application_base
 {
 private:
-    using base_ = appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>;
+    application_base() = delete;
+    using logging_application_ = appt::adec::logging<appt::application_logger, appt::application>;
+    using multi_task_application_ = appt::adec::multi_task<logging_application_>;
+
+public:
+    template <class app_type>
+    using type = typename multi_task_application_::rebind_t<app_type>;
+};
+
+class application : public application_base::type<application>
+{
+private:
+    using base_ = application_base::type<application>;
 
 public:
     using base_::base_;

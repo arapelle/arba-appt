@@ -36,7 +36,6 @@ set(headers
     include/appt/user/user_hash.hpp
     include/appt/user/user_set.hpp
     include/appt/user/user.hpp
-    include/appt/application/multi_task_application.hpp
     include/appt/application/decorator/multi_task.hpp
     include/appt/application/decorator/toolkit.hpp
     include/appt/application/decorator/multi_user.hpp

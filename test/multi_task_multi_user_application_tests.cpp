@@ -1,5 +1,5 @@
 #include <appt/application/multi_user_application.hpp>
-#include <appt/application/multi_task_application.hpp>
+#include <appt/application/decorator/multi_task.hpp>
 #include <appt/application/module/multi_user_module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>

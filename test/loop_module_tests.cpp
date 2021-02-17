@@ -1,14 +1,14 @@
-#include <appt/application/multi_task_application.hpp>
+#include <appt/application/decorator/multi_task.hpp>
 #include <appt/application/module/loop_module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
 using namespace std::string_literals;
 
-class ut_application : public appt::multi_task_application<ut_application>
+class ut_application : public appt::adec::multi_task<appt::application, ut_application>
 {
 public:
-    using appt::multi_task_application<ut_application>::multi_task;
+    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
 };
 
 class ut_times_up_module : public appt::module<ut_application>
