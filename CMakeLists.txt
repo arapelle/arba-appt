@@ -43,7 +43,6 @@ set(headers
     include/appt/application/application_logger.hpp
     include/appt/application/application.hpp
     include/appt/application/program.hpp
-    include/appt/application/multi_user_application.hpp
     include/appt/application/program_args.hpp
     include/appt/application/module/loop_module.hpp
     include/appt/application/module/module_logger.hpp
