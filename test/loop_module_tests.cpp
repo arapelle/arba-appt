@@ -1,5 +1,6 @@
 #include <appt/application/decorator/multi_task.hpp>
-#include <appt/application/module/loop_module.hpp>
+#include <appt/application/module/module.hpp>
+#include <appt/application/module/decorator/loop.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -23,10 +24,13 @@ public:
     }
 };
 
-class ut_loop_module : public appt::loop_module<ut_application, ut_loop_module>
+class ut_loop_module : public appt::mdec::loop<appt::module<ut_application>, ut_loop_module>
 {
+private:
+    using base_ = appt::mdec::loop<appt::module<ut_application>, ut_loop_module>;
+
 public:
-    ut_loop_module() : appt::loop_module<ut_application, ut_loop_module>("ut_loop_module") {}
+    ut_loop_module() : base_("ut_loop_module") {}
     virtual ~ut_loop_module() override = default;
 
     virtual void init() override
