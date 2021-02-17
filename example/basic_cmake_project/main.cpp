@@ -1,77 +1,141 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <appt/application/multi_task_application.hpp>
-#include <appt/application/program_args.hpp>
-#include <appt/application/module/loop_module.hpp>
-#include <appt/util/logger_helper.hpp>
+#include <appt/application/application.hpp>
 #include <appt/application/decorator/logging.hpp>
+#include <appt/application/decorator/multi_task.hpp>
+#include <appt/application/decorator/multi_user.hpp>
+#include <appt/application/module/module.hpp>
 #include <appt/application/module/decorator/logging.hpp>
+#include <appt/application/module/decorator/multi_user.hpp>
+#include <appt/application/module/decorator/loop.hpp>
+#include <appt/util/logging_macro.hpp>
+#include <random>
 
 namespace example
 {
-class application : public appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>
+class user : public appt::user
+{
+public:
+    virtual ~user() = default;
+
+    user(const std::string& name = "") : name_(name) {}
+    const std::string& name() const { return name_; }
+
+public:
+    std::string name_;
+};
+
+class application_base
 {
 private:
-    using base_ = appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>;
+    application_base() = delete;
+    using logging_application_ = appt::adec::logging<appt::application_logger, appt::application>;
+    using multi_user_application_ = appt::adec::multi_user<user, logging_application_>;
+    using multi_task_application_ = appt::adec::multi_task<multi_user_application_>;
+
+public:
+    template <class app_type>
+    using type = typename multi_task_application_::rebind_t<app_type>;
+};
+
+class application : public application_base::type<application>
+{
+private:
+    using base_ = application_base::type<application>;
 
 public:
     using base_::base_;
 
     void init()
     {
-        base_::init();
         logger()->set_level(spdlog::level::trace);
+        ARBA_APPT_LOGGER_TRACE(logger());
+        SPDLOG_LOGGER_DEBUG(logger(), "Test");
+        SPDLOG_LOGGER_INFO(logger(), "Test");
+        SPDLOG_LOGGER_WARN(logger(), "Test");
+        SPDLOG_LOGGER_ERROR(logger(), "Test");
+        base_::init();
     }
 };
 
-class times_up_module : public appt::module<application>
+struct number_event
 {
-public:
-    virtual ~times_up_module() override = default;
-
-    virtual void run() override
-    {
-        SPDLOG_LOGGER_TRACE(app().logger(), "Test");
-        SPDLOG_LOGGER_DEBUG(app().logger(), "Test");
-        SPDLOG_LOGGER_INFO(app().logger(), "Test");
-        SPDLOG_LOGGER_WARN(app().logger(), "Test");
-        SPDLOG_LOGGER_ERROR(app().logger(), "Test");
-
-        SPDLOG_LOGGER_INFO(app().logger(), "start!");
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        app().stop_side_modules();
-        SPDLOG_LOGGER_CRITICAL(app().logger(), "end!");
-    }
+    unsigned number;
 };
 
-class first_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<first_module, application>>
+namespace priv
+{
+using module_ = appt::module<application>;
+using logging_module_ = appt::mdec::logging<appt::module_logger, module_>;
+using multi_user_logging_module_ = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, logging_module_>;
+}
+
+template <class module_type>
+using loop_multi_user_logging_module = appt::mdec::loop<priv::multi_user_logging_module_, module_type>;
+template <class module_type>
+using loop_logging_module = appt::mdec::loop<priv::logging_module_, module_type>;
+
+class consumer_module : public loop_multi_user_logging_module<consumer_module>,
+                        public evnt::event_listener<number_event>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<first_module, application>>;
+    using base_ = loop_multi_user_logging_module<consumer_module>;
 
 public:
-    first_module() : base_("first_module") {}
-    virtual ~first_module() override = default;
+    consumer_module() : base_("consumer_module") {}
+    virtual ~consumer_module() override = default;
+
+    virtual void init() override
+    {
+        logger()->set_level(spdlog::level::trace);
+        event_manager().connect<number_event>(*this);
+        users().reserve(4);
+    }
 
     void run_loop(appt::seconds)
     {
-        SPDLOG_LOGGER_INFO(logger(), "Yo!");
+        ARBA_APPT_LOGGER_TRACE(logger());
+        event_manager().emit(event_box());
+
+        for (const auto& user_sptr : users())
+            SPDLOG_LOGGER_INFO(logger(), "'{}'", user_sptr->name());
+        if (users().size() >= 4)
+            stop();
     }
 
     virtual void finish() override
     {
-        SPDLOG_LOGGER_CRITICAL(logger(), "finish");
+        ARBA_APPT_LOGGER_TRACE(logger());
+        app().stop_side_modules();
+    }
+
+    void receive(number_event& event)
+    {
+        ARBA_APPT_LOGGER_TRACE(logger());
+
+        if (users().size() < 4)
+        {
+            SPDLOG_LOGGER_INFO(logger(), "received {}", event.number);
+            std::string name;
+            {
+                std::ostringstream stream;
+                stream << "User#" << event.number;
+                name = stream.str();
+            }
+            if (users().find_user(name) == users().end())
+                users().create_user(name);
+        }
     }
 };
 
-class second_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<second_module, application>>
+class generator_module : public loop_logging_module<generator_module>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<second_module, application>>;
+    using base_ = loop_logging_module<generator_module>;
 
 public:
-    second_module() : base_("second_module") {}
-    virtual ~second_module() override = default;
+    generator_module() : base_("generator_module"), int_generator_(std::random_device{}()) {}
+    virtual ~generator_module() override = default;
 
     virtual void init() override
     {
@@ -80,22 +144,26 @@ public:
 
     void run_loop(appt::seconds)
     {
-        SPDLOG_LOGGER_INFO(logger(), "start!");
-        coucou<int>();
-        coucou<float>();
-        SPDLOG_LOGGER_ERROR(logger(), "end!");
-    }
+        ARBA_APPT_LOGGER_TRACE(logger());
 
-    template <class Type>
-    void coucou()
-    {
-        SPDLOG_LOGGER_DEBUG(logger(), "coucou");
+        number_event event{ die100() };
+        app().event_manager().emit(event);
     }
 
     virtual void finish() override
     {
-        SPDLOG_LOGGER_CRITICAL(logger(), "finish");
+        ARBA_APPT_LOGGER_TRACE(logger());
     }
+
+private:
+    unsigned die100()
+    {
+        static std::uniform_int_distribution<> die(1, 100);
+        return die(int_generator_);
+    }
+
+private:
+    std::mt19937_64 int_generator_;
 };
 
 }
@@ -103,12 +171,11 @@ public:
 int main(int argc, char** argv)
 {
     example::application app(argc, argv);
-    app.create_main_module<example::times_up_module>();
-    app.create_module<example::first_module>().set_frequency(2);
-    app.create_module<example::second_module>().set_frequency(3);
+    app.create_main_module<example::consumer_module>().set_frequency(3);
+    app.create_module<example::generator_module>().set_frequency(2);
     app.init();
     app.run();
-    SPDLOG_LOGGER_INFO(app.logger(), "EXIT SUCCESS");
 
+    SPDLOG_LOGGER_INFO(app.logger(), "EXIT SUCCESS");
     return EXIT_SUCCESS;
 }
