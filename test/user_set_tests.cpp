@@ -107,7 +107,7 @@ TEST(user_set_tests, test_user_set_mem)
 
 TEST(user_set_tests, test_user_set_max_number_of_users)
 {
-    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+    using sptr_hash = appt::user_sptr_name_hash<ut_user>;
 
     appt::user_set<ut_user, sptr_hash> ut_user_set;
     ut_user_set.set_max_number_of_users(3);
@@ -125,7 +125,7 @@ TEST(user_set_tests, test_user_set_max_number_of_users)
 
 TEST(user_set_tests, test_user_set_max_number_of_users_2)
 {
-    using sptr_hash = appt::user_sptr_id_hash<ut_user>;
+    using sptr_hash = appt::user_sptr_name_hash<ut_user>;
 
     appt::user_set<ut_user, sptr_hash> ut_user_set;
     ut_user_set.set_max_number_of_users(3);
@@ -164,6 +164,27 @@ TEST(user_set_tests, test_user_set_id_with_user_manager)
     iter = ut_user_set.find_user(alpha_id);
     ASSERT_TRUE(iter == ut_user_set.end());
     ASSERT_EQ(user_manager.shared_user(alpha_id), nullptr);
+}
+
+TEST(user_set_tests, test_user_set_create_twice_with_user_manager)
+{
+    using sptr_hash = appt::user_sptr_name_hash<ut_user>;
+
+    appt::user_manager<ut_user> user_manager;
+
+    appt::user_set<ut_user, sptr_hash> ut_user_set;
+    ut_user_set.set_user_manager(user_manager);
+
+    ut_user_sptr alpha_user = ut_user_set.create_user("Alpha");
+    ut_user_set.create_user("Beta");
+    ASSERT_EQ(user_manager.size(), 2);
+
+    ASSERT_EQ(*ut_user_set.find_user(alpha_user->name()), alpha_user);
+    ut_user_sptr alpha_user_bis = ut_user_set.create_user("Alpha");
+    ASSERT_EQ(ut_user_set.size(), 2);
+    ASSERT_EQ(alpha_user_bis, nullptr);
+    ASSERT_EQ(user_manager.shared_user(alpha_user->id()), alpha_user);
+    ASSERT_EQ(user_manager.size(), 2);
 }
 
 TEST(user_set_tests, test_user_set_id_with_user_manager_with_max_user_limit)
