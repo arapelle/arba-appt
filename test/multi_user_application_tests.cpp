@@ -1,4 +1,6 @@
-#include <appt/application/multi_user_application.hpp>
+#include <appt/application/application.hpp>
+#include <appt/application/decorator/multi_user.hpp>
+#include <appt/user/user.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -25,10 +27,10 @@ public:
 
 using ut_user_sptr = std::shared_ptr<ut_user>;
 
-class ut_application : public appt::multi_user_application<ut_user, ut_application>
+class ut_application : public appt::adec::multi_user<ut_user, appt::application, ut_application>
 {
 private:
-    using base_ = appt::multi_user_application<ut_user, ut_application>;
+    using base_ = appt::adec::multi_user<ut_user, appt::application, ut_application>;
 
 public:
     using base_::multi_user;

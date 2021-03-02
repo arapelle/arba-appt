@@ -144,6 +144,7 @@ public:
 
     inline static const key_type& user_id(const user_type& arg) { return arg.*usr_id; }
 };
+
 }
 }
 

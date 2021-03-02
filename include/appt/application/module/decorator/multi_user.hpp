@@ -1,6 +1,6 @@
 #pragma once
 
-#include <appt/application/module/multi_user_module.hpp>
+#include <appt/application/module/module.hpp>
 #include <appt/user/user_set.hpp>
 #include <memory>
 

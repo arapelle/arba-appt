@@ -1,8 +1,10 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <appt/application/multi_task_application.hpp>
-#include <appt/application/module/loop_module.hpp>
+#include <appt/application/application.hpp>
+#include <appt/application/decorator/multi_task.hpp>
 #include <appt/application/decorator/logging.hpp>
+#include <appt/application/module/module.hpp>
+#include <appt/application/module/decorator/loop.hpp>
 #include <appt/application/module/decorator/logging.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
@@ -16,10 +18,22 @@ char** argv = cs_args.data();
 
 namespace ut
 {
-class application : public appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>
+class application_base
 {
 private:
-    using base_ = appt::adec::logging<appt::application_logger, appt::multi_task_application<application>>;
+    application_base() = delete;
+    using logging_application_ = appt::adec::logging<appt::application_logger, appt::application>;
+    using multi_task_application_ = appt::adec::multi_task<logging_application_>;
+
+public:
+    template <class app_type>
+    using type = typename multi_task_application_::rebind_t<app_type>;
+};
+
+class application : public application_base::type<application>
+{
+private:
+    using base_ = application_base::type<application>;
 
 public:
     using base_::base_;
@@ -44,10 +58,10 @@ public:
     }
 };
 
-class first_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<application, first_module>>
+class first_module : public appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<application>>, first_module>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<application, first_module>>;
+    using base_ = appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<application>>, first_module>;
 
 public:
     first_module() : base_("first_module") {}
@@ -64,10 +78,10 @@ public:
     }
 };
 
-class second_module : public appt::mdec::logging<appt::module_logger, appt::loop_module<application, second_module>>
+class second_module : public appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<application>>, second_module>
 {
 private:
-    using base_ = appt::mdec::logging<appt::module_logger, appt::loop_module<application, second_module>>;
+    using base_ = appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<application>>, second_module>;
 
 public:
     second_module() : base_("second_module") {}

@@ -1,4 +1,4 @@
-#include <appt/application/multi_task_application.hpp>
+#include <appt/application/decorator/multi_task.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -9,10 +9,10 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::multi_task_application<ut_application>
+class ut_application : public appt::adec::multi_task<appt::application, ut_application>
 {
 public:
-    using appt::multi_task_application<ut_application>::multi_task;
+    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
 };
 
 class ut_event

@@ -8,16 +8,31 @@ inline namespace arba
 {
 namespace appt
 {
+namespace priv
+{
+template <typename user_type, typename user_sptr_hash>
+struct user_sptr_equal_to
+{
+    bool operator()(const std::shared_ptr<user_type>& lhs, const std::shared_ptr<user_type>& rhs) const
+    {
+        if (lhs && rhs)
+            return user_sptr_hash::user_id(*lhs) == user_sptr_hash::user_id(*rhs);
+        return !lhs && !rhs;
+    }
+};
+}
 
 template <class user_type, class user_sptr_hash>
-class user_set : private std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash>
+class user_set : private std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash,
+                                            priv::user_sptr_equal_to<user_type, user_sptr_hash>>
 {
 private:
-    using base_ = std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash>;
+    using base_ = std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash,
+                                     priv::user_sptr_equal_to<user_type, user_sptr_hash>>;
 
 private:
     using user_type_sptr = std::shared_ptr<user_type>;
-    using user_set_container = std::unordered_set<user_type_sptr, user_sptr_hash>;
+    using user_set_container = base_;
     using key_type = typename user_sptr_hash::key_type;
 
 public:
@@ -29,6 +44,7 @@ public:
     using user_set_container::end;
     using user_set_container::cbegin;
     using user_set_container::cend;
+    using user_set_container::reserve;
     using iterator = user_set_container::iterator;
     using const_iterator = user_set_container::const_iterator;
 
@@ -168,12 +184,21 @@ std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args
     {
         user_type_sptr user_sptr;
         if (user_manager_)
+        {
             user_sptr = user_manager_->create_user(std::forward<args_types>(args)...);
+            if (user_sptr)
+            {
+                if (this->insert(user_sptr).second)
+                    return user_sptr;
+                user_manager_->reset_user_shared_ptr(user_sptr);
+            }
+        }
         else
+        {
             user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
-        if (user_sptr)
-            this->insert(user_sptr);
-        return user_sptr;
+            if (user_sptr && this->insert(user_sptr).second)
+                return user_sptr;
+        }
     }
     return nullptr;
 }
