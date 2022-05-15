@@ -1,6 +1,7 @@
 #pragma once
 
 #include <appt/util/integer_id_factory.hpp>
+#include <limits>
 
 inline namespace arba
 {
