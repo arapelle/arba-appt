@@ -1,5 +1,7 @@
 # cmake -P cmake_quick_install.cmake
 
+set(project "appt")
+
 function(get_script_args script_args)
     set(sc_args)
     set(start_found False)
@@ -16,12 +18,10 @@ function(get_script_args script_args)
 endfunction()
 
 get_script_args(args)
-set(options "")
+set(options "TESTS")
 set(params DIR BUILD)
 set(lists "")
 cmake_parse_arguments(ARG "${options}" "${params}" "${lists}" ${args})
-
-set(project "appt")
 
 if(WIN32)
     set(temp_dir $ENV{TEMP})
@@ -42,6 +42,9 @@ if(EXISTS ${error_file})
 endif()
 
 message(STATUS "*  CONFIGURATION")
+if(ARG_TESTS)
+    list(APPEND conf_args -D${project}_BUILD_TESTS=ON)
+endif()
 if(ARG_BUILD)
     list(APPEND conf_args -DCMAKE_BUILD_TYPE=${ARG_BUILD})
 else()
@@ -61,6 +64,15 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build ${build_dir}  RESULT_VARIABLE c
 if(NOT cmd_res EQUAL 0)
     file(TOUCH ${error_file})
     return()
+endif()
+
+if(ARG_TESTS)
+  message(STATUS "*  TESTS")
+  execute_process(COMMAND ${CMAKE_CTEST_COMMAND}  WORKING_DIRECTORY ${build_dir} RESULT_VARIABLE cmd_res)
+  if(NOT cmd_res EQUAL 0)
+      file(TOUCH ${error_file})
+      return()
+  endif()
 endif()
 
 message(STATUS "*  INSTALL")
