@@ -3,6 +3,7 @@
 #include "user_manager.hpp"
 #include "user_hash.hpp"
 #include <unordered_set>
+#include <algorithm>
 
 inline namespace arba
 {
