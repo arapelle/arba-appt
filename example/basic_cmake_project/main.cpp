@@ -1,5 +1,6 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
+#include <arba/appt/version.hpp>
 #include <appt/application/application.hpp>
 #include <appt/application/decorator/logging.hpp>
 #include <appt/application/decorator/multi_task.hpp>
