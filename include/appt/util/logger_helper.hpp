@@ -1,6 +1,5 @@
 #pragma once
 
-#include <appt/version.hpp>
 #include <spdlog/sinks/sink.h>
 #include <filesystem>
 
