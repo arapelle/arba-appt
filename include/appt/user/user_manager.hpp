@@ -42,6 +42,7 @@ private:
 // Template methods implementation:
 
 template <class user_type>
+    requires std::is_base_of_v<user, user_type>
 template <typename... args_types>
 std::shared_ptr<user_type> user_manager<user_type>::create_user(args_types&&... args)
 {
@@ -59,6 +60,7 @@ std::shared_ptr<user_type> user_manager<user_type>::create_user(args_types&&... 
 }
 
 template <class user_type>
+    requires std::is_base_of_v<user, user_type>
 std::shared_ptr<user_type> user_manager<user_type>::shared_user(const id_type& user_id)
 {
     std::lock_guard lock(mutex_);
@@ -69,6 +71,7 @@ std::shared_ptr<user_type> user_manager<user_type>::shared_user(const id_type& u
 }
 
 template <class user_type>
+    requires std::is_base_of_v<user, user_type>
 void user_manager<user_type>::release_user(const id_type& user_id)
 {
     std::lock_guard lock(mutex_);
@@ -80,6 +83,7 @@ void user_manager<user_type>::release_user(const id_type& user_id)
 }
 
 template <class user_type>
+    requires std::is_base_of_v<user, user_type>
 void user_manager<user_type>::reset_user_shared_ptr(std::shared_ptr<user_type>& user_sptr)
 {
     id_type usr_id = user_sptr->id();
@@ -91,6 +95,7 @@ void user_manager<user_type>::reset_user_shared_ptr(std::shared_ptr<user_type>& 
 }
 
 template <class user_type>
+    requires std::is_base_of_v<user, user_type>
 void user_manager<user_type>::release_user_(const id_type& usr_id, std::weak_ptr<user_type>& user_wptr)
 {
     user_id_factory_.delete_id(usr_id);

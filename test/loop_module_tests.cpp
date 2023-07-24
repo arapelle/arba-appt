@@ -53,7 +53,7 @@ public:
     uint16_t finish_count = 0;
 };
 
-TEST(multi_task_application_tests, test_side_modules)
+TEST(loop_module_tests, test_side_modules)
 {
     ut_application app;
     ut_times_up_module& times_up_module = app.create_main_module<ut_times_up_module>();
