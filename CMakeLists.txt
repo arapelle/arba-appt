@@ -34,29 +34,29 @@ generate_version_macro_header(generated_version_header
 
 ## Headers:
 set(headers
-    include/appt/user/user_manager.hpp
-    include/appt/user/user_hash.hpp
-    include/appt/user/user_set.hpp
-    include/appt/user/user.hpp
-    include/appt/application/decorator/multi_task.hpp
-    include/appt/application/decorator/toolkit.hpp
-    include/appt/application/decorator/multi_user.hpp
-    include/appt/application/decorator/logging.hpp
-    include/appt/application/application_logger.hpp
-    include/appt/application/application.hpp
-    include/appt/application/program.hpp
-    include/appt/application/program_args.hpp
-    include/appt/application/module/module_logger.hpp
-    include/appt/application/module/decorator/loop.hpp
-    include/appt/application/module/decorator/multi_user.hpp
-    include/appt/application/module/decorator/logging.hpp
-    include/appt/application/module/module.hpp
-    include/appt/util/time_point_to_string.hpp
-    include/appt/util/console_file_logger.hpp
-    include/appt/util/integer_id_factory.hpp
-    include/appt/util/duration.hpp
-    include/appt/util/logging_macro.hpp
-    include/appt/util/logger_helper.hpp
+    include/arba/appt/user/user_manager.hpp
+    include/arba/appt/user/user_hash.hpp
+    include/arba/appt/user/user_set.hpp
+    include/arba/appt/user/user.hpp
+    include/arba/appt/application/decorator/multi_task.hpp
+    include/arba/appt/application/decorator/toolkit.hpp
+    include/arba/appt/application/decorator/multi_user.hpp
+    include/arba/appt/application/decorator/logging.hpp
+    include/arba/appt/application/application_logger.hpp
+    include/arba/appt/application/application.hpp
+    include/arba/appt/application/program.hpp
+    include/arba/appt/application/program_args.hpp
+    include/arba/appt/application/module/module_logger.hpp
+    include/arba/appt/application/module/decorator/loop.hpp
+    include/arba/appt/application/module/decorator/multi_user.hpp
+    include/arba/appt/application/module/decorator/logging.hpp
+    include/arba/appt/application/module/module.hpp
+    include/arba/appt/util/time_point_to_string.hpp
+    include/arba/appt/util/console_file_logger.hpp
+    include/arba/appt/util/integer_id_factory.hpp
+    include/arba/appt/util/duration.hpp
+    include/arba/appt/util/logging_macro.hpp
+    include/arba/appt/util/logger_helper.hpp
 )
 
 ## Sources:

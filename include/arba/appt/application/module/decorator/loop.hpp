@@ -1,6 +1,6 @@
 #pragma once
 
-#include <appt/util/duration.hpp>
+#include <arba/appt/util/duration.hpp>
 #include <chrono>
 #include <thread>
 #include <cstdint>

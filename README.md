@@ -58,7 +58,7 @@ cmake -P cmake_uninstall.cmake
 
 ```c++
 #include <iostream>
-#include <appt/application/program_args.hpp>
+#include <arba/appt/application/program_args.hpp>
 
 int main(int argc, char** argv)
 {
