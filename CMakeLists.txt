@@ -15,7 +15,7 @@ set_build_type_if_undefined()
 # C++ PROJECT
 
 project(appt
-        VERSION 0.11
+        VERSION 0.12.0
         DESCRIPTION "A C++ library providing application objects embedding useful tools."
         HOMEPAGE_URL "https://github.com/arapelle/appt"
         LANGUAGES CXX)
