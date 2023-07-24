@@ -79,6 +79,7 @@ private:
 // Template methods implementation:
 
 template <class app_type>
+    requires std::is_base_of_v<application, app_type>
 module<app_type>::module(application_type& app)
     : application_(&app)
 {
@@ -86,6 +87,7 @@ module<app_type>::module(application_type& app)
 }
 
 template <class app_type>
+    requires std::is_base_of_v<application, app_type>
 module<app_type>::module(std::string name, application_type& app)
     : module_interface(std::move(name)), application_(&app)
 {
@@ -93,6 +95,7 @@ module<app_type>::module(std::string name, application_type& app)
 }
 
 template <class app_type>
+    requires std::is_base_of_v<application, app_type>
 void module<app_type>::set_app(module::application_type &app)
 {
     if (application_ && application_ != &app)

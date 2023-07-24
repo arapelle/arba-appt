@@ -89,14 +89,14 @@ install_cpp_library_targets(${PROJECT_NAME}
                             )
 
 # Link targets:
-if(NOT TARGET arba::rsce)
-    find_package(rsce 0.1 REQUIRED CONFIG)
+if(NOT TARGET arba-rsce)
+    find_package(arba-rsce 0.2.0 REQUIRED CONFIG)
 endif()
-if(NOT TARGET arba::evnt)
-    find_package(evnt 0.2 REQUIRED CONFIG)
+if(NOT TARGET arba-evnt)
+    find_package(arba-evnt 0.3.0 REQUIRED CONFIG)
 endif()
 find_package(spdlog 1.8 REQUIRED CONFIG)
-cpp_library_targets_link_libraries(${PROJECT_NAME} PUBLIC arba::rsce arba::evnt spdlog::spdlog)
+cpp_library_targets_link_libraries(${PROJECT_NAME} PUBLIC arba-rsce arba-evnt spdlog::spdlog)
 
 # Install package
 install_package(${PROJECT_NAME}
