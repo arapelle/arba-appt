@@ -40,6 +40,11 @@ public:
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
     void set_app(application_type& app)
     {
+        if (logger_)
+        {
+            spdlog::drop(logger_->name());
+            logger_.reset();
+        }
         this->base_::set_app(app);
         logger_ = std::make_shared<module_logger_type>(*this);
         spdlog::register_logger(logger_);

@@ -37,6 +37,11 @@ public:
     inline const std::filesystem::path& log_dir() const { return log_dir_; }
     inline void set_log_dir(const std::filesystem::path& log_dir)
     {
+        if (logger_)
+        {
+            spdlog::drop(logger_->name());
+            logger_.reset();
+        }
         log_dir_ = log_dir;
         logger_ = std::make_shared<application_logger_type>(*this);
         spdlog::register_logger(logger_);
