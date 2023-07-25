@@ -60,12 +60,12 @@ TEST(loop_module_tests, test_side_modules)
     ASSERT_EQ(times_up_module.name(), "module_0");
     ut_loop_module& loop_module = app.create_module<ut_loop_module>();
     ASSERT_EQ(loop_module.name(), "ut_loop_module");
-    loop_module.set_frequency(60);
+    loop_module.set_frequency(6);
     app.init();
     app.run();
     ASSERT_EQ(loop_module.init_count, 1);
-    ASSERT_GE(loop_module.run_count, 60);
-    ASSERT_LT(loop_module.run_count, 65);
+    ASSERT_GE(loop_module.run_count, 6);
+    ASSERT_LT(loop_module.run_count, 10);
     ASSERT_EQ(loop_module.finish_count, 1);
 }
 

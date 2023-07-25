@@ -9,6 +9,7 @@
 #include <arba/appt/util/time_point_to_string.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
+#include <fstream>
 
 using namespace std::string_literals;
 
@@ -135,6 +136,12 @@ TEST(logging_tests, test_logs)
     app.logger()->flush();
     first_module.logger()->flush();
     second_module.logger()->flush();
+    ASSERT_TRUE(std::filesystem::exists(times_up_log_file));
+    ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
+    ASSERT_TRUE(std::filesystem::exists(second_module_log_file));
+    { std::ifstream stream(times_up_log_file); }
+    { std::ifstream stream(first_module_log_file); }
+    { std::ifstream stream(second_module_log_file); }
     ASSERT_GT(std::filesystem::file_size(times_up_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(first_module_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(second_module_log_file), 0);
