@@ -26,7 +26,9 @@ public:
     logging(int argc, char** argv) : logging(appt::program_args(argc, argv)) {}
     explicit logging(const appt::program_args& args = appt::program_args())
         : base_(args),
-          log_dir_(logger_helper::log_dir(args.program_stem().empty() ? "application" : args.program_stem())),
+        log_dir_(logger_helper::log_dir(args.program_stem().empty() ?
+                                        std::filesystem::path("application")
+                                        : args.program_stem())),
           logger_(std::make_shared<application_logger_type>(*this))
     {
         spdlog::register_logger(logger_);

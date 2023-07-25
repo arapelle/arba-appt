@@ -8,9 +8,9 @@ inline namespace arba
 namespace appt
 {
 
-std::filesystem::path logger_helper::log_dir(const std::string &name)
+std::filesystem::path logger_helper::log_dir(const std::filesystem::path& log_dirname)
 {
-    return std::filesystem::temp_directory_path()/name/"log"/to_string_Ymd_HMS_mcs();
+    return std::filesystem::temp_directory_path()/log_dirname/"log"/to_string_Ymd_HMS_mcs();
 }
 
 spdlog::sink_ptr logger_helper::create_console_sink()
@@ -22,7 +22,7 @@ spdlog::sink_ptr logger_helper::create_console_sink()
 
 spdlog::sink_ptr logger_helper::create_file_sink(const std::filesystem::path &log_file, std::size_t max_size, std::size_t max_files)
 {
-    std::shared_ptr file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_file, max_size, max_files);
+    std::shared_ptr file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_file.string(), max_size, max_files);
     file_sink->set_pattern("[%8l][%Y-%m-%d %H:%M:%S.%f][%n.%t][%@ %!]: %v");
     return file_sink;
 }
