@@ -31,8 +31,8 @@ public:
     inline       vlfs::virtual_filesystem& virtual_filesystem() { return virtual_filesystem_; }
 
 private:
-    rsce::resource_manager resource_manager_;
     vlfs::virtual_filesystem virtual_filesystem_;
+    rsce::resource_manager resource_manager_;
     evnt::event_manager event_manager_;
 };
 
