@@ -33,7 +33,12 @@ using loop_module = appt::loop<module, module_type>;
 class consumer_module : public loop_module<consumer_module>,
                         public evnt::event_listener<number_event>
 {
+private:
+    using base_ = loop_module<consumer_module>;
+
 public:
+    using base_::base_;
+
     virtual ~consumer_module() override = default;
 
     virtual void init() override
@@ -79,7 +84,10 @@ private:
     using base_ = loop_module<generator_module>;
 
 public:
-    generator_module() : base_("first_module"), int_generator_(std::random_device{}()) {}
+    generator_module(std::string_view name = std::string_view())
+        : base_(name), int_generator_(std::random_device{}())
+    {}
+
     virtual ~generator_module() override = default;
 
     void run_loop(appt::seconds)
@@ -109,8 +117,8 @@ private:
 int main(int argc, char** argv)
 {
     example::application app(argc, argv);
-    app.create_main_module<example::consumer_module>().set_frequency(3);
-    app.create_module<example::generator_module>().set_frequency(2);
+    app.create_main_module<example::consumer_module>("consumer_module").set_frequency(3);
+    app.create_module<example::generator_module>("generator_module").set_frequency(2);
     app.init();
     app.run();
 

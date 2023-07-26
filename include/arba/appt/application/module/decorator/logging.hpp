@@ -24,16 +24,7 @@ public:
     template <typename other_module_type>
     using rebind_t = logging<module_logger_type, module_base_type, other_module_type>;
 
-    logging() {}
-    explicit logging(std::string name) : base_(std::move(name)) {}
-    explicit logging(application_type& app) : base_(app), logger_(std::make_shared<module_logger_type>(*this))
-    {
-        spdlog::register_logger(logger_);
-    }
-    logging(std::string name, application_type& app) : base_(std::move(name), app), logger_(std::make_shared<module_logger>(*this))
-    {
-        spdlog::register_logger(logger_);
-    }
+    explicit logging(std::string_view name = std::string_view()) : base_(name) {}
     virtual ~logging() override = default;
 
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
