@@ -7,7 +7,7 @@
 
 inline namespace arba
 {
-namespace appt::adec
+namespace appt::inline adec
 {
 
 template <class application_logger_type, class application_base_type, class application_type = void>

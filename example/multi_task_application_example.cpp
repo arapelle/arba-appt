@@ -7,10 +7,10 @@
 
 namespace example
 {
-class application : public appt::adec::multi_task<appt::application, application>
+class application : public appt::multi_task<appt::application, application>
 {
 private:
-    using base_ = appt::adec::multi_task<appt::application, application>;
+    using base_ = appt::multi_task<appt::application, application>;
 
 public:
     using base_::base_;
@@ -28,7 +28,7 @@ struct number_event
 
 using module = appt::module<application>;
 template <class module_type>
-using loop_module = appt::mdec::loop<module, module_type>;
+using loop_module = appt::loop<module, module_type>;
 
 class consumer_module : public loop_module<consumer_module>,
                         public evnt::event_listener<number_event>

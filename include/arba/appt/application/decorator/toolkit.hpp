@@ -7,7 +7,7 @@
 
 inline namespace arba
 {
-namespace appt::adec // application_decorator
+namespace appt::inline adec // application_decorator
 {
 
 template <class application_base_type, typename application_type = void>

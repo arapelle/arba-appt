@@ -7,7 +7,7 @@
 
 inline namespace arba
 {
-namespace appt::mdec // module_decorator
+namespace appt::inline mdec // module_decorator
 {
 
 template <typename module_base_type, typename module_type = void>

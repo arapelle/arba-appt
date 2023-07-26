@@ -6,7 +6,7 @@
 
 inline namespace arba
 {
-namespace appt::mdec
+namespace appt::inline mdec
 {
 
 template <class module_logger_type, class module_base_type, class module_type = void>
