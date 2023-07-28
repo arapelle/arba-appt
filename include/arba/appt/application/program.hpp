@@ -15,7 +15,7 @@ public:
     using rebind_t = program;
 
     program(int argc, char** argv);
-    program(const program_args& args = program_args());
+    explicit program(const program_args& args = program_args());
 
     inline const program_args& args() const { return program_args_; }
 
