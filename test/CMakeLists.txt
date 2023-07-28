@@ -11,6 +11,7 @@ add_cpp_library_basic_tests(GTest::gtest_main
         logging_tests.cpp
         loop_module_tests.cpp
         multi_task_application_tests.cpp
+        multi_task_application_tests_2.cpp
         multi_task_multi_user_application_tests.cpp
         multi_user_application_tests.cpp
         program_args_tests.cpp

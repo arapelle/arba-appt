@@ -80,29 +80,6 @@ TEST(multi_task_application_tests, test_side_modules)
     ASSERT_EQ(module_3.init_count, 2);
 }
 
-TEST(multi_task_application_tests, test_main_module)
-{
-    ut_application app(argc, argv);
-    run_count_module& module = app.set_main_module(std::make_unique<run_count_module>());
-    ASSERT_EQ(module.name(), "module_2");
-    app.init();
-    app.run();
-    ASSERT_EQ(module.run_count, 1);
-    ASSERT_EQ(module.init_count, 1);
-    run_count_module& module_2 = app.create_main_module<run_count_module>();
-    ASSERT_EQ(module_2.name(), "module_3");
-    app.init();
-    app.run();
-    ASSERT_EQ(module_2.run_count, 1);
-    ASSERT_EQ(module_2.init_count, 1);
-    run_count_module& module_3 = app.create_main_module<run_count_module>("main_module");
-    ASSERT_EQ(module_3.name(), "main_module");
-    app.init();
-    app.run();
-    ASSERT_EQ(module_3.run_count, 1);
-    ASSERT_EQ(module_3.init_count, 1);
-}
-
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
