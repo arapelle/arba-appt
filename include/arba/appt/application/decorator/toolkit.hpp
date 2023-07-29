@@ -21,7 +21,12 @@ public:
     using rebind_t = toolkit<application_base_type, other_application_type>;
 
     toolkit(int argc, char** argv) : toolkit(program_args(argc, argv)) {}
-    explicit toolkit(const program_args& args = program_args()) : application_base_type(args), resource_manager_(virtual_filesystem_) {}
+    explicit toolkit(const program_args& args = program_args())
+        : application_base_type(args), resource_manager_(virtual_filesystem_)
+    {
+        if (!args.empty())
+            virtual_filesystem_.set_program_dir_virtual_root(args.program_dir());
+    }
 
     inline const rsce::resource_manager& resource_manager() const { return resource_manager_; }
     inline       rsce::resource_manager& resource_manager() { return resource_manager_; }
