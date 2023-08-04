@@ -5,7 +5,9 @@
 
 inline namespace arba
 {
-namespace appt::inline adec // application_decorator
+namespace appt
+{
+inline namespace adec // application_decorator
 {
 
 template <typename user_type, typename application_base_type, typename application_type = void>
@@ -40,5 +42,6 @@ public:
     using base_::multi_user;
 };
 
+}
 }
 }

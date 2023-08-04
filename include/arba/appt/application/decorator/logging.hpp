@@ -7,7 +7,9 @@
 
 inline namespace arba
 {
-namespace appt::inline adec
+namespace appt
+{
+inline namespace adec // application_decorator
 {
 
 template <class application_logger_type, class application_base_type, class application_type = void>
@@ -64,5 +66,6 @@ public:
     using base_::base_;
 };
 
+}
 }
 }

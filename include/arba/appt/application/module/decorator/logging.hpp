@@ -6,7 +6,9 @@
 
 inline namespace arba
 {
-namespace appt::inline mdec
+namespace appt
+{
+inline namespace mdec // module_decorator
 {
 
 template <class module_logger_type, class module_base_type, class module_type = void>
@@ -56,5 +58,6 @@ public:
     virtual ~logging() override = default;
 };
 
+}
 }
 }

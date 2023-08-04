@@ -6,7 +6,9 @@
 
 inline namespace arba
 {
-namespace appt::inline mdec // module_decorator
+namespace appt
+{
+inline namespace mdec // module_decorator
 {
 
 template <typename user_type, typename user_sptr_hash, typename module_base_type, typename module_type = void>
@@ -52,5 +54,6 @@ public:
     virtual ~multi_user() override = default;
 };
 
+}
 }
 }
