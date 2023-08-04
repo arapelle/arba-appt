@@ -44,10 +44,10 @@ void multi_user<user_type, user_sptr_hash, module_base_type>::set_app(multi_user
 }
 
 template <typename user_type, typename user_sptr_hash, typename module_base_type, typename module_type>
-class multi_user : public multi_user<user_type, user_sptr_hash, typename module_base_type::rebind_t<module_type>>
+class multi_user : public multi_user<user_type, user_sptr_hash, typename module_base_type::template rebind_t<module_type>>
 {
 private:
-    using base_ = multi_user<user_type, user_sptr_hash, typename module_base_type::rebind_t<module_type>>;
+    using base_ = multi_user<user_type, user_sptr_hash, typename module_base_type::template rebind_t<module_type>>;
 
 public:
     using base_::base_;

@@ -48,10 +48,10 @@ private:
 };
 
 template <class module_logger_type, class module_base_type, class module_type>
-class logging : public logging<module_logger_type, typename module_base_type::rebind_t<module_type>>
+class logging : public logging<module_logger_type, typename module_base_type::template rebind_t<module_type>>
 {
 private:
-    using base_ = logging<module_logger_type, typename module_base_type::rebind_t<module_type>>;
+    using base_ = logging<module_logger_type, typename module_base_type::template rebind_t<module_type>>;
 
 public:
     using base_::base_;

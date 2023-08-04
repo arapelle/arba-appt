@@ -57,10 +57,10 @@ private:
 };
 
 template <class application_logger_type, class application_base_type, class application_type>
-class logging : public logging<application_logger_type, typename application_base_type::rebind_t<application_type>>
+class logging : public logging<application_logger_type, typename application_base_type::template rebind_t<application_type>>
 {
 private:
-    using base_ = logging<application_logger_type, typename application_base_type::rebind_t<application_type>>;
+    using base_ = logging<application_logger_type, typename application_base_type::template rebind_t<application_type>>;
 
 public:
     using base_::base_;

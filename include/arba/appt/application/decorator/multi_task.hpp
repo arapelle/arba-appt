@@ -99,13 +99,14 @@ module_type& multi_task<application_type>::add_module(std::unique_ptr<module_typ
     return *module_ptr;
 }
 
+
 template <typename application_base_type, typename application_type>
-class multi_task : public multi_task<typename application_base_type::rebind_t<application_type>>
+class multi_task : public multi_task<typename application_base_type::template rebind_t<application_type>>
 {
-    using base_ = multi_task<typename application_base_type::rebind_t<application_type>>;
+    using base_ = multi_task<typename application_base_type::template rebind_t<application_type>>;
 
 public:
-    using base_::multi_task;
+    using base_::base_;
 
     template <typename module_type>
     requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)

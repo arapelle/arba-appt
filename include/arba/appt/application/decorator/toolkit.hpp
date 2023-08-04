@@ -44,10 +44,10 @@ private:
 };
 
 template <class application_base_type, typename application_type>
-class toolkit : public toolkit<typename application_base_type::rebind_t<application_type>>
+class toolkit : public toolkit<typename application_base_type::template rebind_t<application_type>>
 {
 private:
-    using base_ = toolkit<typename application_base_type::rebind_t<application_type>>;
+    using base_ = toolkit<typename application_base_type::template rebind_t<application_type>>;
 
 public:
     using base_::base_;

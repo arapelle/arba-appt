@@ -34,12 +34,12 @@ private:
 };
 
 template <typename user_type, typename application_base_type, typename application_type>
-class multi_user : public multi_user<user_type, typename application_base_type::rebind_t<application_type>>
+class multi_user : public multi_user<user_type, typename application_base_type::template rebind_t<application_type>>
 {
-    using base_ = multi_user<user_type, typename application_base_type::rebind_t<application_type>>;
+    using base_ = multi_user<user_type, typename application_base_type::template rebind_t<application_type>>;
 
 public:
-    using base_::multi_user;
+    using base_::base_;
 };
 
 }
