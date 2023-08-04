@@ -11,8 +11,17 @@ char** argv = cs_args.data();
 
 class ut_application : public appt::adec::multi_task<appt::application, ut_application>
 {
+    using base_ = appt::adec::multi_task<appt::application, ut_application>;
+
 public:
-    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
+    using base_::base_;
+
+    void init()
+    {
+        if (event_manager().max_number_of_event_types() == 0)
+            event_manager().resize(1);
+        this->base_::init();
+    }
 };
 
 class ut_event
@@ -23,11 +32,14 @@ public:
 
 class ut_first_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
 {
+    using base_ = appt::module<ut_application>;
+
 public:
     virtual ~ut_first_event_module() override = default;
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<ut_event>(*this);
     }
 
@@ -54,11 +66,14 @@ public:
 
 class ut_second_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
 {
+    using base_ = appt::module<ut_application>;
+
 public:
     virtual ~ut_second_event_module() override = default;
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<ut_event>(*this);
     }
 

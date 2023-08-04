@@ -60,6 +60,8 @@ public:
     inline application_type& app() { return *application_; }
     void set_app(application_type& app);
 
+    virtual void init() override;
+
 protected:
     const evnt::event_box& event_box() const { return event_box_; }
     evnt::event_box& event_box() { return event_box_; }
@@ -81,7 +83,15 @@ void module<app_type>::set_app(module::application_type &app)
     if (application_ && application_ != &app)
         throw std::runtime_error("Module is already linked to an application.");
     application_ = &app;
-    app.event_manager().connect(event_box_);
+}
+
+template <class app_type>
+    requires std::is_base_of_v<application, app_type>
+void module<app_type>::init()
+{
+    app().event_manager().connect(event_box_);
+    if (event_manager().max_number_of_event_types() == 0)
+        event_manager().resize(app().event_manager().max_number_of_event_types());
 }
 
 }
