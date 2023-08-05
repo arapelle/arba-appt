@@ -1,12 +1,14 @@
 #pragma once
 
-#include <appt/application/module/module.hpp>
+#include <arba/appt/application/module/module.hpp>
 #include <memory>
 #include <thread>
 
 inline namespace arba
 {
-namespace appt::adec // application_decorator
+namespace appt
+{
+inline namespace adec // application_decorator
 {
 
 template <typename application_base_type, typename application_type = void>
@@ -97,13 +99,14 @@ module_type& multi_task<application_type>::add_module(std::unique_ptr<module_typ
     return *module_ptr;
 }
 
+
 template <typename application_base_type, typename application_type>
-class multi_task : public multi_task<typename application_base_type::rebind_t<application_type>>
+class multi_task : public multi_task<typename application_base_type::template rebind_t<application_type>>
 {
-    using base_ = multi_task<typename application_base_type::rebind_t<application_type>>;
+    using base_ = multi_task<typename application_base_type::template rebind_t<application_type>>;
 
 public:
-    using base_::multi_task;
+    using base_::base_;
 
     template <typename module_type>
     requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
@@ -114,11 +117,19 @@ public:
     module_type& add_module(std::unique_ptr<module_type>&& module_uptr);
 
     template <typename module_type>
-    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+        requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    module_type& create_module(std::string_view module_name);
+
+    template <typename module_type>
+        requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& create_module();
 
     template <typename module_type>
-    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+        requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+    module_type& create_main_module(std::string_view module_name);
+
+    template <typename module_type>
+        requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& create_main_module();
 };
 
@@ -142,6 +153,24 @@ module_type& multi_task<application_base_type, application_type>::add_module(std
 
 template <typename application_base_type, typename application_type>
 template <typename module_type>
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+module_type& multi_task<application_base_type, application_type>::create_module(std::string_view module_name)
+{
+    std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
+    return add_module<module_type>(std::move(module_uptr));
+}
+
+template <typename application_base_type, typename application_type>
+template <typename module_type>
+    requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
+module_type& multi_task<application_base_type, application_type>::create_main_module(std::string_view module_name)
+{
+    std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
+    return set_main_module<module_type>(std::move(module_uptr));
+}
+
+template <typename application_base_type, typename application_type>
+template <typename module_type>
 requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::create_module()
 {
@@ -158,5 +187,6 @@ module_type& multi_task<application_base_type, application_type>::create_main_mo
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
+}
 }
 }

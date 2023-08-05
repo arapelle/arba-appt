@@ -1,13 +1,15 @@
 #pragma once
 
-#include <appt/application/application_logger.hpp>
-#include <appt/application/program_args.hpp>
-#include <appt/util/logger_helper.hpp>
+#include <arba/appt/application/application_logger.hpp>
+#include <arba/appt/application/program_args.hpp>
+#include <arba/appt/util/logger_helper.hpp>
 #include <spdlog/spdlog.h>
 
 inline namespace arba
 {
-namespace appt::adec
+namespace appt
+{
+inline namespace adec // application_decorator
 {
 
 template <class application_logger_type, class application_base_type, class application_type = void>
@@ -26,7 +28,9 @@ public:
     logging(int argc, char** argv) : logging(appt::program_args(argc, argv)) {}
     explicit logging(const appt::program_args& args = appt::program_args())
         : base_(args),
-          log_dir_(logger_helper::log_dir(args.program_stem().empty() ? "application" : args.program_stem())),
+        log_dir_(logger_helper::log_dir(args.program_stem().empty() ?
+                                        std::filesystem::path("application")
+                                        : args.program_stem())),
           logger_(std::make_shared<application_logger_type>(*this))
     {
         spdlog::register_logger(logger_);
@@ -35,6 +39,11 @@ public:
     inline const std::filesystem::path& log_dir() const { return log_dir_; }
     inline void set_log_dir(const std::filesystem::path& log_dir)
     {
+        if (logger_)
+        {
+            spdlog::drop(logger_->name());
+            logger_.reset();
+        }
         log_dir_ = log_dir;
         logger_ = std::make_shared<application_logger_type>(*this);
         spdlog::register_logger(logger_);
@@ -48,14 +57,15 @@ private:
 };
 
 template <class application_logger_type, class application_base_type, class application_type>
-class logging : public logging<application_logger_type, typename application_base_type::rebind_t<application_type>>
+class logging : public logging<application_logger_type, typename application_base_type::template rebind_t<application_type>>
 {
 private:
-    using base_ = logging<application_logger_type, typename application_base_type::rebind_t<application_type>>;
+    using base_ = logging<application_logger_type, typename application_base_type::template rebind_t<application_type>>;
 
 public:
     using base_::base_;
 };
 
+}
 }
 }

@@ -1,4 +1,4 @@
-#include <appt/util/integer_id_factory.hpp>
+#include <arba/appt/util/integer_id_factory.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -7,7 +7,7 @@ namespace appt
 template class integer_id_factory<>;
 }
 
-TEST(application_tests, test_new_id_simple)
+TEST(integer_id_factory_tests, test_new_id_simple)
 {
     appt::integer_id_factory<> id_factory;
     ASSERT_EQ(id_factory.number_of_valid_id(), 0);
@@ -16,7 +16,7 @@ TEST(application_tests, test_new_id_simple)
     ASSERT_EQ(id_factory.number_of_valid_id(), 1);
 }
 
-TEST(application_tests, test_delete_id_simple)
+TEST(integer_id_factory_tests, test_delete_id_simple)
 {
     appt::integer_id_factory<> id_factory;
     std::size_t id = id_factory.new_id();
@@ -25,7 +25,7 @@ TEST(application_tests, test_delete_id_simple)
     ASSERT_EQ(id_factory.number_of_valid_id(), 0);
 }
 
-TEST(application_tests, test_new_id_queue)
+TEST(integer_id_factory_tests, test_new_id_queue)
 {
     appt::integer_id_factory<> id_factory;
     std::size_t id0 = id_factory.new_id();
@@ -38,7 +38,7 @@ TEST(application_tests, test_new_id_queue)
     ASSERT_EQ(id_factory.number_of_valid_id(), 2);
 }
 
-TEST(application_tests, test_new_delete_id_mix)
+TEST(integer_id_factory_tests, test_new_delete_id_mix)
 {
     appt::integer_id_factory<> id_factory;
     id_factory.new_id();
@@ -56,7 +56,7 @@ TEST(application_tests, test_new_delete_id_mix)
     ASSERT_EQ(id, 1);
 }
 
-TEST(application_tests, test_reset)
+TEST(integer_id_factory_tests, test_reset)
 {
     appt::integer_id_factory<int> id_factory;
     id_factory.new_id();

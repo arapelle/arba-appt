@@ -1,6 +1,6 @@
 #pragma once
 
-#include <appt/application/application.hpp>
+#include <arba/appt/application/application.hpp>
 #include <thread>
 
 inline namespace arba
@@ -11,8 +11,7 @@ namespace appt
 class module_interface
 {
 public:
-    module_interface();
-    module_interface(std::string name);
+    explicit module_interface(std::string_view name = std::string_view());
     virtual ~module_interface() = default;
 
     const std::string& name() const { return name_; }
@@ -54,15 +53,14 @@ public:
 
     using application_type = app_type;
 
-    module() : application_(nullptr) {}
-    explicit module(std::string name) : module_interface(std::move(name)), application_(nullptr) {}
-    explicit module(application_type& app);
-    module(std::string name, application_type& app);
+    explicit module(std::string_view name = std::string_view()) : module_interface(name), application_(nullptr) {}
     virtual ~module() override = default;
 
     inline const application_type& app() const { return *application_; }
     inline application_type& app() { return *application_; }
     void set_app(application_type& app);
+
+    virtual void init() override;
 
 protected:
     const evnt::event_box& event_box() const { return event_box_; }
@@ -79,26 +77,21 @@ private:
 // Template methods implementation:
 
 template <class app_type>
-module<app_type>::module(application_type& app)
-    : application_(&app)
-{
-    application_->event_manager().connect(event_box_);
-}
-
-template <class app_type>
-module<app_type>::module(std::string name, application_type& app)
-    : module_interface(std::move(name)), application_(&app)
-{
-    application_->event_manager().connect(event_box_);
-}
-
-template <class app_type>
+    requires std::is_base_of_v<application, app_type>
 void module<app_type>::set_app(module::application_type &app)
 {
     if (application_ && application_ != &app)
         throw std::runtime_error("Module is already linked to an application.");
     application_ = &app;
-    app.event_manager().connect(event_box_);
+}
+
+template <class app_type>
+    requires std::is_base_of_v<application, app_type>
+void module<app_type>::init()
+{
+    app().event_manager().connect(event_box_);
+    if (event_manager().max_number_of_event_types() == 0)
+        event_manager().resize(app().event_manager().max_number_of_event_types());
 }
 
 }

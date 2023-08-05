@@ -1,6 +1,6 @@
-#include <appt/application/decorator/multi_task.hpp>
-#include <appt/application/module/module.hpp>
-#include <appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -53,19 +53,19 @@ public:
     uint16_t finish_count = 0;
 };
 
-TEST(multi_task_application_tests, test_side_modules)
+TEST(loop_module_tests, test_side_modules)
 {
     ut_application app;
     ut_times_up_module& times_up_module = app.create_main_module<ut_times_up_module>();
     ASSERT_EQ(times_up_module.name(), "module_0");
     ut_loop_module& loop_module = app.create_module<ut_loop_module>();
     ASSERT_EQ(loop_module.name(), "ut_loop_module");
-    loop_module.set_frequency(60);
+    loop_module.set_frequency(6);
     app.init();
     app.run();
     ASSERT_EQ(loop_module.init_count, 1);
-    ASSERT_GE(loop_module.run_count, 60);
-    ASSERT_LT(loop_module.run_count, 65);
+    ASSERT_GE(loop_module.run_count, 6);
+    ASSERT_LT(loop_module.run_count, 10);
     ASSERT_EQ(loop_module.finish_count, 1);
 }
 

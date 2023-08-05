@@ -1,4 +1,4 @@
-#include <appt/application/application.hpp>
+#include <arba/appt/application/application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -11,7 +11,7 @@ char** argv = cs_args.data();
 
 TEST(application_tests, test_constructor_empty)
 {
-    appt::application app;
+    arba::appt::application app;
     ASSERT_TRUE(app.args().empty());
 }
 

@@ -1,13 +1,15 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <appt/application/application.hpp>
-#include <appt/application/decorator/multi_task.hpp>
-#include <appt/application/decorator/logging.hpp>
-#include <appt/application/module/module.hpp>
-#include <appt/application/module/decorator/loop.hpp>
-#include <appt/application/module/decorator/logging.hpp>
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/decorator/logging.hpp>
+#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/decorator/logging.hpp>
+#include <arba/appt/util/time_point_to_string.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
+#include <fstream>
 
 using namespace std::string_literals;
 
@@ -108,6 +110,7 @@ public:
 TEST(logging_tests, test_logs)
 {
     ut::application app(argc, argv);
+    app.set_log_dir(std::filesystem::path("./logs/") / appt::to_string_Ymd_HMS());
     ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);
     std::filesystem::path times_up_log_file = app.log_dir()/"program_name.v2.log";
@@ -133,6 +136,12 @@ TEST(logging_tests, test_logs)
     app.logger()->flush();
     first_module.logger()->flush();
     second_module.logger()->flush();
+    ASSERT_TRUE(std::filesystem::exists(times_up_log_file));
+    ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
+    ASSERT_TRUE(std::filesystem::exists(second_module_log_file));
+    { std::ifstream stream(times_up_log_file); }
+    { std::ifstream stream(first_module_log_file); }
+    { std::ifstream stream(second_module_log_file); }
     ASSERT_GT(std::filesystem::file_size(times_up_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(first_module_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(second_module_log_file), 0);

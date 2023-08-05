@@ -1,8 +1,8 @@
-#include <appt/application/application.hpp>
-#include <appt/application/decorator/multi_task.hpp>
-#include <appt/application/decorator/multi_user.hpp>
-#include <appt/application/module/module.hpp>
-#include <appt/application/module/decorator/multi_user.hpp>
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/decorator/multi_user.hpp>
+#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -29,9 +29,9 @@ public:
     std::string name_;
 };
 
-class ut_application : public appt::adec::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>
+class ut_application : public appt::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>
 {
-    using base_ = appt::adec::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>;
+    using base_ = appt::multi_task<appt::adec::multi_user<ut_user, appt::application>, ut_application>;
 
 public:
     using base_::multi_task;

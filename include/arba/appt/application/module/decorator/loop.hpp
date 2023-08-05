@@ -1,13 +1,15 @@
 #pragma once
 
-#include <appt/util/duration.hpp>
+#include <arba/appt/util/duration.hpp>
 #include <chrono>
 #include <thread>
 #include <cstdint>
 
 inline namespace arba
 {
-namespace appt::mdec // module_decorator
+namespace appt
+{
+inline namespace mdec // module_decorator
 {
 
 template <typename module_base_type, typename module_type = void>
@@ -27,10 +29,10 @@ protected:
 };
 
 template <typename module_base_type, typename module_type>
-class loop : public loop<typename module_base_type::rebind_t<module_type>>
+class loop : public loop<typename module_base_type::template rebind_t<module_type>>
 {
 private:
-    using base_ = loop<typename module_base_type::rebind_t<module_type>>;
+    using base_ = loop<typename module_base_type::template rebind_t<module_type>>;
 
 private:
     const module_type& self_() const { return static_cast<module_type&>(*this); }
@@ -93,5 +95,6 @@ std::chrono::nanoseconds loop<module_base_type, module_type>::compute_loop_durat
     return std::chrono::nanoseconds(static_cast<intmax_t>(1000./frequency_)*1000000);
 }
 
+}
 }
 }
