@@ -11,8 +11,8 @@ Binaries:
 - CMake 3.26 or later
 
 Libraries:
-- [arba-rsce](https://github.com/arapelle/rsce) 0.2.0
-- [arba-evnt](https://github.com/arapelle/evnt) 0.3.0
+- [arba-rsce](https://github.com/arapelle/arba-rsce) 0.2.0
+- [arba-evnt](https://github.com/arapelle/arba-evnt) 0.3.0
 - [spdlog](https://github.com/gabime/spdlog) 1.8
 
 Testing Libraries (optional):
@@ -29,7 +29,7 @@ git clone https://github.com/arapelle/arba-appt --recurse-submodules
 There is a cmake script at the root of the project which builds the library in *Release* mode and install it (default options are used).
 
 ```
-cd /path/to/appt
+cd /path/to/arba-appt
 cmake -P cmake/scripts/quick_install.cmake
 ```
 
