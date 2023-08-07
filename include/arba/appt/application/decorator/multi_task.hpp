@@ -2,6 +2,7 @@
 
 #include <arba/appt/application/module/module.hpp>
 #include <memory>
+#include <format>
 #include <thread>
 
 inline namespace arba
@@ -37,7 +38,7 @@ public:
 
 private:
     using module_interface_uptr = std::unique_ptr<module_interface>;
-    std::vector<std::pair<module_interface_uptr, std::jthread>> side_modules_;
+    std::vector<std::pair<module_interface_uptr, std::thread>> side_modules_;
     module_interface_uptr main_module_;
     std::mutex mutex_;
 };
@@ -57,7 +58,7 @@ void multi_task<application_base_type>::run()
     for (auto& entry : side_modules_)
     {
         module_interface* module_ptr = entry.first.get();
-        entry.second = std::jthread(module_ptr->jthread_runner());
+        entry.second = std::thread(&module_interface::run, module_ptr);
     }
 
     if (main_module_)
@@ -72,7 +73,7 @@ void multi_task<application_base_type>::stop_side_modules()
 {
     std::lock_guard lock(mutex_);
     for (auto& entry : side_modules_)
-        entry.second.request_stop();
+        entry.first->stop();
 }
 
 template <typename application_type>
@@ -95,7 +96,7 @@ module_type& multi_task<application_type>::add_module(std::unique_ptr<module_typ
     if (&module_uptr->app() == nullptr)
         throw std::invalid_argument("The module must be linked to this application before adding it.");
     module_type* module_ptr = module_uptr.get();
-    side_modules_.emplace_back(std::move(module_uptr), std::jthread());
+    side_modules_.emplace_back(std::move(module_uptr), std::thread());
     return *module_ptr;
 }
 
