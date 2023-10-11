@@ -90,8 +90,6 @@ template <class app_type>
 void module<app_type>::init()
 {
     app().event_manager().connect(event_box_);
-    if (event_manager().max_number_of_event_types() == 0)
-        event_manager().resize(app().event_manager().max_number_of_event_types());
 }
 
 }

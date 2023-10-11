@@ -4,7 +4,8 @@
 
 using namespace std::string_literals;
 
-std::array s_args = { "/root/dir/program_name.v2.run"s, "6"s, "-c"s, "Debug"s };
+const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "root/dir";
+std::array s_args = { (program_dir / "program_name.v2.run").generic_string(), "6"s, "-c"s, "Debug"s };
 std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_args[3].data() };
 int argc = cs_args.size();
 char** argv = cs_args.data();
@@ -24,6 +25,9 @@ TEST(application_tests, test_constructor)
 
 int main(int argc, char** argv)
 {
+    std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    auto res = RUN_ALL_TESTS();
+    std::filesystem::remove_all(program_dir);
+    return res;
 }
