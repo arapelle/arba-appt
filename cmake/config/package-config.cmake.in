@@ -3,7 +3,7 @@
 
 include(CMakeFindDependencyMacro)
 find_dependency(arba-rsce 0.3.0 CONFIG)
-find_dependency(arba-evnt 0.3.0 CONFIG)
+find_dependency(arba-evnt 0.4.0 CONFIG)
 find_dependency(spdlog 1.8 CONFIG)
 
 include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake)

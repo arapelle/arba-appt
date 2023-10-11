@@ -85,7 +85,7 @@ if(NOT TARGET arba-rsce)
     find_package(arba-rsce 0.3.0 REQUIRED CONFIG)
 endif()
 if(NOT TARGET arba-evnt)
-    find_package(arba-evnt 0.3.0 REQUIRED CONFIG)
+    find_package(arba-evnt 0.4.0 REQUIRED CONFIG)
 endif()
 find_package(spdlog 1.8 REQUIRED CONFIG)
 cpp_library_link_libraries(
