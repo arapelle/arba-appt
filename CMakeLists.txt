@@ -82,7 +82,7 @@ add_cpp_library(
 
 ## Link C++ targets:
 if(NOT TARGET arba-rsce)
-    find_package(arba-rsce 0.2.0 REQUIRED CONFIG)
+    find_package(arba-rsce 0.3.0 REQUIRED CONFIG)
 endif()
 if(NOT TARGET arba-evnt)
     find_package(arba-evnt 0.3.0 REQUIRED CONFIG)

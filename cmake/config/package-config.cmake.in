@@ -2,7 +2,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(arba-rsce 0.2.0 CONFIG)
+find_dependency(arba-rsce 0.3.0 CONFIG)
 find_dependency(arba-evnt 0.3.0 CONFIG)
 find_dependency(spdlog 1.8 CONFIG)
 
