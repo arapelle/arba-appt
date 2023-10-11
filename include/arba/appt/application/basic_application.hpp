@@ -9,17 +9,17 @@ namespace appt
 {
 
 template <class ApplicationType = void>
-class program;
+class basic_application;
 
 template <>
-class program<void>
+class basic_application<void>
 {
 public:
     template <typename OtherApplicationType>
-    using rebind_t = program<OtherApplicationType>;
+    using rebind_t = basic_application<OtherApplicationType>;
 
-    program(int argc, char** argv);
-    explicit program(const program_args& args = program_args());
+    basic_application(int argc, char** argv);
+    explicit basic_application(const program_args& args = program_args());
 
     inline const program_args& args() const { return program_args_; }
 
@@ -28,10 +28,10 @@ private:
 };
 
 template <class ApplicationType>
-class program : public program<void>
+class basic_application : public basic_application<void>
 {
 private:
-    using base_ = program<void>;
+    using base_ = basic_application<void>;
 
 public:
     using base_::base_;
