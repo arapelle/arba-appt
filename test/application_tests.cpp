@@ -18,7 +18,7 @@ TEST(application_tests, test_constructor_empty)
 
 TEST(application_tests, test_constructor)
 {
-    appt::application<> app(argc, argv);
+    appt::application<> app(appt::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }

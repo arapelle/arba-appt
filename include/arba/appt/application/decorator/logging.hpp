@@ -25,7 +25,6 @@ public:
     template <typename other_application_type>
     using rebind_t = logging<application_logger_type, application_base_type, other_application_type>;
 
-    logging(int argc, char** argv) : logging(appt::program_args(argc, argv)) {}
     explicit logging(const appt::program_args& args = appt::program_args())
         : base_(args),
         log_dir_(logger_helper::log_dir(args.program_stem().empty() ?

@@ -29,7 +29,7 @@ public:
 
 int main(int argc, char** argv)
 {
-    example::logging_application app(argc, argv);
+    example::logging_application app(appt::program_args(argc, argv));
     app.init();
     app.run();
     SPDLOG_LOGGER_INFO(app.logger(), "EXIT SUCCESS");

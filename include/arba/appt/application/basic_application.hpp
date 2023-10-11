@@ -18,7 +18,6 @@ public:
     template <typename OtherApplicationType>
     using rebind_t = basic_application<OtherApplicationType>;
 
-    basic_application(int argc, char** argv);
     explicit basic_application(const program_args& args = program_args());
 
     inline const program_args& args() const { return program_args_; }

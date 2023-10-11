@@ -110,7 +110,7 @@ public:
 
 TEST(logging_tests, test_logs)
 {
-    ut::application app(argc, argv);
+    ut::application app(appt::program_args(argc, argv));
     app.set_log_dir(std::filesystem::path("./logs/") / appt::to_string_Ymd_HMS());
     ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);

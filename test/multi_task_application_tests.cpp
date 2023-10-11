@@ -28,7 +28,7 @@ TEST(multi_task_application_tests, test_constructor_empty)
 
 TEST(multi_task_application_tests, test_constructor)
 {
-    ut_application app(argc, argv);
+    ut_application app(appt::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
@@ -62,7 +62,7 @@ public:
 
 TEST(multi_task_application_tests, test_side_modules)
 {
-    ut_application app(argc, argv);
+    ut_application app(appt::program_args(argc, argv));
     run_count_module& module = app.add_module(std::make_unique<run_count_module>());
     run_count_module& module_2 = app.create_module<run_count_module>("run_count_module_2");
     run_count_module& module_3 = app.create_module<run_count_module>();
