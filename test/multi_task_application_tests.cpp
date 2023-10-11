@@ -14,10 +14,10 @@ std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_a
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::adec::multi_task<appt::application, ut_application>
+class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
 {
 public:
-    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
+    using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
 };
 
 TEST(multi_task_application_tests, test_constructor_empty)

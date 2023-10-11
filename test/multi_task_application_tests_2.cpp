@@ -8,10 +8,10 @@ using namespace std::string_literals;
 // application
 //------------
 
-class ut_application : public appt::adec::multi_task<appt::application, ut_application>
+class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
 {
 public:
-    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
+    using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
 };
 
 //-------------------

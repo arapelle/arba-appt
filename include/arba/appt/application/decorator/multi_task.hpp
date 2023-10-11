@@ -138,7 +138,7 @@ template <typename module_type>
 requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type>&& module_uptr)
 {
-    module_uptr->set_app(*static_cast<application_type*>(this));
+    module_uptr->set_app(this->self_());
     return this->base_::template set_main_module<module_type>(std::move(module_uptr));
 }
 
@@ -147,7 +147,7 @@ template <typename module_type>
 requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type>&& module_uptr)
 {
-    module_uptr->set_app(*static_cast<application_type*>(this));
+    module_uptr->set_app(this->self_());
     return this->base_::template add_module<module_type>(std::move(module_uptr));
 }
 

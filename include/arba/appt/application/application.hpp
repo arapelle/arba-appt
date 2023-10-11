@@ -9,13 +9,14 @@ inline namespace arba
 namespace appt
 {
 
-class application : public adec::toolkit<program>
+template <class ApplicationType = void>
+class application : public adec::toolkit<program<ApplicationType>>
 {
 public:
-    template <typename other_application_type>
-    using rebind_t = application;
+    template <typename OtherApplicationType>
+    using rebind_t = application<OtherApplicationType>;
 
-    using toolkit<program>::toolkit;
+    using toolkit<program<ApplicationType>>::toolkit;
 };
 
 }

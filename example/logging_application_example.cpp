@@ -5,10 +5,10 @@
 
 namespace example
 {
-class logging_application : public appt::adec::logging<appt::application_logger, appt::application>
+class logging_application : public appt::adec::logging<appt::application_logger, appt::application<>>
 {
 private:
-    using base_ = appt::adec::logging<appt::application_logger, appt::application>;
+    using base_ = appt::adec::logging<appt::application_logger, appt::application<>>;
 
 public:
     using base_::base_;

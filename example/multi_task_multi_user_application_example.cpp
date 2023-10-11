@@ -21,7 +21,7 @@ public:
     std::string name_;
 };
 
-using multi_user_application = appt::adec::multi_user<user, appt::application>;
+using multi_user_application = appt::adec::multi_user<user, appt::application<>>;
 
 class application : public appt::adec::multi_task<multi_user_application, application>
 {

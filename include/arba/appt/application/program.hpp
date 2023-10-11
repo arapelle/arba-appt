@@ -8,11 +8,15 @@ inline namespace arba
 namespace appt
 {
 
-class program
+template <class ApplicationType = void>
+class program;
+
+template <>
+class program<void>
 {
 public:
-    template <typename other_application_type>
-    using rebind_t = program;
+    template <typename OtherApplicationType>
+    using rebind_t = program<OtherApplicationType>;
 
     program(int argc, char** argv);
     explicit program(const program_args& args = program_args());
@@ -21,6 +25,22 @@ public:
 
 private:
     program_args program_args_;
+};
+
+template <class ApplicationType>
+class program : public program<void>
+{
+private:
+    using base_ = program<void>;
+
+public:
+    using base_::base_;
+
+protected:
+    using self_type_ = ApplicationType;
+
+    [[nodiscard]] inline const self_type_& self_() const noexcept { return static_cast<self_type_&>(*this); }
+    [[nodiscard]] inline self_type_& self_() noexcept { return static_cast<self_type_&>(*this); }
 };
 
 }

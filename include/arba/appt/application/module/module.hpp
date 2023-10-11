@@ -43,8 +43,7 @@ private:
     std::stop_token stop_token_;
 };
 
-template <class app_type = application>
-requires std::is_base_of_v<application, app_type>
+template <class app_type>
 class module : public module_interface
 {
 public:
@@ -77,7 +76,6 @@ private:
 // Template methods implementation:
 
 template <class app_type>
-    requires std::is_base_of_v<application, app_type>
 void module<app_type>::set_app(module::application_type &app)
 {
     if (application_ && application_ != &app)
@@ -86,7 +84,6 @@ void module<app_type>::set_app(module::application_type &app)
 }
 
 template <class app_type>
-    requires std::is_base_of_v<application, app_type>
 void module<app_type>::init()
 {
     app().event_manager().connect(event_box_);

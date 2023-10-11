@@ -7,10 +7,10 @@
 
 namespace example
 {
-class application : public appt::multi_task<appt::application, application>
+class application : public appt::multi_task<appt::application<>, application>
 {
 private:
-    using base_ = appt::multi_task<appt::application, application>;
+    using base_ = appt::multi_task<appt::application<>, application>;
 
 public:
     using base_::base_;

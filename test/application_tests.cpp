@@ -12,13 +12,13 @@ char** argv = cs_args.data();
 
 TEST(application_tests, test_constructor_empty)
 {
-    arba::appt::application app;
+    arba::appt::application<> app;
     ASSERT_TRUE(app.args().empty());
 }
 
 TEST(application_tests, test_constructor)
 {
-    appt::application app(argc, argv);
+    appt::application<> app(argc, argv);
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
