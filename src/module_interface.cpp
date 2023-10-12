@@ -1,4 +1,4 @@
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/module_interface.hpp>
 #include <format>
 
 inline namespace arba
