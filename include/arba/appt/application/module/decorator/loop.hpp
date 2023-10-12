@@ -34,10 +34,6 @@ class loop : public loop<typename module_base_type::template rebind_t<module_typ
 private:
     using base_ = loop<typename module_base_type::template rebind_t<module_type>>;
 
-private:
-    const module_type& self_() const { return static_cast<module_type&>(*this); }
-    module_type& self_() { return static_cast<module_type&>(*this); }
-
 public:
     using application_type = typename base_::application_type;
     using base_::base_;
@@ -73,7 +69,7 @@ void loop<module_base_type, module_type>::run()
     while (run_token_ && !this->stop_token().stop_requested())
     {
         loop_start_tp = loop_end_tp;
-        self_().run_loop(delta_time_);
+        this->self_().run_loop(delta_time_);
         run_loop_duration = clock.now() - loop_start_tp;
         std::this_thread::sleep_for(loop_duration_ - run_loop_duration);
         loop_end_tp = clock.now();
