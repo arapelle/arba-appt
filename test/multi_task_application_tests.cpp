@@ -1,4 +1,5 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/application.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 

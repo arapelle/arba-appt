@@ -1,8 +1,8 @@
 #pragma once
 
-#include <arba/appt/application/application.hpp>
-#include <thread>
 #include "module_interface.hpp"
+#include <arba/rsce/resource_manager.hpp>
+#include <arba/evnt/evnt.hpp>
 
 inline namespace arba
 {
