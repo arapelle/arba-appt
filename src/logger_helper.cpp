@@ -1,5 +1,5 @@
 #include <arba/appt/util/logger_helper.hpp>
-#include <arba/appt/util/time_point_to_string.hpp>
+#include <arba/appt/util/format_time_point.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 
@@ -10,7 +10,7 @@ namespace appt
 
 std::filesystem::path logger_helper::log_dir(const std::filesystem::path& log_dirname)
 {
-    return std::filesystem::temp_directory_path()/log_dirname/"log"/to_string_Ymd_HMS_mcs();
+    return std::filesystem::temp_directory_path()/log_dirname/"log"/format_filename_Ymd_HMS_mcs();
 }
 
 spdlog::sink_ptr logger_helper::create_console_sink()

@@ -6,7 +6,7 @@
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/decorator/logging.hpp>
-#include <arba/appt/util/time_point_to_string.hpp>
+#include <arba/appt/util/format_time_point.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include <fstream>
@@ -111,7 +111,7 @@ public:
 TEST(logging_tests, test_logs)
 {
     ut::application app(appt::program_args(argc, argv));
-    app.set_log_dir(std::filesystem::path("./logs/") / appt::to_string_Ymd_HMS());
+    app.set_log_dir(std::filesystem::path("./logs/") / appt::format_filename_Ymd_HMS());
     ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);
     std::filesystem::path times_up_log_file = app.log_dir()/"program_name.v2.log";

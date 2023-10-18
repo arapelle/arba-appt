@@ -58,7 +58,7 @@ set(headers
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logger_helper.hpp
     include/arba/appt/util/logging_macro.hpp
-    include/arba/appt/util/time_point_to_string.hpp
+    include/arba/appt/util/format_time_point.hpp
 )
 
 ## Sources:
@@ -67,7 +67,7 @@ set(sources
     src/console_file_logger.cpp
     src/logger_helper.cpp
     src/module_interface.cpp
-    src/time_point_to_string.cpp
+    src/format_time_point.cpp
     src/user.cpp
 )
 
