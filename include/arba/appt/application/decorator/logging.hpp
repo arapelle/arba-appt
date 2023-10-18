@@ -27,12 +27,19 @@ public:
 
     explicit logging(const appt::program_args& args = appt::program_args())
         : base_(args),
-        log_dir_(logger_helper::log_dir(args.program_stem().empty() ?
-                                        std::filesystem::path("application")
-                                        : args.program_stem())),
-          logger_(std::make_shared<application_logger_type>(*this))
+        log_dir_(logger_helper::log_dir(args.empty() ? std::filesystem::path("application") : args.program_stem())),
+        logger_(std::make_shared<application_logger_type>(*this))
     {
         spdlog::register_logger(logger_);
+    }
+
+    ~logging()
+    {
+        if (logger_)
+        {
+            spdlog::drop(logger_->name());
+            logger_.reset();
+        }
     }
 
     inline const std::filesystem::path& log_dir() const { return log_dir_; }

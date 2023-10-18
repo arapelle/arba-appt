@@ -1,6 +1,7 @@
 #pragma once
 
 #include <arba/appt/util/console_file_logger.hpp>
+#include "program_args.hpp"
 
 inline namespace arba
 {
@@ -12,21 +13,19 @@ class application_logger : public console_file_logger
 public:
     template <class app_type>
     inline explicit application_logger(const app_type& app)
-        : console_file_logger(logger_name(app.args().program_stem().generic_string()),
-                              log_file(app.log_dir(), app.args().program_stem().generic_string()))
+        : console_file_logger(logger_name(app.args()),
+                              log_file(app.log_dir(), app.args()))
     {}
 
 protected:
-    inline static std::string logger_name(std::string program_stem)
+    inline static std::string logger_name(const program_args& args)
     {
-        return program_stem.empty() ? "application" : program_stem;
+        return args.empty() ? "application" : args.program_stem().generic_string();
     }
 
-    inline static std::filesystem::path log_file(std::filesystem::path log_dir, std::string program_stem)
+    inline static std::filesystem::path log_file(std::filesystem::path log_dir, const program_args& args)
     {
-        if (!program_stem.empty())
-            return log_dir/(program_stem + ".log");
-        return log_dir/"application.log";
+        return log_dir / (logger_name(args) + ".log");
     }
 };
 

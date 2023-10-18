@@ -27,7 +27,14 @@ public:
     using rebind_t = logging<module_logger_type, module_base_type, other_module_type>;
 
     explicit logging(std::string_view name = std::string_view()) : base_(name) {}
-    virtual ~logging() override = default;
+    virtual ~logging() override
+    {
+        if (logger_)
+        {
+            spdlog::drop(logger_->name());
+            logger_.reset();
+        }
+    }
 
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
