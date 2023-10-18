@@ -69,6 +69,7 @@ set(sources
     src/module_interface.cpp
     src/format_time_point.cpp
     src/user.cpp
+    src/multi_task.cpp
 )
 
 ## Add C++ library:
