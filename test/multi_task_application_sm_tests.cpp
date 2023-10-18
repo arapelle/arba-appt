@@ -1,7 +1,9 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/application.hpp>
+#include <arba/core/sbrm.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
+#include "modules/counting_module.hpp"
 
 using namespace std::string_literals;
 
@@ -21,13 +23,13 @@ public:
     using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
 };
 
-TEST(multi_task_application_tests, test_constructor_empty)
+TEST(multi_task_application_sm_tests, test_constructor_empty)
 {
     ut_application app;
     ASSERT_TRUE(app.args().empty());
 }
 
-TEST(multi_task_application_tests, test_constructor)
+TEST(multi_task_application_sm_tests, test_constructor)
 {
     ut_application app(appt::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
@@ -38,37 +40,20 @@ TEST(multi_task_application_tests, test_constructor)
 // module
 //-------------------
 
-class run_count_module : public appt::module<ut_application>
-{
-public:
-    run_count_module(std::string_view module_name = std::string_view())
-        : appt::module<ut_application>(module_name)
-    {}
+using counting_module = ut::counting_module<ut_application>;
 
-    virtual ~run_count_module() override = default;
+//-------------------
+// unit tests
+//-------------------
 
-    virtual void init() override
-    {
-        ++init_count;
-    }
-
-    virtual void run() override
-    {
-        ++run_count;
-    }
-
-    uint16_t run_count = 0;
-    uint16_t init_count = 0;
-};
-
-TEST(multi_task_application_tests, test_side_modules)
+TEST(multi_task_application_sm_tests, test_side_modules)
 {
     ut_application app(appt::program_args(argc, argv));
-    run_count_module& module = app.add_module(std::make_unique<run_count_module>());
-    run_count_module& module_2 = app.create_module<run_count_module>("run_count_module_2");
-    run_count_module& module_3 = app.create_module<run_count_module>();
+    counting_module& module = app.add_module(std::make_unique<counting_module>());
+    counting_module& module_2 = app.create_module<counting_module>("counting_module_2");
+    counting_module& module_3 = app.create_module<counting_module>();
     ASSERT_EQ(module.name(), "module_0");
-    ASSERT_EQ(module_2.name(), "run_count_module_2");
+    ASSERT_EQ(module_2.name(), "counting_module_2");
     ASSERT_EQ(module_3.name(), "module_1");
     app.init();
     app.run();
@@ -85,8 +70,7 @@ TEST(multi_task_application_tests, test_side_modules)
 int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
+    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

@@ -39,7 +39,7 @@ public:
         ++init_count;
     }
 
-    void run_loop(appt::seconds delta_time)
+    void run_loop(appt::seconds /*delta_time*/)
     {
         ++run_count;
         if (run_count >= 10)
