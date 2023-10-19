@@ -155,7 +155,7 @@ TEST(logging_tests, test_logs)
     ASSERT_EQ(std::filesystem::file_size(second_module_log_file), 0);
 
     app.init();
-    app.run();
+    std::ignore = app.run();
     app.logger()->flush();
     first_module.logger()->flush();
     second_module.logger()->flush();

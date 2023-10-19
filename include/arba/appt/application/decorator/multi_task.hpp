@@ -1,12 +1,13 @@
 #pragma once
 
 #include <source_location>
-#include <arba/appt/application/module/module.hpp>
 #include <memory>
 #include <format>
 #include <thread>
 #include <spdlog/spdlog.h>
 #include <arba/core/sbrm.hpp>
+#include <arba/appt/application/execution_status.hpp>
+#include <arba/appt/application/module/module_interface.hpp>
 
 inline namespace arba
 {
@@ -48,6 +49,9 @@ public:
     void stop();
     void stop_side_modules();
 
+    [[nodiscard]] inline execution_status init_status() const noexcept { return init_status_; }
+    [[nodiscard]] inline execution_status run_status() const noexcept { return run_status_; }
+
     template <typename module_type>
     requires std::is_base_of_v<module_interface, module_type> && (!std::is_abstract_v<module_type>)
     module_type& set_main_module(std::unique_ptr<module_type>&& module_uptr);
@@ -79,30 +83,46 @@ private:
     using module_interface_uptr = std::unique_ptr<module_interface>;
     std::vector<std::pair<module_interface_uptr, std::thread>> side_modules_;
     module_interface_uptr main_module_;
+    execution_status init_status_ = execution_status::ready;
+    execution_status run_status_ = execution_status::ready;
     std::mutex mutex_;
 };
 
 template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::init()
+execution_status multi_task<application_base_type, application_type>::init()
 {
+    init_status_ = execution_status::executing;
     try
     {
         if (main_module_)
             main_module_->init();
         for (auto& entry : side_modules_)
             entry.first->init();
+        init_status_ = execution_status::execution_success;
     }
     catch (...)
     {
+        init_status_ = execution_status::execution_failure;
         this->self_().handle_caught_exception_(std::source_location::current(), std::current_exception());
     }
+    return init_status_;
 }
 
 template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::run()
+execution_status multi_task<application_base_type, application_type>::run()
 {
     try
     {
+        if (init_status_ != execution_status::execution_success) [[unlikely]]
+        {
+            if (init_status_ == execution_status::ready)
+                throw std::runtime_error("init status is 'ready'. Did you forget to call init()?");
+            run_status_ = execution_status::execution_failure;
+            return run_status_;
+        }
+
+        run_status_ = execution_status::executing;
+
         core::sbrm join_side_modules = [this]
         {
             for (auto& entry : side_modules_)
@@ -124,8 +144,12 @@ void multi_task<application_base_type, application_type>::run()
     }
     catch (...)
     {
+        run_status_ = execution_status::execution_failure;
         this->self_().handle_caught_exception_(std::source_location::current(), std::current_exception());
+        return run_status_;
     }
+    run_status_ = execution_status::execution_success;
+    return run_status_;
 }
 
 template <typename application_base_type, typename application_type>

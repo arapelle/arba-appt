@@ -56,9 +56,9 @@ TEST(multi_task_application_sm_tests, test_side_modules)
     ASSERT_EQ(module_2.name(), "counting_module_2");
     ASSERT_EQ(module_3.name(), "module_1");
     app.init();
-    app.run();
+    std::ignore = app.run();
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module.run_count, 2);
     ASSERT_EQ(module_2.run_count, 2);
     ASSERT_EQ(module_3.run_count, 2);

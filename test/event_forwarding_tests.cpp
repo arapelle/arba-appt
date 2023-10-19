@@ -1,5 +1,6 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/application.hpp>
+#include <arba/appt/application/module/module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
@@ -98,13 +99,13 @@ TEST(event_forwarding_tests, test_forwarding)
     ut_first_event_module& first_module = app.create_module<ut_first_event_module>();
     ut_second_event_module& second_module = app.create_module<ut_second_event_module>();
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(first_module.run_count, 1);
     ASSERT_EQ(second_module.run_count, 1);
     ASSERT_EQ(first_module.messages.size(), 1);
     ASSERT_EQ(first_module.messages.front(), "local");
     ASSERT_EQ(second_module.messages.size(), 0);
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(first_module.run_count, 2);
     ASSERT_EQ(second_module.run_count, 2);
     ASSERT_EQ(first_module.messages.size(), 2);

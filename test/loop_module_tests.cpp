@@ -65,7 +65,7 @@ TEST(loop_module_tests, test_side_modules)
     ASSERT_EQ(loop_module.name(), "ut_loop_module");
     loop_module.set_frequency(6);
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(loop_module.init_count, 1);
     ASSERT_GE(loop_module.run_count, 6);
     ASSERT_LT(loop_module.run_count, 10);

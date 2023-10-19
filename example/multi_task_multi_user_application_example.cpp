@@ -133,7 +133,5 @@ int main(int argc, char** argv)
     app.create_main_module<example::consumer_module>().set_frequency(3);
     app.create_module<example::generator_module>().set_frequency(2);
     app.init();
-    app.run();
-
-    return EXIT_SUCCESS;
+    return app.run();
 }

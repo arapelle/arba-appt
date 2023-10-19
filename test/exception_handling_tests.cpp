@@ -97,7 +97,7 @@ TEST(exception_handling_tests, test_main_module_fail__logging)
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(6);
     app.init();
-    app.run();
+    ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
 
@@ -118,7 +118,7 @@ TEST(exception_handling_tests, test_main_module_fail__printing)
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(6);
     app.init();
-    app.run();
+    ASSERT_EQ(app.run(), appt::execution_failure);
 }
 
 int main(int argc, char** argv)

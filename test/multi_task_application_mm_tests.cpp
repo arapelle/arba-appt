@@ -31,20 +31,20 @@ TEST(multi_task_application_mm_tests, test_main_module)
     ut_application app;
     counting_module& module = app.set_main_module(std::make_unique<counting_module>());
     ASSERT_EQ(module.name(), "module_0");
-    app.init();
-    app.run();
+    ASSERT_EQ(app.init(), appt::execution_success);
+    ASSERT_EQ(app.run(), appt::execution_success);
     ASSERT_EQ(module.run_count, 1);
     ASSERT_EQ(module.init_count, 1);
     counting_module& module_2 = app.create_main_module<counting_module>();
     ASSERT_EQ(module_2.name(), "module_1");
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module_2.run_count, 1);
     ASSERT_EQ(module_2.init_count, 1);
     counting_module& module_3 = app.create_main_module<counting_module>("main_module");
     ASSERT_EQ(module_3.name(), "main_module");
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module_3.run_count, 1);
     ASSERT_EQ(module_3.init_count, 1);
 }

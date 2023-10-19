@@ -97,9 +97,9 @@ TEST(multi_user_multi_task_application_tests, test_side_modules)
     counting_module& module = app.add_module(std::make_unique<counting_module>());
     counting_module& module_2 = app.create_module<counting_module>();
     app.init();
-    app.run();
+    std::ignore = app.run();
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module.run_count, 2);
     ASSERT_EQ(module_2.run_count, 2);
     ASSERT_EQ(module.init_count, 2);
@@ -111,10 +111,10 @@ TEST(multi_user_multi_task_application_tests, test_main_module)
     ut_application app(appt::program_args(argc, argv));
     counting_module& module = app.set_main_module(std::make_unique<counting_module>());
     app.init();
-    app.run();
+    std::ignore = app.run();
     counting_module& module_2 = app.create_main_module<counting_module>();
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module.run_count, 1);
     ASSERT_EQ(module_2.run_count, 1);
     ASSERT_EQ(module.init_count, 1);
@@ -128,7 +128,7 @@ TEST(multi_user_multi_task_application_tests, test_create_multi_user_module)
 
     module.names.push_back("Alpha");
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module.users().size(), 1);
     auto iter = module.users().find_user(0);
     ASSERT_EQ((*iter)->name(), "Alpha");
@@ -136,7 +136,7 @@ TEST(multi_user_multi_task_application_tests, test_create_multi_user_module)
     module.names.push_back("Beta");
     module.names.push_back("Gamma");
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(module.users().size(), 3);
     iter = module.users().find_user(0);
     ASSERT_EQ((*iter)->name(), "Alpha");

@@ -41,6 +41,7 @@ set(headers
     include/arba/appt/application/decorator/multi_task.hpp
     include/arba/appt/application/decorator/multi_user.hpp
     include/arba/appt/application/decorator/toolkit.hpp
+    include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/module/basic_module.hpp
     include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
@@ -49,27 +50,27 @@ set(headers
     include/arba/appt/application/module/module_interface.hpp
     include/arba/appt/application/module/module_logger.hpp
     include/arba/appt/application/program_args.hpp
-    include/arba/appt/user/user.hpp
     include/arba/appt/user/user_hash.hpp
+    include/arba/appt/user/user.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
     include/arba/appt/util/console_file_logger.hpp
     include/arba/appt/util/duration.hpp
+    include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logger_helper.hpp
     include/arba/appt/util/logging_macro.hpp
-    include/arba/appt/util/format_time_point.hpp
 )
 
 ## Sources:
 set(sources
     src/basic_application.cpp
     src/console_file_logger.cpp
+    src/format_time_point.cpp
     src/logger_helper.cpp
     src/module_interface.cpp
-    src/format_time_point.cpp
-    src/user.cpp
     src/multi_task.cpp
+    src/user.cpp
 )
 
 ## Add C++ library:
