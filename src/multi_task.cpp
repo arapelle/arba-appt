@@ -11,7 +11,7 @@ inline namespace adec // application_decorator
 namespace private_
 {
 
-void notify_error_message_to_cerr_(std::string_view error_msg)
+void log_error_message_to_cerr_(std::string_view error_msg)
 {
     std::cerr << "[critical][" << format_log_Ymd_HMS_mcs() << "]: " << error_msg << std::endl;
 }
