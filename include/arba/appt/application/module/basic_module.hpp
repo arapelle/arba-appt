@@ -2,6 +2,8 @@
 
 #include "module_interface.hpp"
 #include <arba/core/debug/assert.hpp>
+#include <arba/appt/util/log_critical_message.hpp>
+#include <spdlog/spdlog.h>
 
 inline namespace arba
 {
@@ -29,6 +31,9 @@ public:
 
     virtual void init() override;
 
+protected:
+    virtual void handle_caught_exception_(const std::source_location& location, std::exception_ptr ex_ptr) override;
+
 private:
     application_type* application_ = nullptr;
 };
@@ -47,6 +52,38 @@ template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
     ARBA_ASSERT(application_ != nullptr);
+}
+
+template <class ApplicationType>
+void basic_module<ApplicationType>::handle_caught_exception_(const std::source_location& location,
+                                                             std::exception_ptr ex_ptr)
+{
+    std::string error_msg;
+    try
+    {
+        if (ex_ptr)
+            std::rethrow_exception(ex_ptr);
+    }
+    catch (const std::exception& ex)
+    {
+        error_msg = std::format("Exception caught:\n{}", std::string_view(ex.what()));
+    }
+    catch (...)
+    {
+        error_msg = "Unknown exception caught.";
+    }
+
+    if constexpr (requires(application_type& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
+    {
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
+        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
+        (*this->app().logger()).log(src_loc, spdlog::level::critical, error_msg);
+#endif
+    }
+    else
+    {
+        log_critical_message_to_cerr(error_msg);
+    }
 }
 
 

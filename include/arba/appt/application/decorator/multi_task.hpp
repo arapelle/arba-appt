@@ -75,6 +75,10 @@ protected:
     inline void handle_caught_exception_(const std::source_location location, std::exception_ptr ex_ptr);
 
 private:
+    bool check_init_status_();
+    void join_side_modules_();
+
+private:
     using module_interface_uptr = std::unique_ptr<module_interface>;
     std::vector<std::pair<module_interface_uptr, std::thread>> side_modules_;
     module_interface_uptr main_module_;
@@ -108,32 +112,22 @@ execution_status multi_task<application_base_type, application_type>::run()
 {
     try
     {
-        if (init_status_ != execution_status::execution_success) [[unlikely]]
-        {
-            if (init_status_ == execution_status::ready)
-                throw std::runtime_error("init status is 'ready'. Did you forget to call init()?");
-            run_status_ = execution_status::execution_failure;
+        if (check_init_status_() == false) [[unlikely]]
             return run_status_;
-        }
 
         run_status_ = execution_status::executing;
 
-        core::sbrm join_side_modules = [this]
-        {
-            for (auto& entry : side_modules_)
-                if (entry.second.joinable())
-                    entry.second.join();
-        };
+        core::sbrm join_side_modules = [this]{ join_side_modules_(); };
         core::sbrm stop_side_modules_iferr = [this]{ stop_side_modules(); };
 
         for (auto& entry : side_modules_)
         {
             module_interface* module_ptr = entry.first.get();
-            entry.second = std::thread(&module_interface::run, module_ptr);
+            entry.second = std::thread(&module_interface::run_nothrow<application_type>, module_ptr,
+                                       std::ref(this->self_()));
         }
-
         if (main_module_)
-            main_module_->run();
+            main_module_->run_maythrow();
 
         stop_side_modules_iferr.disable();
     }
@@ -141,11 +135,38 @@ execution_status multi_task<application_base_type, application_type>::run()
     {
         run_status_ = execution_status::execution_failure;
         this->self_().handle_caught_exception_(std::source_location::current(), std::current_exception());
-        return run_status_;
     }
-    run_status_ = execution_status::execution_success;
+
+    if (run_status_ == execution_status::executing)
+        run_status_ = execution_status::execution_success;
     return run_status_;
 }
+
+template <typename application_base_type, typename application_type>
+bool multi_task<application_base_type, application_type>::check_init_status_()
+{
+    if (init_status_ != execution_status::execution_success) [[unlikely]]
+    {
+        if (init_status_ == execution_status::ready)
+            throw std::runtime_error("init status is 'ready'. Did you forget to call init()?");
+        run_status_ = execution_status::execution_failure;
+        return false;
+    }
+    return true;
+}
+
+template <typename application_base_type, typename application_type>
+void multi_task<application_base_type, application_type>::join_side_modules_()
+{
+    for (auto& entry : side_modules_)
+    {
+        if (entry.first->run_status() != execution_status::execution_success)
+            run_status_ = execution_status::execution_failure;
+        if (entry.second.joinable())
+            entry.second.join();
+    }
+}
+
 
 template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::handle_caught_exception_(const std::source_location location,

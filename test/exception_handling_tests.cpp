@@ -40,7 +40,7 @@ public:
     {
         ++run_count;
         if (run_count >= 30)
-            this->stop();
+            std::abort();
     }
 
     virtual void finish() override
@@ -178,6 +178,70 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
     std::string log_file_contents = text_file_contents(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("Did you forget to call init()?"), std::string::npos);
+}
+
+TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
+{
+    using app_type = ut_application<multi_task_logging_application>;
+    using mod_type = appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<app_type>>>;
+
+    app_type app;
+    auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
+    main_module.set_frequency(20);
+    auto& side_module = app.create_module<ut_failing_module<mod_type>>();
+    side_module.run_fails = true;
+    ASSERT_EQ(app.init(), appt::execution_success);
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    side_module.logger()->flush();
+
+    std::filesystem::path log_fpath = app.log_dir() / (side_module.logger()->name() + ".log");
+    ASSERT_TRUE(std::filesystem::exists(log_fpath));
+    std::string log_file_contents = text_file_contents(log_fpath);
+    ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_file_contents.find("RUN_FAIL"), std::string::npos);
+}
+
+TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
+{
+    using app_type = ut_application<multi_task_logging_application>;
+    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+
+    app_type app;
+    auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
+    main_module.set_frequency(20);
+    auto& side_module = app.create_module<ut_failing_module<mod_type>>();
+    side_module.run_fails = true;
+    ASSERT_EQ(app.init(), appt::execution_success);
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    app.logger()->flush();
+
+    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    ASSERT_TRUE(std::filesystem::exists(log_fpath));
+    std::string log_file_contents = text_file_contents(log_fpath);
+    ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_file_contents.find("RUN_FAIL"), std::string::npos);
+}
+
+TEST(exception_handling_tests, test_side_module_run_fails__log_to_cerr)
+{
+    using app_type = ut_application<multi_task_application>;
+    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+
+    stream_capture cerr_capture(std::cerr);
+
+    app_type app;
+    auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
+    main_module.set_frequency(20);
+    auto& side_module = app.create_module<ut_failing_module<mod_type>>();
+    side_module.run_fails = true;
+    ASSERT_EQ(app.init(), appt::execution_success);
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    std::string log_stream_contents = cerr_capture.str();
+    ASSERT_NE(log_stream_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_stream_contents.find("RUN_FAIL"), std::string::npos);
 }
 
 int main(int argc, char** argv)
