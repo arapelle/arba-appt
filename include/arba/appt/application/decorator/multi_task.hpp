@@ -8,6 +8,7 @@
 #include <arba/core/sbrm.hpp>
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/application/module/module_interface.hpp>
+#include <arba/appt/util/log_critical_message.hpp>
 
 inline namespace arba
 {
@@ -15,12 +16,6 @@ namespace appt
 {
 inline namespace adec // application_decorator
 {
-namespace private_
-{
-
-void log_error_message_to_cerr_(std::string_view error_msg);
-
-}
 
 template <typename application_base_type, typename application_type = void>
 class multi_task;
@@ -156,27 +151,7 @@ template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::handle_caught_exception_(const std::source_location location,
                                                                                    std::exception_ptr ex_ptr)
 {
-    const auto log_error_msg = [this, &location](std::string_view ex_what)
-    {
-        std::string error_msg = ex_what.size() ?
-            std::format("Exception caught:\n{}", ex_what) : std::format("Unknown exception caught.");
-
-        if constexpr (requires(application_type& app)
-                      {
-                          { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
-                      })
-        {
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-            spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-            (*this->self_().logger()).log(src_loc, spdlog::level::critical, error_msg);
-#endif
-        }
-        else
-        {
-            private_::log_error_message_to_cerr_(error_msg);
-        }
-    };
-
+    std::string error_msg;
     try
     {
         if (ex_ptr)
@@ -184,11 +159,23 @@ void multi_task<application_base_type, application_type>::handle_caught_exceptio
     }
     catch (const std::exception& ex)
     {
-        log_error_msg(ex.what());
+        error_msg = std::format("Exception caught:\n{}", std::string_view(ex.what()));
     }
     catch (...)
     {
-        log_error_msg("");
+        error_msg = "Unknown exception caught.";
+    }
+
+    if constexpr (requires(application_type& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
+    {
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
+        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
+        (*this->self_().logger()).log(src_loc, spdlog::level::critical, error_msg);
+#endif
+    }
+    else
+    {
+        log_critical_message_to_cerr(error_msg);
     }
 }
 

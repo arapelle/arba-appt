@@ -50,8 +50,8 @@ set(headers
     include/arba/appt/application/module/module_interface.hpp
     include/arba/appt/application/module/module_logger.hpp
     include/arba/appt/application/program_args.hpp
-    include/arba/appt/user/user_hash.hpp
     include/arba/appt/user/user.hpp
+    include/arba/appt/user/user_hash.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
     include/arba/appt/util/console_file_logger.hpp
@@ -60,6 +60,7 @@ set(headers
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logger_helper.hpp
     include/arba/appt/util/logging_macro.hpp
+    include/arba/appt/util/log_critical_message.hpp
 )
 
 ## Sources:
@@ -68,8 +69,8 @@ set(sources
     src/console_file_logger.cpp
     src/format_time_point.cpp
     src/logger_helper.cpp
+    src/log_critical_message.cpp
     src/module_interface.cpp
-    src/multi_task.cpp
     src/user.cpp
 )
 
