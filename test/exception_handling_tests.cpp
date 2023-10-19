@@ -164,6 +164,22 @@ TEST(exception_handling_tests, test_main_module_run_fails__printing)
     ASSERT_NE(log_stream_contents.find("RUN_FAIL"), std::string::npos);
 }
 
+TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_logging)
+{
+    using app_type = ut_application<multi_task_logging_application>;
+
+    app_type app;
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    app.logger()->flush();
+
+    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    ASSERT_TRUE(std::filesystem::exists(log_fpath));
+    std::string log_file_contents = text_file_contents(log_fpath);
+    ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_file_contents.find("Did you forget to call init()?"), std::string::npos);
+}
+
 int main(int argc, char** argv)
 {
     const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "application";
