@@ -56,7 +56,7 @@ public:
     virtual void run() override
     {
         SPDLOG_LOGGER_TRACE(app().logger(), "");
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         app().stop_side_modules();
     }
 };
