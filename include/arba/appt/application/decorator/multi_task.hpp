@@ -42,8 +42,9 @@ class multi_task : public multi_task<typename application_base_type::template re
 public:
     using base_::base_;
 
-    void init();
-    void run();
+    execution_status init();
+    [[nodiscard]] execution_status run();
+    void stop();
     void stop_side_modules();
 
     template <typename module_type>
@@ -168,6 +169,15 @@ void multi_task<application_base_type, application_type>::stop_side_modules()
     std::lock_guard lock(mutex_);
     for (auto& entry : side_modules_)
         entry.first->stop();
+}
+
+template <typename application_base_type, typename application_type>
+void multi_task<application_base_type, application_type>::stop()
+{
+    stop_side_modules();
+    std::lock_guard lock(mutex_);
+    if (main_module_)
+        main_module_->stop();
 }
 
 template <typename application_base_type, typename application_type>
