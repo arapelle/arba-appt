@@ -68,12 +68,12 @@ public:
     virtual ~logging() override = default;
 
 protected:
-    virtual void handle_caught_exception_(const std::source_location& location, std::exception_ptr ex_ptr) override;
+    virtual void handle_caught_exception(const std::source_location& location, std::exception_ptr ex_ptr) override;
 };
 
 template <class module_logger_type, class module_base_type, class module_type>
 void logging<module_logger_type, module_base_type, module_type>::
-    handle_caught_exception_(const std::source_location& location, std::exception_ptr ex_ptr)
+    handle_caught_exception(const std::source_location& location, std::exception_ptr ex_ptr)
 {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
     std::string error_msg;

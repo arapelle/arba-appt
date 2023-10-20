@@ -1,9 +1,14 @@
 #pragma once
 
-#include "module_interface.hpp"
+#include <arba/core/sbrm.hpp>
 #include <arba/core/debug/assert.hpp>
+#include <arba/core/template/exception_policy.hpp>
+#include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/util/log_critical_message.hpp>
 #include <spdlog/spdlog.h>
+#include <source_location>
+#include <exception>
+#include "module_base.hpp"
 
 inline namespace arba
 {
@@ -14,7 +19,7 @@ template <class ApplicationType, class ModuleType = void>
 class basic_module;
 
 template <class ApplicationType>
-class basic_module<ApplicationType, void> : public module_interface
+class basic_module<ApplicationType, void> : public module_base
 {
 public:
     template <typename OtherModuleType>
@@ -22,20 +27,27 @@ public:
 
     using application_type = ApplicationType;
 
-    using module_interface::module_interface;
+    explicit basic_module(std::string_view name = std::string_view()) : module_base(name) {}
     virtual ~basic_module() override = default;
 
     inline const application_type& app() const { return *application_; }
     inline application_type& app() { return *application_; }
     void set_app(application_type& app);
 
-    virtual void init() override;
+    virtual void init();
+    void run(core::maythrow_t);
+    void run(std::nothrow_t);
+    virtual void stop() {}
+
+    [[nodiscard]] inline execution_status run_status() const noexcept { return run_status_; }
 
 protected:
-    virtual void handle_caught_exception_(const std::source_location& location, std::exception_ptr ex_ptr) override;
+    virtual void run() = 0;
+    virtual void handle_caught_exception(const std::source_location& location, std::exception_ptr ex_ptr);
 
 private:
     application_type* application_ = nullptr;
+    execution_status run_status_ = execution_status::ready;
 };
 
 // Template methods implementation:
@@ -55,8 +67,35 @@ void basic_module<ApplicationType>::init()
 }
 
 template <class ApplicationType>
-void basic_module<ApplicationType>::handle_caught_exception_(const std::source_location& location,
-                                                             std::exception_ptr ex_ptr)
+void basic_module<ApplicationType>::run(core::maythrow_t)
+{
+    run_status_ = execution_status::executing;
+    core::sbrm set_execution_failure_if_err = [this]{ run_status_ = execution_status::execution_failure; };
+    this->run();
+    set_execution_failure_if_err.disable();
+    run_status_ = execution_status::execution_success;
+}
+
+template <class ApplicationType>
+void basic_module<ApplicationType>::run(std::nothrow_t)
+{
+    try
+    {
+        run(core::maythrow);
+    }
+    catch (...)
+    {
+        this->handle_caught_exception(std::source_location::current(), std::current_exception());
+        if constexpr (requires(application_type& app){ { app.stop() }; })
+        {
+            app().stop();
+        }
+    }
+}
+
+template <class ApplicationType>
+void basic_module<ApplicationType>::handle_caught_exception(const std::source_location& location,
+                                                            std::exception_ptr ex_ptr)
 {
     std::string error_msg;
     try

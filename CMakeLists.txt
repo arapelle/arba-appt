@@ -47,7 +47,7 @@ set(headers
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
     include/arba/appt/application/module/module.hpp
-    include/arba/appt/application/module/module_interface.hpp
+    include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/module_logger.hpp
     include/arba/appt/application/program_args.hpp
     include/arba/appt/user/user.hpp
@@ -70,7 +70,7 @@ set(sources
     src/format_time_point.cpp
     src/logger_helper.cpp
     src/log_critical_message.cpp
-    src/module_interface.cpp
+    src/module_base.cpp
     src/user.cpp
 )
 
