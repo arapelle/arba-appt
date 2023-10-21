@@ -36,10 +36,10 @@ public:
     using base_::base_;
 
 protected:
-    using self_type_ = ApplicationType;
+    using self_type = ApplicationType;
 
-    [[nodiscard]] inline const self_type_& self_() const noexcept { return static_cast<self_type_&>(*this); }
-    [[nodiscard]] inline self_type_& self_() noexcept { return static_cast<self_type_&>(*this); }
+    [[nodiscard]] inline const self_type& self() const noexcept { return static_cast<const self_type&>(*this); }
+    [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };
 
 }

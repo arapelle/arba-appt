@@ -73,7 +73,7 @@ void loop<module_base_type, module_type>::run()
     while (is_running())
     {
         loop_start_tp = loop_end_tp;
-        this->self_().run_loop(delta_time_);
+        this->self().run_loop(delta_time_);
         run_loop_duration = clock.now() - loop_start_tp;
         std::this_thread::sleep_for(loop_duration_ - run_loop_duration);
         loop_end_tp = clock.now();

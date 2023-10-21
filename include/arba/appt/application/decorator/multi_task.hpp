@@ -104,7 +104,7 @@ execution_status multi_task<application_base_type, application_type>::init()
     catch (...)
     {
         init_status_ = execution_status::execution_failure;
-        this->self_().handle_caught_exception(std::source_location::current(), std::current_exception());
+        this->self().handle_caught_exception(std::source_location::current(), std::current_exception());
     }
     return init_status_;
 }
@@ -136,7 +136,7 @@ execution_status multi_task<application_base_type, application_type>::run()
     catch (...)
     {
         run_status_ = execution_status::execution_failure;
-        this->self_().handle_caught_exception(std::source_location::current(), std::current_exception());
+        this->self().handle_caught_exception(std::source_location::current(), std::current_exception());
     }
 
     if (run_status_ == execution_status::executing)
@@ -193,7 +193,7 @@ void multi_task<application_base_type, application_type>::handle_caught_exceptio
     {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
         spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-        (*this->self_().logger()).log(src_loc, spdlog::level::critical, error_msg);
+        (*this->self().logger()).log(src_loc, spdlog::level::critical, error_msg);
 #endif
     }
     else
@@ -225,7 +225,7 @@ template <typename module_type>
              && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type> module_uptr)
 {
-    module_uptr->set_app(this->self_());
+    module_uptr->set_app(this->self());
     module_type* module_ptr = module_uptr.get();
     main_module_ = std::move(module_uptr);
     return *module_ptr;
@@ -237,7 +237,7 @@ template <typename module_type>
              && (!std::is_abstract_v<module_type>)
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type> module_uptr)
 {
-    module_uptr->set_app(this->self_());
+    module_uptr->set_app(this->self());
     module_type* module_ptr = module_uptr.get();
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
     return *module_ptr;
