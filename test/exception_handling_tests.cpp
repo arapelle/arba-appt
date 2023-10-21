@@ -6,7 +6,7 @@
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <gtest/gtest.h>
 #include "util/stream_capture.hpp"
-#include "util/text_file_contents.hpp"
+#include "util/text_file_content.hpp"
 
 using logging_application = appt::adec::logging<appt::application<>>;
 using multi_task_application = appt::adec::multi_task<appt::application<>>;
@@ -97,7 +97,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__logging)
 
     std::filesystem::path log_fpath = app.log_directory() / (app.logger()->name() + ".log");
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
-    std::string log_file_contents = text_file_contents(log_fpath);
+    std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("INIT_FAIL"), std::string::npos);
 }
@@ -139,7 +139,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__logging)
 
     std::filesystem::path log_fpath = app.log_directory() / (app.logger()->name() + ".log");
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
-    std::string log_file_contents = text_file_contents(log_fpath);
+    std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("RUN_FAIL"), std::string::npos);
 }
@@ -175,7 +175,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
 
     std::filesystem::path log_fpath = app.log_directory() / (app.logger()->name() + ".log");
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
-    std::string log_file_contents = text_file_contents(log_fpath);
+    std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("Did you forget to call init()?"), std::string::npos);
 }
@@ -197,7 +197,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
 
     std::filesystem::path log_fpath = app.log_directory() / (side_module.logger()->name() + ".log");
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
-    std::string log_file_contents = text_file_contents(log_fpath);
+    std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("RUN_FAIL"), std::string::npos);
 }
@@ -219,7 +219,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
 
     std::filesystem::path log_fpath = app.log_directory() / (app.logger()->name() + ".log");
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
-    std::string log_file_contents = text_file_contents(log_fpath);
+    std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("RUN_FAIL"), std::string::npos);
 }

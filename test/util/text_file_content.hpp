@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-inline std::string text_file_contents(const std::filesystem::path& fpath)
+inline std::string text_file_content(const std::filesystem::path& fpath)
 {
     std::string contents;
     std::ifstream stream(fpath);
