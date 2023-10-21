@@ -13,10 +13,16 @@ requires std::is_base_of_v<user, user_type>
 struct user_sptr_id_hash
 {
     using key_type = appt::user_id;
+    using is_transparent = void;
 
     std::size_t operator()(const std::shared_ptr<user_type>& arg) const noexcept
     {
         return arg ? arg->id() : std::numeric_limits<std::size_t>::max();
+    }
+
+    std::size_t operator()(const key_type& arg) const noexcept
+    {
+        return std::hash<key_type>{}(arg);
     }
 
     inline static const appt::user_id& user_id(const user_type& arg) { return arg.id(); }
@@ -36,14 +42,7 @@ struct user_sptr_name_hash<user_type>
 public:
     using name_type = std::remove_cvref_t<decltype(std::declval<user_type*>()->name())>;
     using key_type = name_type;
-
-    struct transparent_key_equal
-    {
-        bool operator()(const std::shared_ptr<user_type>& lhs, const name_type& rhs) const noexcept
-        {
-            return lhs && lhs->name() == rhs;
-        }
-    };
+    using is_transparent = void;
 
     std::size_t operator()(const std::shared_ptr<user_type>& arg) const noexcept
     {
@@ -69,14 +68,7 @@ struct user_sptr_name_hash<user_type>
 public:
     using name_type = std::remove_cvref_t<decltype(std::declval<user_type*>()->name)>;
     using key_type = name_type;
-
-    struct transparent_key_equal
-    {
-        bool operator()(const std::shared_ptr<user_type>& lhs, const name_type& rhs) const noexcept
-        {
-            return lhs && lhs->name == rhs;
-        }
-    };
+    using is_transparent = void;
 
     std::size_t operator()(const std::shared_ptr<user_type>& arg) const noexcept
     {
@@ -96,14 +88,7 @@ struct user_sptr_mem_fn_hash
 {
 public:
     using key_type = user_id_type;
-
-    struct transparent_key_equal
-    {
-        bool operator()(const std::shared_ptr<user_type>& lhs, const key_type& rhs) const noexcept
-        {
-            return lhs && user_id(*lhs) == rhs;
-        }
-    };
+    using is_transparent = void;
 
     std::size_t operator()(const std::shared_ptr<user_type>& arg) const noexcept
     {
@@ -123,14 +108,7 @@ struct user_sptr_mem_hash
 {
 public:
     using key_type = user_id_type;
-
-    struct transparent_key_equal
-    {
-        bool operator()(const std::shared_ptr<user_type>& lhs, const key_type& rhs) const noexcept
-        {
-            return lhs && user_id(*lhs) == rhs;
-        }
-    };
+    using is_transparent = void;
 
     std::size_t operator()(const std::shared_ptr<user_type>& arg) const noexcept
     {
