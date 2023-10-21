@@ -14,7 +14,7 @@ inline namespace adec // application_decorator
 namespace private_
 {
 
-std::filesystem::path logging_impl::make_log_directory_path(const program_args& args)
+std::filesystem::path logging_impl::make_log_dirpath(const program_args& args)
 {
     std::filesystem::path app_log_dirname = args.empty() ? std::filesystem::path("application") : args.program_stem();
     return std::filesystem::temp_directory_path() / app_log_dirname / "log" / format_filename_Ymd_HMS_mcs();

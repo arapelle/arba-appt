@@ -41,9 +41,12 @@ private:
 public:
     using base_::base_;
 
-    inline std::filesystem::path make_log_dir() const
+    inline std::filesystem::path make_log_directory_path() const
     {
-        return std::filesystem::path("./logs/") / appt::format_filename_Ymd_HMS();
+        std::filesystem::path subpath = std::filesystem::path("log") / appt::format_filename_Ymd_HMS();
+        if (!args().empty())
+            return args().program_dir() / subpath;
+        return subpath;
     }
 
     void init()
@@ -117,24 +120,24 @@ TEST(logging_tests, test_logs__no_args)
 {
     {
         ut::application app;
-        ASSERT_TRUE(std::filesystem::exists(app.log_directory()));
+        ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
         ASSERT_NE(app.logger(), nullptr);
-        std::filesystem::path app_log_file = app.log_directory()/"application.log";
+        std::filesystem::path app_log_file = app.log_dir() / "application.log";
         ASSERT_TRUE(std::filesystem::exists(app_log_file));
         ut::first_module& first_module = app.create_module<ut::first_module>();
         ASSERT_NE(first_module.logger(), nullptr);
-        std::filesystem::path first_module_log_file = app.log_directory()/"first_module.log";
+        std::filesystem::path first_module_log_file = app.log_dir()/"first_module.log";
         ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
     }
     {
         ut::application app;
-        ASSERT_TRUE(std::filesystem::exists(app.log_directory()));
+        ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
         ASSERT_NE(app.logger(), nullptr);
-        std::filesystem::path app_log_file = app.log_directory()/"application.log";
+        std::filesystem::path app_log_file = app.log_dir() / "application.log";
         ASSERT_TRUE(std::filesystem::exists(app_log_file));
         ut::first_module& first_module = app.create_module<ut::first_module>();
         ASSERT_NE(first_module.logger(), nullptr);
-        std::filesystem::path first_module_log_file = app.log_directory()/"first_module.log";
+        std::filesystem::path first_module_log_file = app.log_dir() / "first_module.log";
         ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
     }
 }
@@ -142,9 +145,9 @@ TEST(logging_tests, test_logs__no_args)
 TEST(logging_tests, test_logs)
 {
     ut::application app(appt::program_args(argc, argv));
-    ASSERT_TRUE(std::filesystem::exists(app.log_directory()));
+    ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);
-    std::filesystem::path app_log_file = app.log_directory()/"program_name.v2.log";
+    std::filesystem::path app_log_file = app.log_dir() / "program_name.v2.log";
     ASSERT_TRUE(std::filesystem::exists(app_log_file));
 
     app.create_main_module<ut::times_up_module>();
@@ -154,8 +157,8 @@ TEST(logging_tests, test_logs)
     second_module.set_frequency(3);
     ASSERT_NE(first_module.logger(), nullptr);
     ASSERT_NE(second_module.logger(), nullptr);
-    std::filesystem::path first_module_log_file = app.log_directory()/"first_module.log";
-    std::filesystem::path second_module_log_file = app.log_directory()/"second_module.log";
+    std::filesystem::path first_module_log_file = app.log_dir() / "first_module.log";
+    std::filesystem::path second_module_log_file = app.log_dir() / "second_module.log";
     ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
     ASSERT_TRUE(std::filesystem::exists(second_module_log_file));
     ASSERT_EQ(std::filesystem::file_size(app_log_file), 0);

@@ -16,7 +16,7 @@ namespace private_
 class logging_impl
 {
 protected:
-    static std::filesystem::path make_log_directory_path(const program_args& args);
+    static std::filesystem::path make_log_dirpath(const program_args& args);
 
     static std::string make_logger_name(const program_args& args);
     static spdlog::sink_ptr make_console_sink();
@@ -51,56 +51,57 @@ private:
     using base_ = logging<typename application_base_type::template rebind_t<application_type>>;
 
 public:
-    explicit logging(const appt::program_args& args = appt::program_args())
-        : base_(args),
-        log_dir_(this->self().make_log_directory_path()),
-        logger_(this->self().make_logger())
-    {}
+    explicit logging(const appt::program_args& args = appt::program_args());
+    ~logging();
 
-    ~logging()
-    {
-        if (logger_)
-        {
-            this->self().destroy_logger(logger_);
-            logger_.reset();
-        }
-    }
-
-    inline const std::filesystem::path& log_directory() const { return log_dir_; }
+    inline std::filesystem::path log_dir() const { return log_fpath_.parent_path(); }
+    inline const std::filesystem::path& log_path() const { return log_fpath_; }
 
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
 
 protected:
-    inline std::filesystem::path make_log_directory_path() const;
+    inline std::filesystem::path make_log_dirpath() const;
+    inline std::filesystem::path make_log_filename() const;
 
     std::shared_ptr<spdlog::logger> make_logger() const;
     inline std::string make_logger_name() const;
-    inline std::filesystem::path make_logger_filename() const;
     inline std::vector<spdlog::sink_ptr> make_sink_list() const;
+
     inline void destroy_logger(std::shared_ptr<spdlog::logger> app_logger) const;
 
 private:
-    std::filesystem::path log_dir_;
+    std::filesystem::path log_fpath_;
     std::shared_ptr<spdlog::logger> logger_;
 };
 
 template <class application_base_type, class application_type>
-std::string logging<application_base_type, application_type>::make_logger_name() const
+logging<application_base_type, application_type>::logging(const appt::program_args& args)
+    : base_(args),
+    log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
+    logger_(this->self().make_logger())
+{}
+
+template <class application_base_type, class application_type>
+logging<application_base_type, application_type>::~logging()
 {
-    return logging_impl::make_logger_name(this->args());
+    if (logger_)
+    {
+        this->self().destroy_logger(logger_);
+        logger_.reset();
+    }
 }
 
 template <class application_base_type, class application_type>
-std::filesystem::path logging<application_base_type, application_type>::make_logger_filename() const
+std::filesystem::path logging<application_base_type, application_type>::make_log_dirpath() const
+{
+    return logging_impl::make_log_dirpath(this->args());
+}
+
+template <class application_base_type, class application_type>
+std::filesystem::path logging<application_base_type, application_type>::make_log_filename() const
 {
     return this->self().make_logger_name() + ".log";
-}
-
-template <class application_base_type, class application_type>
-std::filesystem::path logging<application_base_type, application_type>::make_log_directory_path() const
-{
-    return logging_impl::make_log_directory_path(this->args());
 }
 
 template <class application_base_type, class application_type>
@@ -115,6 +116,12 @@ std::shared_ptr<spdlog::logger> logging<application_base_type, application_type>
 }
 
 template <class application_base_type, class application_type>
+std::string logging<application_base_type, application_type>::make_logger_name() const
+{
+    return logging_impl::make_logger_name(this->args());
+}
+
+template <class application_base_type, class application_type>
 std::vector<spdlog::sink_ptr> logging<application_base_type, application_type>::make_sink_list() const
 {
     std::vector<spdlog::sink_ptr> sink_list;
@@ -122,8 +129,7 @@ std::vector<spdlog::sink_ptr> logging<application_base_type, application_type>::
     if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr)
         sink_list.push_back(std::move(sink_ptr));
 
-    std::filesystem::path log_fpath = log_dir_ / this->self().make_logger_filename();
-    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath); sink_ptr)
+    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath_); sink_ptr)
         sink_list.push_back(std::move(sink_ptr));
 
     return sink_list;
