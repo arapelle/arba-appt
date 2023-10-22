@@ -2,13 +2,14 @@
 
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/logging.hpp>
+#include <spdlog/spdlog.h>
 
 namespace example
 {
-class logging_application : public appt::adec::logging<appt::application_logger, appt::application<>>
+class logging_application : public appt::adec::logging<appt::application<>, logging_application>
 {
 private:
-    using base_ = appt::adec::logging<appt::application_logger, appt::application<>>;
+    using base_ = appt::adec::logging<appt::application<>, logging_application>;
 
 public:
     using base_::base_;

@@ -3,6 +3,7 @@
 #include <arba/appt/application/module/module_logger.hpp>
 #include <arba/appt/application/program_args.hpp>
 #include <spdlog/spdlog.h>
+#include <source_location>
 
 inline namespace arba
 {

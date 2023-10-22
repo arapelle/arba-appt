@@ -29,7 +29,7 @@ class application_base
 {
 private:
     application_base() = delete;
-    using logging_application_ = appt::adec::logging<appt::application_logger, appt::application<>>;
+    using logging_application_ = appt::adec::logging<appt::application<>>;
     using multi_user_application_ = appt::adec::multi_user<user, logging_application_>;
     using multi_task_application_ = appt::adec::multi_task<multi_user_application_>;
 
