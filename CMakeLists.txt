@@ -52,7 +52,6 @@ set(headers
     include/arba/appt/user/user.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
-    include/arba/appt/util/console_file_logger.hpp
     include/arba/appt/util/duration.hpp
     include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
@@ -66,7 +65,6 @@ set(sources
     src/application/decorator/logging.cpp
     src/application/module/decorator/logging.cpp
     src/basic_application.cpp
-    src/console_file_logger.cpp
     src/format_time_point.cpp
     src/log_critical_message.cpp
     src/logger_helper.cpp
