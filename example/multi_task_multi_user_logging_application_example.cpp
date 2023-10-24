@@ -66,7 +66,7 @@ struct number_event
 namespace priv
 {
 using module_ = appt::module<application>;
-using logging_module_ = appt::mdec::logging<appt::module_logger, module_>;
+using logging_module_ = appt::mdec::logging<module_>;
 using multi_user_logging_module_ = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, logging_module_>;
 }
 

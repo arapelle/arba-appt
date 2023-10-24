@@ -47,7 +47,6 @@ set(headers
     include/arba/appt/application/module/decorator/multi_user.hpp
     include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/module.hpp
-    include/arba/appt/application/module/module_logger.hpp
     include/arba/appt/application/program_args.hpp
     include/arba/appt/user/user_hash.hpp
     include/arba/appt/user/user.hpp
@@ -65,6 +64,7 @@ set(headers
 ## Sources:
 set(sources
     src/application/decorator/logging.cpp
+    src/application/module/decorator/logging.cpp
     src/basic_application.cpp
     src/console_file_logger.cpp
     src/format_time_point.cpp

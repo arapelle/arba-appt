@@ -95,7 +95,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__logging)
 
     app.logger()->flush();
 
-    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
@@ -137,7 +137,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__logging)
 
     app.logger()->flush();
 
-    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
@@ -173,7 +173,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
 
     app.logger()->flush();
 
-    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
@@ -183,7 +183,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
 TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::mdec::logging<appt::module_logger, appt::module<app_type>>>;
+    using mod_type = appt::mdec::loop<appt::mdec::logging<appt::module<app_type>>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
@@ -195,7 +195,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
 
     side_module.logger()->flush();
 
-    std::filesystem::path log_fpath = app.log_dir() / (side_module.logger()->name() + ".log");
+    std::filesystem::path log_fpath = side_module.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
@@ -217,7 +217,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
 
     app.logger()->flush();
 
-    std::filesystem::path log_fpath = app.log_dir() / (app.logger()->name() + ".log");
+    std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
