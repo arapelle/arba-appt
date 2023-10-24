@@ -55,9 +55,9 @@ set(headers
     include/arba/appt/util/duration.hpp
     include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
-    include/arba/appt/util/log_critical_message.hpp
-    include/arba/appt/util/logger_helper.hpp
-    include/arba/appt/util/logging_macro.hpp
+    include/arba/appt/util/logging/log_critical_message.hpp
+    include/arba/appt/util/logging/logger_make_helper.hpp
+    include/arba/appt/util/logging/logging_macro.hpp
 )
 
 ## Sources:
@@ -67,7 +67,7 @@ set(sources
     src/basic_application.cpp
     src/format_time_point.cpp
     src/log_critical_message.cpp
-    src/logger_helper.cpp
+    src/logger_make_helper.cpp
     src/module_base.cpp
     src/user.cpp
 )

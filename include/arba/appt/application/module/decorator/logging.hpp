@@ -137,13 +137,10 @@ template <class module_base_type, class module_type>
 std::vector<spdlog::sink_ptr> logging<module_base_type, module_type>::make_sink_list() const
 {
     std::vector<spdlog::sink_ptr> sink_list;
-
-    if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr)
+    if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr) [[likely]]
         sink_list.push_back(std::move(sink_ptr));
-
-    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath_); sink_ptr)
+    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath_); sink_ptr) [[likely]]
         sink_list.push_back(std::move(sink_ptr));
-
     return sink_list;
 }
 

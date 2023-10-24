@@ -1,4 +1,4 @@
-#include <arba/appt/util/log_critical_message.hpp>
+#include <arba/appt/util/logging/log_critical_message.hpp>
 #include <iostream>
 #include <arba/appt/util/format_time_point.hpp>
 

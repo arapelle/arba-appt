@@ -8,8 +8,8 @@
 #include <arba/core/sbrm.hpp>
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/application/module/module_base.hpp>
-#include <arba/appt/util/log_critical_message.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
+#include <arba/appt/util/logging/log_critical_message.hpp>
 
 inline namespace arba
 {

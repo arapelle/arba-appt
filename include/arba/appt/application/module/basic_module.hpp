@@ -4,7 +4,7 @@
 #include <arba/core/debug/assert.hpp>
 #include <arba/core/template/exception_policy.hpp>
 #include <arba/appt/application/execution_status.hpp>
-#include <arba/appt/util/log_critical_message.hpp>
+#include <arba/appt/util/logging/log_critical_message.hpp>
 #include <spdlog/spdlog.h>
 #include <source_location>
 #include <exception>

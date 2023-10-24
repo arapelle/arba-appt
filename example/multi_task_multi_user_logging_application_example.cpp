@@ -8,7 +8,7 @@
 #include <arba/appt/application/module/decorator/logging.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/util/logging_macro.hpp>
+#include <arba/appt/util/logging/logging_macro.hpp>
 #include <random>
 
 namespace example

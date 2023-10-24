@@ -15,6 +15,9 @@ namespace private_
 
 class logging_impl
 {
+public:
+    static constexpr std::string_view default_logger_name = "application";
+
 protected:
     static std::filesystem::path make_log_dirpath(const program_args& args);
 
@@ -125,13 +128,10 @@ template <class application_base_type, class application_type>
 std::vector<spdlog::sink_ptr> logging<application_base_type, application_type>::make_sink_list() const
 {
     std::vector<spdlog::sink_ptr> sink_list;
-
-    if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr)
+    if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr) [[likely]]
         sink_list.push_back(std::move(sink_ptr));
-
-    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath_); sink_ptr)
+    if (spdlog::sink_ptr sink_ptr = this->self().make_file_sink(log_fpath_); sink_ptr) [[likely]]
         sink_list.push_back(std::move(sink_ptr));
-
     return sink_list;
 }
 
