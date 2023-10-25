@@ -175,10 +175,10 @@ void multi_task<application_base_type, application_type>::join_side_modules_()
 {
     for (auto& entry : side_modules_)
     {
-        if (entry.first->run_status() != execution_status::execution_success)
-            run_status_ = execution_status::execution_failure;
         if (entry.second.joinable())
             entry.second.join();
+        if (entry.first->run_status() != execution_status::execution_success)
+            run_status_ = execution_status::execution_failure;
     }
 }
 
