@@ -43,7 +43,8 @@ template <class ApplicationType, class ModuleType>
 void module<ApplicationType, ModuleType>::init()
 {
     base_::init();
-    this->app().event_manager().connect(event_box_);
+    if (event_box_.listened_event_manager() == nullptr) [[likely]]
+        this->app().event_manager().connect(event_box_);
 }
 
 }
