@@ -6,15 +6,13 @@ namespace ut
 {
 
 template <class ApplicationType>
-class counting_module : public appt::module<ApplicationType>
+class counting_module : public appt::module<ApplicationType, counting_module<ApplicationType>>
 {
 private:
-    using base_ = appt::module<ApplicationType>;
+    using base_ = appt::module<ApplicationType, counting_module<ApplicationType>>;
 
 public:
-    counting_module(std::string_view module_name = std::string_view())
-        : appt::module<ApplicationType>(module_name)
-    {}
+    using base_::base_;
 
     virtual ~counting_module() override = default;
 

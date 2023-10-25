@@ -56,7 +56,7 @@ public:
     }
 };
 
-class times_up_module : public appt::module<application>
+class times_up_module : public appt::module<application, times_up_module>
 {
 public:
     virtual ~times_up_module() override = default;

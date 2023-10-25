@@ -31,9 +31,10 @@ public:
     std::string message;
 };
 
-class ut_first_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
+class ut_first_event_module : public appt::module<ut_application, ut_first_event_module>,
+                              public evnt::event_listener<ut_event>
 {
-    using base_ = appt::module<ut_application>;
+    using base_ = appt::module<ut_application, ut_first_event_module>;
 
 public:
     virtual ~ut_first_event_module() override = default;
@@ -65,9 +66,10 @@ public:
     std::vector<std::string> messages;
 };
 
-class ut_second_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
+class ut_second_event_module : public appt::module<ut_application, ut_second_event_module>,
+                               public evnt::event_listener<ut_event>
 {
-    using base_ = appt::module<ut_application>;
+    using base_ = appt::module<ut_application, ut_second_event_module>;
 
 public:
     virtual ~ut_second_event_module() override = default;

@@ -13,7 +13,7 @@ public:
     using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
 };
 
-class ut_times_up_module : public appt::module<ut_application>
+class ut_times_up_module : public appt::module<ut_application, ut_times_up_module>
 {
 public:
     virtual ~ut_times_up_module() override = default;
