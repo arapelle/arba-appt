@@ -5,6 +5,7 @@
 #include <arba/appt/application/module/decorator/logging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <gtest/gtest.h>
+#include "modules/bad_crtp_module.hpp"
 #include "util/stream_capture.hpp"
 #include "util/text_file_content.hpp"
 
@@ -207,6 +208,24 @@ TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("The init status is 'ready' (should be at least 'executing'). "
                                      "Did you forget to call parent init()?"), std::string::npos);
+}
+
+TEST(exception_handling_tests, test_main_module_init_fails__bad_crtp_module)
+{
+    using app_type = ut_application<multi_task_logging_application>;
+
+    app_type app;
+    auto& main_module = app.create_main_module<ut::bad_crtp_module<app_type>>();
+    ASSERT_EQ(app.init(), appt::execution_failure);
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    app.logger()->flush();
+
+    std::filesystem::path log_fpath = app.log_path();
+    ASSERT_TRUE(std::filesystem::exists(log_fpath));
+    std::string log_file_contents = text_file_content(log_fpath);
+    ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_file_contents.find("CRTP class is not you used correctly."), std::string::npos);
 }
 
 // Side module tests

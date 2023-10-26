@@ -63,6 +63,9 @@ private:
     application_type* application_ = nullptr;
     execution_status init_status_ = execution_status::ready;
     execution_status run_status_ = execution_status::ready;
+
+    template <class OtherApplicationType, class OtherModuleType>
+    friend class basic_module;
 };
 
 // Template methods implementation:
@@ -78,8 +81,11 @@ void basic_module<ApplicationType>::set_app(application_type& app)
 template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
-    init_status_ = execution_status::executing;
-    ARBA_ASSERT(application_ != nullptr);
+    throw std::runtime_error("CRTP class is not you used correctly.\n"
+                             "You forgot to provide the ModuleType in your custom module type,\n"
+                             "or you are using a decorator around basic_module<AppType> "
+                             "which forgot to call rebind_t<OtherModuleType>,\n"
+                             "or you are doing something very nasty. >.>");
 }
 
 template <class ApplicationType>
@@ -107,6 +113,10 @@ void basic_module<ApplicationType>::run(std::nothrow_t)
         if constexpr (requires(application_type& app){ { app.stop() }; })
         {
             app().stop();
+        }
+        else
+        {
+            throw;
         }
     }
 }
@@ -152,6 +162,13 @@ private:
 
 public:
     using base_::base_;
+
+protected:
+    virtual void init()
+    {
+        this->init_status_ = execution_status::executing;
+        ARBA_ASSERT(&(this->app()) != nullptr);
+    }
 
 protected:
     using self_type = ModuleType;
