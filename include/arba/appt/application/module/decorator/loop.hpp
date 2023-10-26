@@ -93,7 +93,7 @@ void loop<module_base_type, module_type>::set_frequency(uint16_t times_per_secon
 template <typename module_base_type, typename module_type>
 std::chrono::nanoseconds loop<module_base_type, module_type>::compute_loop_duration_() const
 {
-    return std::chrono::nanoseconds(static_cast<intmax_t>(1000./frequency_)*1000000);
+    return std::chrono::nanoseconds(static_cast<intmax_t>(static_cast<long double>(1000000000.) / frequency_));
 }
 
 }
