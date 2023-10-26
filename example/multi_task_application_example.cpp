@@ -43,6 +43,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<number_event>(*this);
         numbers_.reserve(6);
     }

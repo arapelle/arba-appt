@@ -36,6 +36,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         ++init_count;
     }
 

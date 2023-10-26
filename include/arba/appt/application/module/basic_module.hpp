@@ -34,19 +34,34 @@ public:
     inline application_type& app() { return *application_; }
     void set_app(application_type& app);
 
-    virtual void init();
+    execution_status init(core::maythrow_t)
+    {
+        core::sbrm set_execution_failure_if_err = [this]{ init_status_ = execution_status::execution_failure; };
+        this->init();
+        if (init_status_ == execution_status::ready) [[unlikely]]
+            throw std::runtime_error("The init status is 'ready' (should be at least 'executing'). "
+                                     "Did you forget to call parent init()?");
+        set_execution_failure_if_err.disable();
+        if (init_status_ == execution_status::executing) [[likely]]
+            init_status_ = execution_status::execution_success;
+        return init_status_;
+    }
+
     void run(core::maythrow_t);
     void run(std::nothrow_t);
     virtual void stop() {}
 
+    [[nodiscard]] inline execution_status init_status() const noexcept { return init_status_; }
     [[nodiscard]] inline execution_status run_status() const noexcept { return run_status_; }
 
 protected:
+    virtual void init();
     virtual void run() = 0;
     virtual void handle_caught_exception(const std::source_location& location, std::exception_ptr ex_ptr);
 
 private:
     application_type* application_ = nullptr;
+    execution_status init_status_ = execution_status::ready;
     execution_status run_status_ = execution_status::ready;
 };
 
@@ -63,17 +78,20 @@ void basic_module<ApplicationType>::set_app(application_type& app)
 template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
+    init_status_ = execution_status::executing;
     ARBA_ASSERT(application_ != nullptr);
 }
 
 template <class ApplicationType>
 void basic_module<ApplicationType>::run(core::maythrow_t)
 {
+    ARBA_ASSERT(init_status_ == execution_status::execution_success);
     run_status_ = execution_status::executing;
     core::sbrm set_execution_failure_if_err = [this]{ run_status_ = execution_status::execution_failure; };
     this->run();
     set_execution_failure_if_err.disable();
-    run_status_ = execution_status::execution_success;
+    if (run_status_ == execution_status::executing) [[likely]]
+        run_status_ = execution_status::execution_success;
 }
 
 template <class ApplicationType>

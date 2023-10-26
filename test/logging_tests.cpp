@@ -100,6 +100,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         logger()->set_level(spdlog::level::debug);
     }
 

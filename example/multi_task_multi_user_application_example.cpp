@@ -50,11 +50,15 @@ using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
 class consumer_module : public loop_multi_user_module<consumer_module>,
                         public evnt::event_listener<number_event>
 {
+private:
+    using base_ = loop_multi_user_module<consumer_module>;
+
 public:
     virtual ~consumer_module() override = default;
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<number_event>(*this);
         users().reserve(6);
     }

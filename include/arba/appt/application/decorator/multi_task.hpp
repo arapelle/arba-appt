@@ -92,13 +92,26 @@ private:
 template <typename application_base_type, typename application_type>
 execution_status multi_task<application_base_type, application_type>::init()
 {
-    init_status_ = execution_status::executing;
     try
     {
+        init_status_ = execution_status::executing;
         if (main_module_)
-            main_module_->init();
-        for (auto& entry : side_modules_)
-            entry.first->init();
+        {
+            if (main_module_->init(core::maythrow) != execution_status::execution_success)
+                init_status_ = execution_status::execution_failure;
+        }
+        if (init_status_ == execution_status::executing) [[likely]]
+        {
+            for (auto& entry : side_modules_)
+            {
+                init_status_ = entry.first->init(core::maythrow);
+                if (init_status_ != execution_status::execution_success) [[unlikely]]
+                {
+                    init_status_ = execution_status::execution_failure;
+                    break;
+                }
+            }
+        }
         init_status_ = execution_status::execution_success;
     }
     catch (...)

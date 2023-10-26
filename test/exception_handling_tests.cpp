@@ -33,6 +33,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         ++init_count;
     }
 
@@ -65,6 +66,8 @@ public:
 
     virtual void init() override
     {
+        if (!base_init_not_called)
+            this->base_::init();
         if (init_fails)
             throw std::runtime_error("INIT_FAIL");
     }
@@ -76,9 +79,12 @@ public:
             throw std::runtime_error("RUN_FAIL");
     }
 
+    bool base_init_not_called = false;
     bool init_fails = false;
     bool run_fails = false;
 };
+
+// Main module tests
 
 TEST(exception_handling_tests, test_main_module_init_fails__logging)
 {
@@ -179,6 +185,31 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("Did you forget to call init()?"), std::string::npos);
 }
+
+TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called_logging)
+{
+    using app_type = ut_application<multi_task_logging_application>;
+    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+
+    app_type app;
+    auto& main_module = app.create_main_module<ut_failing_module<mod_type>>();
+    main_module.base_init_not_called = true;
+    auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
+    loop_module.set_frequency(20);
+    ASSERT_EQ(app.init(), appt::execution_failure);
+    ASSERT_EQ(app.run(), appt::execution_failure);
+
+    app.logger()->flush();
+
+    std::filesystem::path log_fpath = app.log_path();
+    ASSERT_TRUE(std::filesystem::exists(log_fpath));
+    std::string log_file_contents = text_file_content(log_fpath);
+    ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
+    ASSERT_NE(log_file_contents.find("The init status is 'ready' (should be at least 'executing'). "
+                                     "Did you forget to call parent init()?"), std::string::npos);
+}
+
+// Side module tests
 
 TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
 {

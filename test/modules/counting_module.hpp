@@ -8,6 +8,9 @@ namespace ut
 template <class ApplicationType>
 class counting_module : public appt::module<ApplicationType>
 {
+private:
+    using base_ = appt::module<ApplicationType>;
+
 public:
     counting_module(std::string_view module_name = std::string_view())
         : appt::module<ApplicationType>(module_name)
@@ -17,6 +20,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         ++init_count;
     }
 

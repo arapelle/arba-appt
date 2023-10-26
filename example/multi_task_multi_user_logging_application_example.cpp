@@ -87,6 +87,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         logger()->set_level(spdlog::level::trace);
         event_manager().connect<number_event>(*this);
         users().reserve(4);
@@ -139,6 +140,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         logger()->set_level(spdlog::level::trace);
     }
 

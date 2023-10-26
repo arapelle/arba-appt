@@ -61,11 +61,14 @@ using counting_module = ut::counting_module<ut_application>;
 
 class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>>
 {
+private:
+    using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>>;
 public:
     virtual ~multi_user_module() override = default;
 
     virtual void init() override
     {
+        this->base_::init();
         users().clear_users();
         ASSERT_EQ(users().size(), 0);
     }
