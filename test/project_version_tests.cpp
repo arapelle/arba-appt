@@ -6,7 +6,7 @@
 TEST(project_version_tests, test_version_macros)
 {
     const unsigned major = 0;
-    const unsigned minor = 13;
+    const unsigned minor = 14;
     const unsigned patch = 0;
     ASSERT_EQ(ARBA_APPT_VERSION_MAJOR, major);
     ASSERT_EQ(ARBA_APPT_VERSION_MINOR, minor);

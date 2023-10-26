@@ -16,7 +16,7 @@ set_build_type_ifndef()
 set(PROJECT_NAME "arba-appt")
 set(project_namespace "arba")
 set(project_base_name "appt")
-set(PROJECT_VERSION 0.13.0)
+set(PROJECT_VERSION 0.14.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
         DESCRIPTION "A C++ library providing application objects embedding useful tools."
