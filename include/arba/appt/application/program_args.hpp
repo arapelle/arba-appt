@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <iterator>
+#include <arba/core/debug/assert.hpp>
 
 inline namespace arba
 {
@@ -45,7 +46,9 @@ public:
     inline program_args() = default;
     inline program_args(int ac, char** av)
         : argc(ac), argv(ac > 0 ? av : nullptr)
-    {}
+    {
+        ARBA_ASSERT(argc == 0 || argv != nullptr);
+    }
 
     inline std::size_t size() const { return argc; }
     inline bool empty() const { return argc == 0; }
@@ -56,10 +59,9 @@ public:
     inline const_iterator cbegin() const { return begin(); }
     inline const_iterator cend() const { return end(); }
 
-    inline std::string_view operator[](std::size_t index) const { return argv[index]; }
-    inline std::string_view operator[](std::size_t index) { return argv[index]; }
+    inline std::string_view operator[](std::size_t index) const { ARBA_ASSERT(index < argc); return argv[index]; }
 
-    inline std::filesystem::path program_path() const { return argv[0]; }
+    inline std::filesystem::path program_path() const { return (*this)[0]; }
     inline std::filesystem::path program_dir() const { return program_path().parent_path(); }
     inline std::filesystem::path program_name() const { return program_path().filename(); }
     inline std::filesystem::path program_stem() const { return program_path().stem(); }

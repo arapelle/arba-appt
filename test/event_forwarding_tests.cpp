@@ -1,25 +1,26 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/module/module.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 
 using namespace std::string_literals;
 
-std::array s_args = { "/root/dir/program_name.v2.run"s, "6"s, "-c"s, "Debug"s };
+const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "root/dir";
+std::array s_args = { (program_dir / "program_name.v2.run").generic_string(), "6"s, "-c"s, "Debug"s };
 std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_args[3].data() };
 int argc = cs_args.size();
 char** argv = cs_args.data();
 
-class ut_application : public appt::adec::multi_task<appt::application, ut_application>
+class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
 {
-    using base_ = appt::adec::multi_task<appt::application, ut_application>;
+    using base_ = appt::adec::multi_task<appt::application<>, ut_application>;
 
 public:
     using base_::base_;
 
     void init()
     {
-        if (event_manager().max_number_of_event_types() == 0)
-            event_manager().resize(1);
         this->base_::init();
     }
 };
@@ -30,9 +31,10 @@ public:
     std::string message;
 };
 
-class ut_first_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
+class ut_first_event_module : public appt::module<ut_application, ut_first_event_module>,
+                              public evnt::event_listener<ut_event>
 {
-    using base_ = appt::module<ut_application>;
+    using base_ = appt::module<ut_application, ut_first_event_module>;
 
 public:
     virtual ~ut_first_event_module() override = default;
@@ -64,9 +66,10 @@ public:
     std::vector<std::string> messages;
 };
 
-class ut_second_event_module : public appt::module<ut_application>, public evnt::event_listener<ut_event>
+class ut_second_event_module : public appt::module<ut_application, ut_second_event_module>,
+                               public evnt::event_listener<ut_event>
 {
-    using base_ = appt::module<ut_application>;
+    using base_ = appt::module<ut_application, ut_second_event_module>;
 
 public:
     virtual ~ut_second_event_module() override = default;
@@ -94,17 +97,17 @@ public:
 
 TEST(event_forwarding_tests, test_forwarding)
 {
-    ut_application app(argc, argv);
+    ut_application app(appt::program_args(argc, argv));
     ut_first_event_module& first_module = app.create_module<ut_first_event_module>();
     ut_second_event_module& second_module = app.create_module<ut_second_event_module>();
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(first_module.run_count, 1);
     ASSERT_EQ(second_module.run_count, 1);
     ASSERT_EQ(first_module.messages.size(), 1);
     ASSERT_EQ(first_module.messages.front(), "local");
     ASSERT_EQ(second_module.messages.size(), 0);
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(first_module.run_count, 2);
     ASSERT_EQ(second_module.run_count, 2);
     ASSERT_EQ(first_module.messages.size(), 2);
@@ -116,6 +119,9 @@ TEST(event_forwarding_tests, test_forwarding)
 
 int main(int argc, char** argv)
 {
+    std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    auto res = RUN_ALL_TESTS();
+    std::filesystem::remove_all(program_dir);
+    return res;
 }

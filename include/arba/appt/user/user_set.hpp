@@ -14,11 +14,18 @@ namespace priv
 template <typename user_type, typename user_sptr_hash>
 struct user_sptr_equal_to
 {
-    bool operator()(const std::shared_ptr<user_type>& lhs, const std::shared_ptr<user_type>& rhs) const
+    using is_transparent = void;
+
+    constexpr bool operator()(const std::shared_ptr<user_type>& lhs, const std::shared_ptr<user_type>& rhs) const
     {
         if (lhs && rhs)
             return user_sptr_hash::user_id(*lhs) == user_sptr_hash::user_id(*rhs);
         return !lhs && !rhs;
+    }
+
+    constexpr bool operator()(const typename user_sptr_hash::key_type& lhs, const std::shared_ptr<user_type>& rhs) const
+    {
+        return rhs && user_sptr_hash::user_id(*rhs) == lhs;
     }
 };
 }
@@ -60,8 +67,8 @@ public:
 
     template <typename... args_types>
     std::shared_ptr<user_type> create_user(args_types&&... args);
-    const_iterator find_user(const key_type& key) const;
-    iterator find_user(const key_type& key);
+    inline const_iterator find_user(const key_type& key) const { return this->find(key); }
+    inline iterator find_user(const key_type& key) { return this->find(key); }
     inline user_type_sptr find_user_sptr(const key_type& key) const;
     void erase_user(const key_type& key);
     void clear_users();
@@ -113,30 +120,6 @@ user_set<user_type, user_sptr_hash>::operator=(user_set&& other)
     other.user_manager_ = nullptr;
     static_cast<base_&>(*this) = std::move(static_cast<base_&>(other));
     return *this;
-}
-
-template <class user_type, class user_sptr_hash>
-user_set<user_type, user_sptr_hash>::const_iterator
-        user_set<user_type, user_sptr_hash>::find_user(const key_type& key) const
-{
-    // when C++20 heterogenous lookup is ready:
-    //    return this->find(name);
-    // instead of:
-    return std::find_if(begin(), end(),
-                        [&](const user_type_sptr& arg)
-                        { return user_sptr_hash::user_id(*arg) == key; });
-}
-
-template <class user_type, class user_sptr_hash>
-user_set<user_type, user_sptr_hash>::iterator
-user_set<user_type, user_sptr_hash>::find_user(const key_type& key)
-{
-    // when C++20 heterogenous lookup is ready:
-//    return this->find(name);
-    // instead of:
-    return std::find_if(begin(), end(),
-                        [&](const user_type_sptr& arg)
-                        { return user_sptr_hash::user_id(*arg) == key; });
 }
 
 template <class user_type, class user_sptr_hash>

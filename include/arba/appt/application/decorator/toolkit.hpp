@@ -22,7 +22,6 @@ public:
     template <typename other_application_type>
     using rebind_t = toolkit<application_base_type, other_application_type>;
 
-    toolkit(int argc, char** argv) : toolkit(program_args(argc, argv)) {}
     explicit toolkit(const program_args& args = program_args())
         : application_base_type(args), resource_manager_(virtual_filesystem_)
     {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <arba/core/debug/assert.hpp>
 #include <arba/appt/util/duration.hpp>
 #include <chrono>
 #include <thread>
@@ -34,10 +35,6 @@ class loop : public loop<typename module_base_type::template rebind_t<module_typ
 private:
     using base_ = loop<typename module_base_type::template rebind_t<module_type>>;
 
-private:
-    const module_type& self_() const { return static_cast<module_type&>(*this); }
-    module_type& self_() { return static_cast<module_type&>(*this); }
-
 public:
     using application_type = typename base_::application_type;
     using base_::base_;
@@ -46,7 +43,9 @@ public:
 
     virtual void run() override;
     virtual void finish() {}
-    inline  void stop() { run_token_ = false; }
+    virtual void stop() override { run_token_ = false; }
+
+    [[nodiscard]] inline bool is_running() const noexcept { return run_token_; }
 
     inline uint16_t frequency() const { return frequency_; }
     inline void set_frequency(uint16_t times_per_second);
@@ -56,7 +55,7 @@ private:
     inline std::chrono::nanoseconds compute_loop_duration_() const;
 
 private:
-    std::atomic_bool run_token_ = true;
+    std::atomic_bool run_token_ = false;
     std::atomic_uint16_t frequency_ = 60;
     std::chrono::steady_clock::duration loop_duration_ = compute_loop_duration_();
     duration delta_time_;
@@ -65,15 +64,16 @@ private:
 template <typename module_base_type, typename module_type>
 void loop<module_base_type, module_type>::run()
 {
+    run_token_ = true;
     std::chrono::steady_clock clock;
     std::chrono::steady_clock::duration run_loop_duration;
     delta_time_ = loop_duration_;
     std::chrono::steady_clock::time_point loop_start_tp;
     std::chrono::steady_clock::time_point loop_end_tp = clock.now();
-    while (run_token_ && !this->stop_token().stop_requested())
+    while (is_running())
     {
         loop_start_tp = loop_end_tp;
-        self_().run_loop(delta_time_);
+        this->self().run_loop(delta_time_);
         run_loop_duration = clock.now() - loop_start_tp;
         std::this_thread::sleep_for(loop_duration_ - run_loop_duration);
         loop_end_tp = clock.now();
@@ -85,6 +85,7 @@ void loop<module_base_type, module_type>::run()
 template <typename module_base_type, typename module_type>
 void loop<module_base_type, module_type>::set_frequency(uint16_t times_per_second)
 {
+    ARBA_ASSERT(times_per_second > 0);
     frequency_ = times_per_second;
     loop_duration_ = compute_loop_duration_();
 }

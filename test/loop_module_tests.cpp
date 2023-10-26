@@ -1,4 +1,5 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/application.hpp>
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <gtest/gtest.h>
@@ -6,13 +7,13 @@
 
 using namespace std::string_literals;
 
-class ut_application : public appt::adec::multi_task<appt::application, ut_application>
+class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
 {
 public:
-    using appt::adec::multi_task<appt::application, ut_application>::multi_task;
+    using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
 };
 
-class ut_times_up_module : public appt::module<ut_application>
+class ut_times_up_module : public appt::module<ut_application, ut_times_up_module>
 {
 public:
     virtual ~ut_times_up_module() override = default;
@@ -35,12 +36,15 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         ++init_count;
     }
 
-    void run_loop(appt::seconds delta_time)
+    void run_loop(appt::seconds /*delta_time*/)
     {
         ++run_count;
+        if (run_count >= 10)
+            stop();
     }
 
     virtual void finish() override
@@ -62,7 +66,7 @@ TEST(loop_module_tests, test_side_modules)
     ASSERT_EQ(loop_module.name(), "ut_loop_module");
     loop_module.set_frequency(6);
     app.init();
-    app.run();
+    std::ignore = app.run();
     ASSERT_EQ(loop_module.init_count, 1);
     ASSERT_GE(loop_module.run_count, 6);
     ASSERT_LT(loop_module.run_count, 10);

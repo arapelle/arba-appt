@@ -16,7 +16,7 @@ set_build_type_ifndef()
 set(PROJECT_NAME "arba-appt")
 set(project_namespace "arba")
 set(project_base_name "appt")
-set(PROJECT_VERSION 0.12.0)
+set(PROJECT_VERSION 0.13.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
         DESCRIPTION "A C++ library providing application objects embedding useful tools."
@@ -34,39 +34,42 @@ generate_version_macro_header(generated_version_header
 
 ## Headers:
 set(headers
-    include/arba/appt/user/user_manager.hpp
-    include/arba/appt/user/user_hash.hpp
-    include/arba/appt/user/user_set.hpp
-    include/arba/appt/user/user.hpp
-    include/arba/appt/application/decorator/multi_task.hpp
-    include/arba/appt/application/decorator/toolkit.hpp
-    include/arba/appt/application/decorator/multi_user.hpp
-    include/arba/appt/application/decorator/logging.hpp
-    include/arba/appt/application/application_logger.hpp
     include/arba/appt/application/application.hpp
-    include/arba/appt/application/program.hpp
-    include/arba/appt/application/program_args.hpp
-    include/arba/appt/application/module/module_logger.hpp
+    include/arba/appt/application/basic_application.hpp
+    include/arba/appt/application/decorator/logging.hpp
+    include/arba/appt/application/decorator/multi_task.hpp
+    include/arba/appt/application/decorator/multi_user.hpp
+    include/arba/appt/application/decorator/toolkit.hpp
+    include/arba/appt/application/execution_status.hpp
+    include/arba/appt/application/module/basic_module.hpp
+    include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
-    include/arba/appt/application/module/decorator/logging.hpp
+    include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/module.hpp
-    include/arba/appt/util/time_point_to_string.hpp
-    include/arba/appt/util/console_file_logger.hpp
-    include/arba/appt/util/integer_id_factory.hpp
+    include/arba/appt/application/program_args.hpp
+    include/arba/appt/user/user_hash.hpp
+    include/arba/appt/user/user.hpp
+    include/arba/appt/user/user_manager.hpp
+    include/arba/appt/user/user_set.hpp
     include/arba/appt/util/duration.hpp
-    include/arba/appt/util/logging_macro.hpp
-    include/arba/appt/util/logger_helper.hpp
+    include/arba/appt/util/format_time_point.hpp
+    include/arba/appt/util/integer_id_factory.hpp
+    include/arba/appt/util/logging/log_critical_message.hpp
+    include/arba/appt/util/logging/logger_make_helper.hpp
+    include/arba/appt/util/logging/logging_macro.hpp
 )
 
 ## Sources:
 set(sources
-    src/console_file_logger.cpp
-    src/logger_helper.cpp
-    src/program.cpp
-    src/module.cpp
+    src/application/decorator/logging.cpp
+    src/application/module/decorator/logging.cpp
+    src/basic_application.cpp
+    src/format_time_point.cpp
+    src/log_critical_message.cpp
+    src/logger_make_helper.cpp
+    src/module_base.cpp
     src/user.cpp
-    src/time_point_to_string.cpp
 )
 
 ## Add C++ library:
@@ -82,10 +85,10 @@ add_cpp_library(
 
 ## Link C++ targets:
 if(NOT TARGET arba-rsce)
-    find_package(arba-rsce 0.2.0 REQUIRED CONFIG)
+    find_package(arba-rsce 0.3.0 REQUIRED CONFIG)
 endif()
 if(NOT TARGET arba-evnt)
-    find_package(arba-evnt 0.3.0 REQUIRED CONFIG)
+    find_package(arba-evnt 0.5.0 REQUIRED CONFIG)
 endif()
 find_package(spdlog 1.8 REQUIRED CONFIG)
 cpp_library_link_libraries(

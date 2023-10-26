@@ -7,10 +7,10 @@
 
 namespace example
 {
-class application : public appt::multi_task<appt::application, application>
+class application : public appt::multi_task<appt::application<>, application>
 {
 private:
-    using base_ = appt::multi_task<appt::application, application>;
+    using base_ = appt::multi_task<appt::application<>, application>;
 
 public:
     using base_::base_;
@@ -43,6 +43,7 @@ public:
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<number_event>(*this);
         numbers_.reserve(6);
     }
@@ -116,11 +117,9 @@ private:
 
 int main(int argc, char** argv)
 {
-    example::application app(argc, argv);
+    example::application app(appt::program_args(argc, argv));
     app.create_main_module<example::consumer_module>("consumer_module").set_frequency(3);
     app.create_module<example::generator_module>("generator_module").set_frequency(2);
     app.init();
-    app.run();
-
-    return EXIT_SUCCESS;
+    return app.run();
 }

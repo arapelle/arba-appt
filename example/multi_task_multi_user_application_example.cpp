@@ -21,7 +21,7 @@ public:
     std::string name_;
 };
 
-using multi_user_application = appt::adec::multi_user<user, appt::application>;
+using multi_user_application = appt::adec::multi_user<user, appt::application<>>;
 
 class application : public appt::adec::multi_task<multi_user_application, application>
 {
@@ -50,11 +50,15 @@ using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
 class consumer_module : public loop_multi_user_module<consumer_module>,
                         public evnt::event_listener<number_event>
 {
+private:
+    using base_ = loop_multi_user_module<consumer_module>;
+
 public:
     virtual ~consumer_module() override = default;
 
     virtual void init() override
     {
+        this->base_::init();
         event_manager().connect<number_event>(*this);
         users().reserve(6);
     }
@@ -129,11 +133,9 @@ private:
 
 int main(int argc, char** argv)
 {
-    example::application app(argc, argv);
+    example::application app(appt::program_args(argc, argv));
     app.create_main_module<example::consumer_module>().set_frequency(3);
     app.create_module<example::generator_module>().set_frequency(2);
     app.init();
-    app.run();
-
-    return EXIT_SUCCESS;
+    return app.run();
 }
