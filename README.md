@@ -11,8 +11,8 @@ Binaries:
 - CMake 3.26 or later
 
 Libraries:
-- [arba-rsce](https://github.com/arapelle/arba-rsce) 0.2.0
-- [arba-evnt](https://github.com/arapelle/arba-evnt) 0.3.0
+- [arba-rsce](https://github.com/arapelle/arba-rsce) 0.3.0
+- [arba-evnt](https://github.com/arapelle/arba-evnt) 0.5.0
 - [spdlog](https://github.com/gabime/spdlog) 1.8
 
 Testing Libraries (optional):
