@@ -81,7 +81,7 @@ void basic_module<ApplicationType>::set_app(application_type& app)
 template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
-    throw std::runtime_error("CRTP class is not you used correctly.\n"
+    throw std::runtime_error("CRTP class is not used correctly.\n"
                              "You forgot to provide the ModuleType in your custom module type,\n"
                              "or you are using a decorator around basic_module<AppType> "
                              "which forgot to call rebind_t<OtherModuleType>,\n"
@@ -161,6 +161,8 @@ private:
     using base_ = basic_module<ApplicationType>;
 
 public:
+    using self_type = ModuleType;
+
     using base_::base_;
 
 protected:
@@ -171,8 +173,6 @@ protected:
     }
 
 protected:
-    using self_type = ModuleType;
-
     [[nodiscard]] inline const self_type& self() const noexcept { return static_cast<const self_type&>(*this); }
     [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };

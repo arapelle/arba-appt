@@ -7,8 +7,8 @@
 #include <spdlog/spdlog.h>
 #include <arba/core/sbrm.hpp>
 #include <arba/appt/application/execution_status.hpp>
-#include <arba/appt/application/module/module_base.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
+#include <arba/appt/application/module/concepts/concrete_derived_basic_module.hpp>
 #include <arba/appt/util/logging/log_critical_message.hpp>
 
 inline namespace arba
@@ -31,15 +31,15 @@ public:
     using application_base_type::application_base_type;
 };
 
-
 template <typename application_base_type, typename application_type>
 class multi_task : public multi_task<typename application_base_type::template rebind_t<application_type>>
 {
     using base_ = multi_task<typename application_base_type::template rebind_t<application_type>>;
-    using module_base_ = basic_module<application_type>;
-    using module_base_uptr_ = std::unique_ptr<module_base_>;
 
 public:
+    using module_base = basic_module<application_type>;
+    using module_base_uptr = std::unique_ptr<module_base>;
+
     using base_::base_;
 
     execution_status init();
@@ -50,28 +50,26 @@ public:
     [[nodiscard]] inline execution_status init_status() const noexcept { return init_status_; }
     [[nodiscard]] inline execution_status run_status() const noexcept { return run_status_; }
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    void set_main_module(module_base_uptr module_uptr);
+
+    void add_module(module_base_uptr module_uptr);
+
+    template <ConcreteDerivedBasicModule module_type>
     module_type& set_main_module(std::unique_ptr<module_type> module_uptr);
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    template <ConcreteDerivedBasicModule module_type>
     module_type& add_module(std::unique_ptr<module_type> module_uptr);
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    template <ConcreteDerivedBasicModule module_type>
     module_type& create_module(std::string_view module_name);
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    template <ConcreteDerivedBasicModule module_type>
     module_type& create_module();
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    template <ConcreteDerivedBasicModule module_type>
     module_type& create_main_module(std::string_view module_name);
 
-    template <typename module_type>
-        requires std::is_base_of_v<module_base_, module_type> && (!std::is_abstract_v<module_type>)
+    template <ConcreteDerivedBasicModule module_type>
     module_type& create_main_module();
 
 protected:
@@ -82,8 +80,8 @@ private:
     void join_side_modules_();
 
 private:
-    std::vector<std::pair<module_base_uptr_, std::thread>> side_modules_;
-    module_base_uptr_ main_module_;
+    std::vector<std::pair<module_base_uptr, std::thread>> side_modules_;
+    module_base_uptr main_module_;
     execution_status init_status_ = execution_status::ready;
     execution_status run_status_ = execution_status::ready;
     std::mutex mutex_;
@@ -137,9 +135,9 @@ execution_status multi_task<application_base_type, application_type>::run()
 
         for (auto& entry : side_modules_)
         {
-            module_base_* module_ptr = entry.first.get();
-            using run_callback_t = void (module_base_::*)(std::nothrow_t);
-            entry.second = std::thread(static_cast<run_callback_t>(&module_base_::run), module_ptr, std::nothrow);
+            module_base* module_ptr = entry.first.get();
+            using run_callback_t = void (module_base::*)(std::nothrow_t);
+            entry.second = std::thread(static_cast<run_callback_t>(&module_base::run), module_ptr, std::nothrow);
         }
         if (main_module_)
             main_module_->run(core::maythrow);
@@ -233,9 +231,14 @@ void multi_task<application_base_type, application_type>::stop()
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+void multi_task<application_base_type, application_type>::set_main_module(module_base_uptr module_uptr)
+{
+    module_uptr->set_app(this->self());
+    main_module_ = std::move(module_uptr);
+}
+
+template <typename application_base_type, typename application_type>
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type> module_uptr)
 {
     module_uptr->set_app(this->self());
@@ -245,9 +248,14 @@ module_type& multi_task<application_base_type, application_type>::set_main_modul
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+void multi_task<application_base_type, application_type>::add_module(module_base_uptr module_uptr)
+{
+    module_uptr->set_app(this->self());
+    side_modules_.emplace_back(std::move(module_uptr), std::thread());
+}
+
+template <typename application_base_type, typename application_type>
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type> module_uptr)
 {
     module_uptr->set_app(this->self());
@@ -257,9 +265,7 @@ module_type& multi_task<application_base_type, application_type>::add_module(std
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_module(std::string_view module_name)
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
@@ -267,9 +273,7 @@ module_type& multi_task<application_base_type, application_type>::create_module(
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_main_module(std::string_view module_name)
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
@@ -277,9 +281,7 @@ module_type& multi_task<application_base_type, application_type>::create_main_mo
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>();
@@ -287,9 +289,7 @@ module_type& multi_task<application_base_type, application_type>::create_module(
 }
 
 template <typename application_base_type, typename application_type>
-template <typename module_type>
-    requires std::is_base_of_v<typename multi_task<application_base_type, application_type>::module_base_, module_type>
-             && (!std::is_abstract_v<module_type>)
+template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_main_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>();

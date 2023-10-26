@@ -42,6 +42,7 @@ set(headers
     include/arba/appt/application/decorator/toolkit.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/module/basic_module.hpp
+    include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
     include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
