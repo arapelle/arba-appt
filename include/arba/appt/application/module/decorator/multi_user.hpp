@@ -24,7 +24,7 @@ public:
     template <typename other_module_type>
     using rebind_t = multi_user<user_type, user_sptr_hash, module_base_type, other_module_type>;
 
-    explicit multi_user(std::string_view name = std::string_view()) : module_base_type(name) {}
+    using module_base_type::module_base_type;
     virtual ~multi_user() override = default;
 
     inline const user_set& users() const { return users_; }

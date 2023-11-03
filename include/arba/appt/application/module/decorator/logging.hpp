@@ -56,10 +56,6 @@ public:
 public:
     using base_::base_;
 
-    explicit logging(std::string_view name = std::string_view())
-        : base_(name)
-    {}
-
     virtual ~logging() override
     {
         if (logger_)

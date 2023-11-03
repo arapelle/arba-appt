@@ -85,8 +85,8 @@ private:
     using base_ = loop_module<generator_module>;
 
 public:
-    generator_module(std::string_view name = std::string_view())
-        : base_(name), int_generator_(std::random_device{}())
+    generator_module(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name), int_generator_(std::random_device{}())
     {}
 
     virtual ~generator_module() override = default;

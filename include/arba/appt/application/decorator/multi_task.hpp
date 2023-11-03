@@ -268,7 +268,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_module(std::string_view module_name)
 {
-    std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
+    std::unique_ptr module_uptr = std::make_unique<module_type>(this->self(), module_name);
     return add_module<module_type>(std::move(module_uptr));
 }
 
@@ -276,7 +276,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_main_module(std::string_view module_name)
 {
-    std::unique_ptr module_uptr = std::make_unique<module_type>(module_name);
+    std::unique_ptr module_uptr = std::make_unique<module_type>(this->self(), module_name);
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
@@ -284,7 +284,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_module()
 {
-    std::unique_ptr module_uptr = std::make_unique<module_type>();
+    std::unique_ptr module_uptr = std::make_unique<module_type>(this->self());
     return add_module<module_type>(std::move(module_uptr));
 }
 
@@ -292,7 +292,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::create_main_module()
 {
-    std::unique_ptr module_uptr = std::make_unique<module_type>();
+    std::unique_ptr module_uptr = std::make_unique<module_type>(this->self());
     return set_main_module<module_type>(std::move(module_uptr));
 }
 

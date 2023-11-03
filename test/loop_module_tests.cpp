@@ -15,7 +15,11 @@ public:
 
 class ut_times_up_module : public appt::module<ut_application, ut_times_up_module>
 {
+    using base_ = appt::module<ut_application, ut_times_up_module>;
+
 public:
+    using base_::base_;
+
     virtual ~ut_times_up_module() override = default;
 
     virtual void run() override
@@ -31,7 +35,7 @@ private:
     using base_ = appt::mdec::loop<appt::module<ut_application>, ut_loop_module>;
 
 public:
-    ut_loop_module() : base_("ut_loop_module") {}
+    ut_loop_module(application_type& app) : base_(app, "ut_loop_module") {}
     virtual ~ut_loop_module() override = default;
 
     virtual void init() override

@@ -29,7 +29,9 @@ private:
     using base_ = ModuleBaseType::template rebind_t<ut_counting_module>;
 
 public:
-    ut_counting_module() : base_("ut_counting_module") {}
+    using typename base_::application_type;
+
+    ut_counting_module(application_type& app) : base_(app, "ut_counting_module") {}
     virtual ~ut_counting_module() override = default;
 
     virtual void init() override
@@ -62,7 +64,9 @@ private:
     using base_ = ModuleBaseType::template rebind_t<ut_failing_module>;
 
 public:
-    ut_failing_module() : base_("ut_failing_module") {}
+    using typename base_::application_type;
+
+    ut_failing_module(application_type& app) : base_(app, "ut_failing_module") {}
     virtual ~ut_failing_module() override = default;
 
     virtual void init() override
@@ -215,7 +219,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__bad_derived_module)
     using app_type = ut_application<multi_task_logging_application>;
 
     app_type app;
-    app_type::module_base_uptr mod_uptr = std::make_unique<ut::bad_crtp_module<app_type>>();
+    app_type::module_base_uptr mod_uptr = std::make_unique<ut::bad_crtp_module<app_type>>(std::ref(app));
     app.set_main_module(std::move(mod_uptr));
     ASSERT_EQ(app.init(), appt::execution_failure);
     ASSERT_EQ(app.run(), appt::execution_failure);

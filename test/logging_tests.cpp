@@ -58,7 +58,11 @@ public:
 
 class times_up_module : public appt::module<application, times_up_module>
 {
+    using base_ = appt::module<application, times_up_module>;
+
 public:
+    using base_::base_;
+
     virtual ~times_up_module() override = default;
 
     virtual void run() override
@@ -75,7 +79,7 @@ private:
     using base_ = appt::mdec::loop<appt::mdec::logging<appt::module<application>>, first_module>;
 
 public:
-    first_module() : base_("first_module") {}
+    first_module(application_type& app) : base_(app, "first_module") {}
     virtual ~first_module() override = default;
 
     void run_loop(appt::dt::seconds)
@@ -95,7 +99,7 @@ private:
     using base_ = appt::mdec::loop<appt::mdec::logging<appt::module<application>>, second_module>;
 
 public:
-    second_module() : base_("second_module") {}
+    second_module(application_type& app) : base_(app, "second_module") {}
     virtual ~second_module() override = default;
 
     virtual void init() override

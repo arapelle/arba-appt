@@ -54,6 +54,8 @@ private:
     using base_ = loop_multi_user_module<consumer_module>;
 
 public:
+    using base_::base_;
+
     virtual ~consumer_module() override = default;
 
     virtual void init() override
@@ -104,7 +106,7 @@ private:
     using base_ = loop_multi_user_module<generator_module>;
 
 public:
-    generator_module() : base_("first_module"), int_generator_(std::random_device{}()) {}
+    generator_module(application_type& app) : base_(app, "first_module"), int_generator_(std::random_device{}()) {}
     virtual ~generator_module() override = default;
 
     void run_loop(appt::dt::seconds)

@@ -82,7 +82,7 @@ private:
     using base_ = loop_multi_user_logging_module<consumer_module>;
 
 public:
-    consumer_module() : base_("consumer_module") {}
+    consumer_module(application_type& app) : base_(app, "consumer_module") {}
     virtual ~consumer_module() override = default;
 
     virtual void init() override
@@ -135,7 +135,7 @@ private:
     using base_ = loop_logging_module<generator_module>;
 
 public:
-    generator_module() : base_("generator_module"), int_generator_(std::random_device{}()) {}
+    generator_module(application_type& app) : base_(app, "generator_module"), int_generator_(std::random_device{}()) {}
     virtual ~generator_module() override = default;
 
     virtual void init() override

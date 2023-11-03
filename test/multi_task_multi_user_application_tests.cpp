@@ -66,6 +66,8 @@ private:
     using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
                                          multi_user_module>;
 public:
+    using base_::base_;
+
     virtual ~multi_user_module() override = default;
 
     virtual void init() override
@@ -99,7 +101,7 @@ public:
 TEST(multi_user_multi_task_application_tests, test_side_modules)
 {
     ut_application app(appt::program_args(argc, argv));
-    counting_module& module = app.add_module(std::make_unique<counting_module>());
+    counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>();
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
     ASSERT_EQ(app.run(), appt::execution_status::execution_success);
@@ -114,7 +116,7 @@ TEST(multi_user_multi_task_application_tests, test_side_modules)
 TEST(multi_user_multi_task_application_tests, test_main_module)
 {
     ut_application app(appt::program_args(argc, argv));
-    counting_module& module = app.set_main_module(std::make_unique<counting_module>());
+    counting_module& module = app.set_main_module(std::make_unique<counting_module>(std::ref(app)));
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
     ASSERT_EQ(app.run(), appt::execution_status::execution_success);
     ASSERT_EQ(module.init_count, 1);

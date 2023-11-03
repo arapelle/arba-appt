@@ -27,7 +27,9 @@ public:
 
     using application_type = ApplicationType;
 
-    explicit basic_module(std::string_view name = std::string_view()) : module_base(name) {}
+    explicit basic_module(application_type& app, std::string_view name = std::string_view())
+        : module_base(name), application_(&app)
+    {}
     virtual ~basic_module() override = default;
 
     inline const application_type& app() const { return *application_; }

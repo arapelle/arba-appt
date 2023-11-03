@@ -37,6 +37,8 @@ class ut_first_event_module : public appt::module<ut_application, ut_first_event
     using base_ = appt::module<ut_application, ut_first_event_module>;
 
 public:
+    using base_::base_;
+
     virtual ~ut_first_event_module() override = default;
 
     virtual void init() override
@@ -72,6 +74,8 @@ class ut_second_event_module : public appt::module<ut_application, ut_second_eve
     using base_ = appt::module<ut_application, ut_second_event_module>;
 
 public:
+    using base_::base_;
+
     virtual ~ut_second_event_module() override = default;
 
     virtual void init() override
