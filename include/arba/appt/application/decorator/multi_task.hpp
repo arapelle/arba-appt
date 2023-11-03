@@ -233,7 +233,7 @@ void multi_task<application_base_type, application_type>::stop()
 template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::set_main_module(module_base_uptr module_uptr)
 {
-    module_uptr->set_app(this->self());
+    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
     main_module_ = std::move(module_uptr);
 }
 
@@ -241,7 +241,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type> module_uptr)
 {
-    module_uptr->set_app(this->self());
+    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
     main_module_ = std::move(module_uptr);
     return *module_ptr;
@@ -250,7 +250,7 @@ module_type& multi_task<application_base_type, application_type>::set_main_modul
 template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::add_module(module_base_uptr module_uptr)
 {
-    module_uptr->set_app(this->self());
+    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
 }
 
@@ -258,7 +258,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type> module_uptr)
 {
-    module_uptr->set_app(this->self());
+    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
     return *module_ptr;

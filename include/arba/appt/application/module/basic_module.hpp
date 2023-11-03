@@ -73,14 +73,6 @@ private:
 // Template methods implementation:
 
 template <class ApplicationType>
-void basic_module<ApplicationType>::set_app(application_type& app)
-{
-    if (application_ && application_ != &app) [[unlikely]]
-        throw std::runtime_error("Module is already linked to an application.");
-    application_ = &app;
-}
-
-template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
     throw std::runtime_error("CRTP class is not used correctly.\n"

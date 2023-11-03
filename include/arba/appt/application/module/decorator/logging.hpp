@@ -54,7 +54,11 @@ public:
     using application_type = typename base_::application_type;
 
 public:
-    using base_::base_;
+    explicit logging(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name),
+        log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
+        logger_(this->self().make_logger())
+    {}
 
     virtual ~logging() override
     {
@@ -70,18 +74,6 @@ public:
 
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
-
-    void set_app(application_type& app)
-    {
-        if (logger_)
-        {
-            this->self().destroy_logger(logger_);
-            logger_.reset();
-        }
-        this->base_::set_app(app);
-        log_fpath_ = this->self().make_log_dirpath() / this->self().make_log_filename();
-        logger_ = this->self().make_logger();
-    }
 
 protected:
     inline std::filesystem::path make_log_dirpath() const;
