@@ -1,7 +1,7 @@
 #pragma once
 
 #include <arba/core/debug/assert.hpp>
-#include <arba/appt/util/duration.hpp>
+#include <arba/appt/util/delta_time.hpp>
 #include <chrono>
 #include <thread>
 #include <cstdint>

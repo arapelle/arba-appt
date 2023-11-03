@@ -53,7 +53,7 @@ set(headers
     include/arba/appt/user/user.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
-    include/arba/appt/util/duration.hpp
+    include/arba/appt/util/delta_time.hpp
     include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logging/log_critical_message.hpp
