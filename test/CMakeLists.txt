@@ -6,6 +6,7 @@ add_cpp_library_basic_tests(GTest::gtest_main
     SOURCES
         project_version_tests.cpp
         application_tests.cpp
+        delta_time_tests.cpp
         event_forwarding_tests.cpp
         exception_handling_tests.cpp
         execution_status_tests.cpp

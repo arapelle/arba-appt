@@ -93,7 +93,7 @@ public:
         users().reserve(4);
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         ARBA_APPT_LOGGER_TRACE(logger());
         event_manager().emit(event_box());
@@ -143,7 +143,7 @@ public:
         logger()->set_level(spdlog::level::trace);
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         ARBA_APPT_LOGGER_TRACE(logger());
 

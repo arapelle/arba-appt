@@ -1,62 +1,51 @@
 #pragma once
 
-#include <chrono>
+#include <arba/core/chrono/duration.hpp>
 #include <cstdint>
 
 inline namespace arba
 {
 namespace appt
 {
-
-class duration : public std::chrono::steady_clock::duration
+namespace dt  // delta_time
 {
-private:
-    using base_ = std::chrono::steady_clock::duration;
 
+class seconds : private core::seconds_f64
+{
 public:
-    using base_::duration;
-    using base_::operator=;
+    using duration_type = core::seconds_f64;
 
-    inline explicit duration(const base_& arg) : base_(arg) {}
+    using duration_type::duration_type;
+    template <class RepT, class PeriodT>
+    inline seconds(const std::chrono::duration<RepT, PeriodT>& arg)
+        : duration_type(arg)
+    {}
 
-    template <class rep = double>
-    inline rep to_seconds() const
+    inline operator double() const { return this->count(); }
+    [[nodiscard]] inline const duration_type& as_duration() const noexcept
     {
-        return std::chrono::duration_cast<std::chrono::duration<rep>>(*this).count();
-    }
-
-    template <class rep = double>
-    inline rep to_hours() const
-    {
-        return std::chrono::duration_cast<std::chrono::duration<rep, std::chrono::hours::period>>(*this).count();
-    }
-
-    template <class rep = std::chrono::milliseconds::rep>
-    inline rep to_milliseconds() const
-    {
-        return std::chrono::duration_cast<std::chrono::duration<rep, std::milli>>(*this).count();
+        return static_cast<const duration_type&>(*this);
     }
 };
 
-class seconds : public duration
+class hours : private core::hours_f64
 {
 public:
-    using duration::duration;
-    using duration::operator=;
+    using duration_type = core::hours_f64;
 
-    inline seconds(const duration& arg) : duration(arg) {}
-    inline operator double() const { return duration::to_seconds(); }
+    using duration_type::duration_type;
+    template <class rep, class period>
+    inline hours(const std::chrono::duration<rep, period>& arg)
+        : duration_type(arg)
+    {}
+
+    inline operator double() const { return this->count(); }
+    [[nodiscard]] inline const duration_type& as_duration() const noexcept
+    {
+        return static_cast<const duration_type&>(*this);
+    }
 };
 
-class hours : public duration
-{
-public:
-    using duration::duration;
-    using duration::operator=;
-
-    inline hours(const duration& arg) : duration(arg) {}
-    inline operator double() const { return duration::to_hours(); }
-};
-
+}
 }
 }

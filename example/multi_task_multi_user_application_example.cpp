@@ -63,7 +63,7 @@ public:
         users().reserve(6);
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         event_manager().emit(event_box());
 
@@ -107,7 +107,7 @@ public:
     generator_module() : base_("first_module"), int_generator_(std::random_device{}()) {}
     virtual ~generator_module() override = default;
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         number_event event{ die100() };
         app().event_manager().emit(event);

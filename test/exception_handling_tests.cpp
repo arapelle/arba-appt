@@ -38,7 +38,7 @@ public:
         ++init_count;
     }
 
-    void run_loop(appt::seconds /*delta_time*/)
+    void run_loop(appt::dt::seconds /*delta_time*/)
     {
         ++run_count;
         if (run_count >= 30)
@@ -73,7 +73,7 @@ public:
             throw std::runtime_error("INIT_FAIL");
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (run_fails)
