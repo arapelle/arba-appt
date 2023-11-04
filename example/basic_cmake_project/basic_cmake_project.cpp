@@ -9,7 +9,7 @@
 #include <arba/appt/application/module/decorator/logging.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/util/logging_macro.hpp>
+#include <arba/appt/util/logging/logging_macro.hpp>
 #include <random>
 
 namespace example
@@ -30,7 +30,7 @@ class application_base
 {
 private:
     application_base() = delete;
-    using logging_application_ = appt::adec::logging<appt::application_logger, appt::application>;
+    using logging_application_ = appt::adec::logging<appt::application<>>;
     using multi_user_application_ = appt::adec::multi_user<user, logging_application_>;
     using multi_task_application_ = appt::adec::multi_task<multi_user_application_>;
 
@@ -67,7 +67,7 @@ struct number_event
 namespace priv
 {
 using module_ = appt::module<application>;
-using logging_module_ = appt::mdec::logging<appt::module_logger, module_>;
+using logging_module_ = appt::mdec::logging<module_>;
 using multi_user_logging_module_ = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, logging_module_>;
 }
 
@@ -83,7 +83,7 @@ private:
     using base_ = loop_multi_user_logging_module<consumer_module>;
 
 public:
-    consumer_module() : base_("consumer_module") {}
+    consumer_module(application_type& app) : base_(app, "consumer_module") {}
     virtual ~consumer_module() override = default;
 
     virtual void init() override
@@ -135,7 +135,7 @@ private:
     using base_ = loop_logging_module<generator_module>;
 
 public:
-    generator_module() : base_("generator_module"), int_generator_(std::random_device{}()) {}
+    generator_module(application_type& app) : base_(app, "generator_module"), int_generator_(std::random_device{}()) {}
     virtual ~generator_module() override = default;
 
     virtual void init() override
@@ -171,12 +171,11 @@ private:
 
 int main(int argc, char** argv)
 {
-    example::application app(argc, argv);
+    example::application app(appt::program_args(argc, argv));
     app.create_main_module<example::consumer_module>().set_frequency(3);
     app.create_module<example::generator_module>().set_frequency(2);
     app.init();
-    app.run();
-
-    SPDLOG_LOGGER_INFO(app.logger(), "EXIT SUCCESS");
-    return EXIT_SUCCESS;
+    int res = app.run();
+    SPDLOG_LOGGER_INFO(app.logger(), "EXIT");
+    return res;
 }
