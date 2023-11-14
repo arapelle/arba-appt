@@ -40,6 +40,7 @@ set(headers
     include/arba/appt/application/decorator/multi_task.hpp
     include/arba/appt/application/decorator/multi_user.hpp
     include/arba/appt/application/decorator/toolkit.hpp
+    include/arba/appt/application/decorator/versioned/trinum_versioned.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/module/basic_module.hpp
     include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
@@ -81,7 +82,7 @@ add_cpp_library(
     BUILD_STATIC BUILD_arba-arba-static
     HEADERS ${headers} ${generated_version_header}
     SOURCES ${sources}
-    CXX_STANDARD 20
+    CXX_STANDARD 23
 )
 
 ## Link C++ targets:

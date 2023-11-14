@@ -19,6 +19,7 @@ add_cpp_library_basic_tests(GTest::gtest_main
         multi_task_multi_user_application_tests.cpp
         multi_user_application_tests.cpp
         program_args_tests.cpp
+        trinum_versioned_tests.cpp
         user_hash_tests.cpp
         user_manager_tests.cpp
         user_set_tests.cpp
