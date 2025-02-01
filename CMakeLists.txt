@@ -16,7 +16,7 @@ set_build_type_ifndef()
 set(PROJECT_NAME "arba-appt")
 set(project_namespace "arba")
 set(project_base_name "appt")
-set(PROJECT_VERSION 0.13.0)
+set(PROJECT_VERSION 0.14.0)
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
         DESCRIPTION "A C++ library providing application objects embedding useful tools."
@@ -42,6 +42,7 @@ set(headers
     include/arba/appt/application/decorator/toolkit.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/module/basic_module.hpp
+    include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
     include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
@@ -52,7 +53,7 @@ set(headers
     include/arba/appt/user/user.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
-    include/arba/appt/util/duration.hpp
+    include/arba/appt/util/delta_time.hpp
     include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logging/log_critical_message.hpp

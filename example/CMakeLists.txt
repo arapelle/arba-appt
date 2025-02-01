@@ -7,4 +7,5 @@ add_cpp_library_examples(
         multi_task_application_example.cpp
         multi_task_multi_user_application_example.cpp
         multi_task_multi_user_logging_application_example.cpp
+        basic_cmake_project/basic_cmake_project.cpp
 )

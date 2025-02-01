@@ -48,7 +48,7 @@ public:
         numbers_.reserve(6);
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         event_manager().emit(event_box());
 
@@ -85,13 +85,13 @@ private:
     using base_ = loop_module<generator_module>;
 
 public:
-    generator_module(std::string_view name = std::string_view())
-        : base_(name), int_generator_(std::random_device{}())
+    generator_module(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name), int_generator_(std::random_device{}())
     {}
 
     virtual ~generator_module() override = default;
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         number_event event{ die6() };
         app().event_manager().emit(event);

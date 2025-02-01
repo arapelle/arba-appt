@@ -27,7 +27,9 @@ public:
 
     using application_type = ApplicationType;
 
-    explicit basic_module(std::string_view name = std::string_view()) : module_base(name) {}
+    explicit basic_module(application_type& app, std::string_view name = std::string_view())
+        : module_base(name), application_(&app)
+    {}
     virtual ~basic_module() override = default;
 
     inline const application_type& app() const { return *application_; }
@@ -71,17 +73,9 @@ private:
 // Template methods implementation:
 
 template <class ApplicationType>
-void basic_module<ApplicationType>::set_app(application_type& app)
-{
-    if (application_ && application_ != &app) [[unlikely]]
-        throw std::runtime_error("Module is already linked to an application.");
-    application_ = &app;
-}
-
-template <class ApplicationType>
 void basic_module<ApplicationType>::init()
 {
-    throw std::runtime_error("CRTP class is not you used correctly.\n"
+    throw std::runtime_error("CRTP class is not used correctly.\n"
                              "You forgot to provide the ModuleType in your custom module type,\n"
                              "or you are using a decorator around basic_module<AppType> "
                              "which forgot to call rebind_t<OtherModuleType>,\n"
@@ -161,6 +155,8 @@ private:
     using base_ = basic_module<ApplicationType>;
 
 public:
+    using self_type = ModuleType;
+
     using base_::base_;
 
 protected:
@@ -171,8 +167,6 @@ protected:
     }
 
 protected:
-    using self_type = ModuleType;
-
     [[nodiscard]] inline const self_type& self() const noexcept { return static_cast<const self_type&>(*this); }
     [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };

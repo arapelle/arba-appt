@@ -29,7 +29,9 @@ private:
     using base_ = ModuleBaseType::template rebind_t<ut_counting_module>;
 
 public:
-    ut_counting_module() : base_("ut_counting_module") {}
+    using typename base_::application_type;
+
+    ut_counting_module(application_type& app) : base_(app, "ut_counting_module") {}
     virtual ~ut_counting_module() override = default;
 
     virtual void init() override
@@ -38,7 +40,7 @@ public:
         ++init_count;
     }
 
-    void run_loop(appt::seconds /*delta_time*/)
+    void run_loop(appt::dt::seconds /*delta_time*/)
     {
         ++run_count;
         if (run_count >= 30)
@@ -62,7 +64,9 @@ private:
     using base_ = ModuleBaseType::template rebind_t<ut_failing_module>;
 
 public:
-    ut_failing_module() : base_("ut_failing_module") {}
+    using typename base_::application_type;
+
+    ut_failing_module(application_type& app) : base_(app, "ut_failing_module") {}
     virtual ~ut_failing_module() override = default;
 
     virtual void init() override
@@ -73,7 +77,7 @@ public:
             throw std::runtime_error("INIT_FAIL");
     }
 
-    void run_loop(appt::seconds)
+    void run_loop(appt::dt::seconds)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (run_fails)
@@ -210,12 +214,13 @@ TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called
                                      "Did you forget to call parent init()?"), std::string::npos);
 }
 
-TEST(exception_handling_tests, test_main_module_init_fails__bad_crtp_module)
+TEST(exception_handling_tests, test_main_module_init_fails__bad_derived_module)
 {
     using app_type = ut_application<multi_task_logging_application>;
 
     app_type app;
-    auto& main_module = app.create_main_module<ut::bad_crtp_module<app_type>>();
+    app_type::module_base_uptr mod_uptr = std::make_unique<ut::bad_crtp_module<app_type>>(std::ref(app));
+    app.set_main_module(std::move(mod_uptr));
     ASSERT_EQ(app.init(), appt::execution_failure);
     ASSERT_EQ(app.run(), appt::execution_failure);
 
@@ -225,7 +230,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__bad_crtp_module)
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
-    ASSERT_NE(log_file_contents.find("CRTP class is not you used correctly."), std::string::npos);
+    ASSERT_NE(log_file_contents.find("CRTP class is not used correctly."), std::string::npos);
 }
 
 // Side module tests

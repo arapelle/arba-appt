@@ -49,7 +49,7 @@ using counting_module = ut::counting_module<ut_application>;
 TEST(multi_task_application_sm_tests, test_side_modules)
 {
     ut_application app(appt::program_args(argc, argv));
-    counting_module& module = app.add_module(std::make_unique<counting_module>());
+    counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>("counting_module_2");
     counting_module& module_3 = app.create_module<counting_module>();
     ASSERT_EQ(module.name(), "module_0");
