@@ -1,8 +1,7 @@
 #pragma once
 
-#include <arba/core/sbrm.hpp>
-#include <arba/core/debug/assert.hpp>
-#include <arba/core/template/exception_policy.hpp>
+#include <arba/core/sbrm/sbrm.hpp>
+#include <arba/meta/policy/exception_policy.hpp>
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/util/logging/log_critical_message.hpp>
 #include <spdlog/spdlog.h>
@@ -36,7 +35,7 @@ public:
     inline application_type& app() { return *application_; }
     void set_app(application_type& app);
 
-    execution_status init(core::maythrow_t)
+    execution_status init(meta::maythrow_t)
     {
         core::sbrm set_execution_failure_if_err = [this]{ init_status_ = execution_status::execution_failure; };
         this->init();
@@ -49,7 +48,7 @@ public:
         return init_status_;
     }
 
-    void run(core::maythrow_t);
+    void run(meta::maythrow_t);
     void run(std::nothrow_t);
     virtual void stop() {}
 
@@ -83,9 +82,9 @@ void basic_module<ApplicationType>::init()
 }
 
 template <class ApplicationType>
-void basic_module<ApplicationType>::run(core::maythrow_t)
+void basic_module<ApplicationType>::run(meta::maythrow_t)
 {
-    ARBA_ASSERT(init_status_ == execution_status::execution_success);
+    assert(init_status_ == execution_status::execution_success);
     run_status_ = execution_status::executing;
     core::sbrm set_execution_failure_if_err = [this]{ run_status_ = execution_status::execution_failure; };
     this->run();
@@ -99,7 +98,7 @@ void basic_module<ApplicationType>::run(std::nothrow_t)
 {
     try
     {
-        run(core::maythrow);
+        run(meta::maythrow);
     }
     catch (...)
     {
@@ -163,7 +162,7 @@ protected:
     virtual void init()
     {
         this->init_status_ = execution_status::executing;
-        ARBA_ASSERT(&(this->app()) != nullptr);
+        assert(&(this->app()) != nullptr);
     }
 
 protected:

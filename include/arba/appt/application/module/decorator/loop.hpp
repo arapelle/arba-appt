@@ -1,10 +1,10 @@
 #pragma once
 
-#include <arba/core/debug/assert.hpp>
 #include <arba/appt/util/delta_time.hpp>
 #include <chrono>
 #include <thread>
 #include <cstdint>
+#include <cassert>
 
 inline namespace arba
 {
@@ -96,7 +96,7 @@ void loop<module_base_type, module_type>::run()
 template <typename module_base_type, typename module_type>
 void loop<module_base_type, module_type>::set_frequency(uint16_t times_per_second)
 {
-    ARBA_ASSERT(times_per_second > 0);
+    assert(times_per_second > 0);
     frequency_ = times_per_second;
     loop_duration_ = compute_loop_duration_();
 }

@@ -5,7 +5,7 @@
 #include <format>
 #include <thread>
 #include <spdlog/spdlog.h>
-#include <arba/core/sbrm.hpp>
+#include <arba/core/sbrm/sbrm.hpp>
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
 #include <arba/appt/application/module/concepts/concrete_derived_basic_module.hpp>
@@ -95,14 +95,14 @@ execution_status multi_task<application_base_type, application_type>::init()
         init_status_ = execution_status::executing;
         if (main_module_)
         {
-            if (main_module_->init(core::maythrow) != execution_status::execution_success)
+            if (main_module_->init(meta::maythrow) != execution_status::execution_success)
                 init_status_ = execution_status::execution_failure;
         }
         if (init_status_ == execution_status::executing) [[likely]]
         {
             for (auto& entry : side_modules_)
             {
-                init_status_ = entry.first->init(core::maythrow);
+                init_status_ = entry.first->init(meta::maythrow);
                 if (init_status_ != execution_status::execution_success) [[unlikely]]
                 {
                     init_status_ = execution_status::execution_failure;
@@ -140,7 +140,7 @@ execution_status multi_task<application_base_type, application_type>::run()
             entry.second = std::thread(static_cast<run_callback_t>(&module_base::run), module_ptr, std::nothrow);
         }
         if (main_module_)
-            main_module_->run(core::maythrow);
+            main_module_->run(meta::maythrow);
 
         stop_side_modules_iferr.disable();
     }
@@ -233,7 +233,7 @@ void multi_task<application_base_type, application_type>::stop()
 template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::set_main_module(module_base_uptr module_uptr)
 {
-    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
+    assert((&module_uptr->app()) == (&this->self()));
     main_module_ = std::move(module_uptr);
 }
 
@@ -241,7 +241,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type> module_uptr)
 {
-    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
+    assert((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
     main_module_ = std::move(module_uptr);
     return *module_ptr;
@@ -250,7 +250,7 @@ module_type& multi_task<application_base_type, application_type>::set_main_modul
 template <typename application_base_type, typename application_type>
 void multi_task<application_base_type, application_type>::add_module(module_base_uptr module_uptr)
 {
-    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
+    assert((&module_uptr->app()) == (&this->self()));
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
 }
 
@@ -258,7 +258,7 @@ template <typename application_base_type, typename application_type>
 template <ConcreteDerivedBasicModule module_type>
 module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type> module_uptr)
 {
-    ARBA_ASSERT((&module_uptr->app()) == (&this->self()));
+    assert((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
     return *module_ptr;

@@ -73,10 +73,8 @@ TEST(multi_user_application_tests, test_run)
     ASSERT_EQ(user_sptr->name, "Gamma");
 }
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     std::filesystem::create_directories(program_dir);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

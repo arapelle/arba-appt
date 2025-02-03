@@ -3,7 +3,6 @@
 #include <arba/appt/application/decorator/multi_user.hpp>
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
-#include <arba/core/sbrm.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include "modules/counting_module.hpp"
@@ -156,7 +155,6 @@ TEST(multi_user_multi_task_application_tests, test_create_multi_user_module)
 int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
-    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

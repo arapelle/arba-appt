@@ -105,6 +105,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__logging)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -147,6 +148,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__logging)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -271,6 +273,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -302,13 +305,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_cerr)
 int main(int argc, char** argv)
 {
     const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "application";
-    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     std::filesystem::create_directories(program_dir);
-
     ::testing::InitGoogleTest(&argc, argv);
-    int exit_value = RUN_ALL_TESTS();
-    if (exit_value != 0)
-        program_dir_remover.disable();
-
-    return exit_value;
+    return RUN_ALL_TESTS();
 }

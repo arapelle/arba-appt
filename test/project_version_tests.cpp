@@ -1,15 +1,11 @@
 #include <arba/appt/version.hpp>
-#include <gtest/gtest.h>
-#include <format>
-#include <cstdlib>
 
-TEST(project_version_tests, test_version_macros)
+#include <gtest/gtest.h>
+
+TEST(project_version_tests, test_version_core)
 {
-    const unsigned major = 0;
-    const unsigned minor = 15;
-    const unsigned patch = 0;
-    ASSERT_EQ(ARBA_APPT_VERSION_MAJOR, major);
-    ASSERT_EQ(ARBA_APPT_VERSION_MINOR, minor);
-    ASSERT_EQ(ARBA_APPT_VERSION_PATCH, patch);
-    ASSERT_EQ(ARBA_APPT_VERSION, std::format("{}.{}.{}", major, minor, patch));
+    constexpr unsigned major = 0;
+    constexpr unsigned minor = 15;
+    constexpr unsigned patch = 0;
+    static_assert(arba::appt::version.core() == arba::cppx::numver(major, minor, patch));
 }

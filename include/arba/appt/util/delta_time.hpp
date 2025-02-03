@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/core/chrono/duration.hpp>
+#include <arba/stdx/chrono/duration.hpp>
 #include <cstdint>
 
 inline namespace arba
@@ -10,10 +10,10 @@ namespace appt
 namespace dt  // delta_time
 {
 
-class seconds : private core::seconds_f64
+class seconds : private stdx::seconds_f64
 {
 public:
-    using duration_type = core::seconds_f64;
+    using duration_type = stdx::seconds_f64;
 
     using duration_type::duration_type;
     template <class RepT, class PeriodT>
@@ -28,10 +28,10 @@ public:
     }
 };
 
-class hours : private core::hours_f64
+class hours : private stdx::hours_f64
 {
 public:
-    using duration_type = core::hours_f64;
+    using duration_type = stdx::hours_f64;
 
     using duration_type::duration_type;
     template <class rep, class period>

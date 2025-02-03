@@ -190,7 +190,5 @@ int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

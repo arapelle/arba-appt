@@ -1,6 +1,6 @@
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/application.hpp>
-#include <arba/core/sbrm.hpp>
+#include <arba/core/sbrm/sbrm.hpp>
 #include <gtest/gtest.h>
 #include <cstdlib>
 #include "modules/counting_module.hpp"
@@ -70,7 +70,6 @@ TEST(multi_task_application_sm_tests, test_side_modules)
 int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
-    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
