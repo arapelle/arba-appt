@@ -1,10 +1,11 @@
 #pragma once
 
 #include "user.hpp"
-#include <vector>
+
 #include <memory>
 #include <mutex>
 #include <stdexcept>
+#include <vector>
 
 inline namespace arba
 {
@@ -12,7 +13,7 @@ namespace appt
 {
 
 template <class UserType>
-requires std::is_base_of_v<user, UserType>
+    requires std::is_base_of_v<user, UserType>
 class user_manager
 {
 public:
@@ -25,9 +26,21 @@ public:
     std::shared_ptr<UserType> shared_user(const id_type& user_id);
     void release_user(const id_type& user_id);
     void reset_user_shared_ptr(std::shared_ptr<UserType>& user_sptr);
-    std::size_t size() const { std::lock_guard lock(mutex_); return user_id_factory_.number_of_valid_id(); }
-    std::size_t max_number_of_users() const { std::lock_guard lock(mutex_); return max_number_of_users_; }
-    void set_max_number_of_users(std::size_t max_count) { std::lock_guard lock(mutex_); max_number_of_users_ = max_count; }
+    std::size_t size() const
+    {
+        std::lock_guard lock(mutex_);
+        return user_id_factory_.number_of_valid_id();
+    }
+    std::size_t max_number_of_users() const
+    {
+        std::lock_guard lock(mutex_);
+        return max_number_of_users_;
+    }
+    void set_max_number_of_users(std::size_t max_count)
+    {
+        std::lock_guard lock(mutex_);
+        max_number_of_users_ = max_count;
+    }
 
 private:
     void release_user_(const id_type& usr_id, std::weak_ptr<UserType>& user_wptr);
@@ -104,5 +117,5 @@ void user_manager<UserType>::release_user_(const id_type& usr_id, std::weak_ptr<
         users_.pop_back();
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

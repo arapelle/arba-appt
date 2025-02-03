@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 
 #include "program_args.hpp"
+
 #include <string>
 
 inline namespace arba
@@ -42,5 +43,5 @@ protected:
     [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "basic_module.hpp"
-#include <arba/rsce/resource_manager.hpp>
+
 #include <arba/evnt/evnt.hpp>
+#include <arba/rsce/resource_manager.hpp>
 
 inline namespace arba
 {
@@ -47,5 +48,5 @@ void module<ApplicationType, ModuleType>::init()
         this->app().event_manager().connect(event_box_);
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

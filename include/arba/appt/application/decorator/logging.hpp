@@ -1,8 +1,10 @@
 #pragma once
 
 #include <arba/appt/application/program_args.hpp>
-#include <filesystem>
+
 #include <spdlog/logger.h>
+
+#include <filesystem>
 
 inline namespace arba
 {
@@ -28,7 +30,7 @@ protected:
     static void destroy_logger(std::shared_ptr<spdlog::logger> logger);
 };
 
-}
+} // namespace private_
 
 template <class ApplicationBase, class SelfType = void>
 class logging;
@@ -47,8 +49,7 @@ public:
 };
 
 template <class ApplicationBase, class SelfType>
-class logging : public logging<typename ApplicationBase::template rebind_t<SelfType>>,
-                private_::logging_impl
+class logging : public logging<typename ApplicationBase::template rebind_t<SelfType>>, private_::logging_impl
 {
 private:
     using base_ = logging<typename ApplicationBase::template rebind_t<SelfType>>;
@@ -80,10 +81,10 @@ private:
 
 template <class ApplicationBase, class SelfType>
 logging<ApplicationBase, SelfType>::logging(const appt::program_args& args)
-    : base_(args),
-    log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
-    logger_(this->self().make_logger())
-{}
+    : base_(args), log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
+      logger_(this->self().make_logger())
+{
+}
 
 template <class ApplicationBase, class SelfType>
 logging<ApplicationBase, SelfType>::~logging()
@@ -111,8 +112,8 @@ template <class ApplicationBase, class SelfType>
 std::shared_ptr<spdlog::logger> logging<ApplicationBase, SelfType>::make_logger() const
 {
     std::vector<spdlog::sink_ptr> sink_list = this->self().make_sink_list();
-    std::shared_ptr logger = std::make_shared<spdlog::logger>(this->self().make_logger_name(),
-                                                              sink_list.begin(), sink_list.end());
+    std::shared_ptr logger =
+        std::make_shared<spdlog::logger>(this->self().make_logger_name(), sink_list.begin(), sink_list.end());
     logger->set_level(static_cast<decltype(spdlog::level::info)>(SPDLOG_ACTIVE_LEVEL));
     logging_impl::initialize_logger(logger);
     return logger;
@@ -141,6 +142,6 @@ void logging<ApplicationBase, SelfType>::destroy_logger(std::shared_ptr<spdlog::
     logging_impl::destroy_logger(app_logger);
 }
 
-}
-}
-}
+} // namespace adec
+} // namespace appt
+} // namespace arba

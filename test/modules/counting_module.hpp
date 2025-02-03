@@ -22,13 +22,10 @@ public:
         ++init_count;
     }
 
-    virtual void run() override
-    {
-        ++run_count;
-    }
+    virtual void run() override { ++run_count; }
 
     uint16_t run_count = 0;
     uint16_t init_count = 0;
 };
 
-}
+} // namespace ut

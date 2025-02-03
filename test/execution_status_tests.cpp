@@ -1,7 +1,9 @@
 #include <arba/appt/application/execution_status.hpp>
+
 #include <gtest/gtest.h>
-#include <format>
+
 #include <cstdlib>
+#include <format>
 
 TEST(execution_status_tests, compare_values)
 {

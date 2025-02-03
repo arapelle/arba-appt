@@ -1,6 +1,7 @@
 #pragma once
 
 #include <arba/appt/util/integer_id_factory.hpp>
+
 #include <limits>
 
 inline namespace arba
@@ -24,7 +25,7 @@ public:
 
 private:
     template <class UserType>
-    requires std::is_base_of_v<user, UserType>
+        requires std::is_base_of_v<user, UserType>
     friend class user_manager;
     void set_id(id_type id);
     void unset_id();
@@ -35,5 +36,5 @@ private:
 
 using user_id = user::id_type;
 
-}
-}
+} // namespace appt
+} // namespace arba

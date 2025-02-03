@@ -1,9 +1,10 @@
 #pragma once
 
-#include "user_manager.hpp"
 #include "user_hash.hpp"
-#include <unordered_set>
+#include "user_manager.hpp"
+
 #include <algorithm>
+#include <unordered_set>
 
 inline namespace arba
 {
@@ -28,15 +29,15 @@ struct user_sptr_equal_to
         return rhs && UserSptrHash::user_id(*rhs) == lhs;
     }
 };
-}
+} // namespace priv
 
 template <class UserType, class UserSptrHash>
 class user_set : private std::unordered_set<std::shared_ptr<UserType>, UserSptrHash,
                                             priv::user_sptr_equal_to<UserType, UserSptrHash>>
 {
 private:
-    using base_ = std::unordered_set<std::shared_ptr<UserType>, UserSptrHash,
-                                     priv::user_sptr_equal_to<UserType, UserSptrHash>>;
+    using base_ =
+        std::unordered_set<std::shared_ptr<UserType>, UserSptrHash, priv::user_sptr_equal_to<UserType, UserSptrHash>>;
 
 private:
     using UserType_sptr = std::shared_ptr<UserType>;
@@ -46,13 +47,13 @@ private:
 public:
     inline void set_user_manager(user_manager<UserType>& usr_manager);
 
-    using user_set_container::empty;
-    using user_set_container::size;
     using user_set_container::begin;
-    using user_set_container::end;
     using user_set_container::cbegin;
     using user_set_container::cend;
+    using user_set_container::empty;
+    using user_set_container::end;
     using user_set_container::reserve;
+    using user_set_container::size;
     using iterator = user_set_container::iterator;
     using const_iterator = user_set_container::const_iterator;
 
@@ -100,8 +101,7 @@ void user_set<UserType, UserSptrHash>::set_user_manager(user_manager<UserType>& 
 }
 
 template <class UserType, class UserSptrHash>
-user_set<UserType, UserSptrHash>&
-user_set<UserType, UserSptrHash>::operator=(const user_set &other)
+user_set<UserType, UserSptrHash>& user_set<UserType, UserSptrHash>::operator=(const user_set& other)
 {
     if (&other != this)
         clear_users();
@@ -111,8 +111,7 @@ user_set<UserType, UserSptrHash>::operator=(const user_set &other)
 }
 
 template <class UserType, class UserSptrHash>
-user_set<UserType, UserSptrHash>&
-user_set<UserType, UserSptrHash>::operator=(user_set&& other)
+user_set<UserType, UserSptrHash>& user_set<UserType, UserSptrHash>::operator=(user_set&& other)
 {
     if (&other != this)
         clear_users();
@@ -124,7 +123,7 @@ user_set<UserType, UserSptrHash>::operator=(user_set&& other)
 
 template <class UserType, class UserSptrHash>
 user_set<UserType, UserSptrHash>::UserType_sptr
-user_set<UserType, UserSptrHash>::find_user_sptr(const user_set::key_type &key) const
+user_set<UserType, UserSptrHash>::find_user_sptr(const user_set::key_type& key) const
 {
     auto iter = find_user(key);
     return iter != end() ? *iter : nullptr;
@@ -187,5 +186,5 @@ std::shared_ptr<UserType> user_set<UserType, UserSptrHash>::create_user(ArgsType
     return nullptr;
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

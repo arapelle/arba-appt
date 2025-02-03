@@ -3,9 +3,11 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/logging.hpp>
 #include <arba/appt/util/logging/logging_macro.hpp>
+
 #include <spdlog/spdlog.h>
-#include <source_location>
+
 #include <iostream>
+#include <source_location>
 
 namespace example
 {
@@ -17,10 +19,7 @@ private:
 public:
     using base_::base_;
 
-    void init()
-    {
-        logger()->set_level(spdlog::level::trace);
-    }
+    void init() { logger()->set_level(spdlog::level::trace); }
 
     void run()
     {
@@ -35,7 +34,7 @@ public:
     }
 };
 
-}
+} // namespace example
 
 int main(int argc, char** argv)
 {

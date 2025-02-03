@@ -1,7 +1,9 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
 #include <arba/appt/user/user.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;

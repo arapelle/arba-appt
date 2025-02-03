@@ -1,13 +1,15 @@
 #pragma once
 
-#include <arba/core/sbrm/sbrm.hpp>
-#include <arba/meta/policy/exception_policy.hpp>
+#include "module_base.hpp"
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/util/logging/log_critical_message.hpp>
+
+#include <arba/core/sbrm/sbrm.hpp>
+#include <arba/meta/policy/exception_policy.hpp>
 #include <spdlog/spdlog.h>
-#include <source_location>
+
 #include <exception>
-#include "module_base.hpp"
+#include <source_location>
 
 inline namespace arba
 {
@@ -28,7 +30,8 @@ public:
 
     explicit basic_module(application_type& app, std::string_view name = std::string_view())
         : module_base(name), application_(&app)
-    {}
+    {
+    }
     virtual ~basic_module() override = default;
 
     inline const application_type& app() const { return *application_; }
@@ -37,7 +40,7 @@ public:
 
     execution_status init(meta::maythrow_t)
     {
-        core::sbrm set_execution_failure_if_err = [this]{ init_status_ = execution_status::execution_failure; };
+        core::sbrm set_execution_failure_if_err = [this] { init_status_ = execution_status::execution_failure; };
         this->init();
         if (init_status_ == execution_status::ready) [[unlikely]]
             throw std::runtime_error("The init status is 'ready' (should be at least 'executing'). "
@@ -86,7 +89,7 @@ void basic_module<ApplicationType>::run(meta::maythrow_t)
 {
     assert(init_status_ == execution_status::execution_success);
     run_status_ = execution_status::executing;
-    core::sbrm set_execution_failure_if_err = [this]{ run_status_ = execution_status::execution_failure; };
+    core::sbrm set_execution_failure_if_err = [this] { run_status_ = execution_status::execution_failure; };
     this->run();
     set_execution_failure_if_err.disable();
     if (run_status_ == execution_status::executing) [[likely]]
@@ -103,7 +106,9 @@ void basic_module<ApplicationType>::run(std::nothrow_t)
     catch (...)
     {
         this->handle_caught_exception(std::source_location::current(), std::current_exception());
-        if constexpr (requires(application_type& app){ { app.stop() }; })
+        if constexpr (requires(application_type& app) {
+                          { app.stop() };
+                      })
         {
             app().stop();
         }
@@ -133,7 +138,9 @@ void basic_module<ApplicationType>::handle_caught_exception(const std::source_lo
         error_msg = "Unknown exception caught.";
     }
 
-    if constexpr (requires(application_type& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
+    if constexpr (requires(application_type& app) {
+                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+                  })
     {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
         spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
@@ -145,7 +152,6 @@ void basic_module<ApplicationType>::handle_caught_exception(const std::source_lo
         log_critical_message_to_cerr(error_msg);
     }
 }
-
 
 template <class ApplicationType, class ModuleType>
 class basic_module : public basic_module<ApplicationType>
@@ -170,5 +176,5 @@ protected:
     [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

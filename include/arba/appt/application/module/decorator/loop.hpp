@@ -1,10 +1,11 @@
 #pragma once
 
 #include <arba/appt/util/delta_time.hpp>
-#include <chrono>
-#include <thread>
-#include <cstdint>
+
 #include <cassert>
+#include <chrono>
+#include <cstdint>
+#include <thread>
 
 inline namespace arba
 {
@@ -24,8 +25,7 @@ template <typename ModuleBase, typename SelfType = void>
 class loop;
 
 template <typename ModuleBase>
-class loop<ModuleBase> : public ModuleBase,
-                               public loop_base
+class loop<ModuleBase> : public ModuleBase, public loop_base
 
 {
 public:
@@ -107,6 +107,6 @@ std::chrono::nanoseconds loop<ModuleBase, SelfType>::compute_loop_duration_() co
     return std::chrono::nanoseconds(static_cast<intmax_t>(static_cast<long double>(1000000000.) / frequency_));
 }
 
-}
-}
-}
+} // namespace mdec
+} // namespace appt
+} // namespace arba

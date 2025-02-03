@@ -16,5 +16,5 @@ enum execution_status : int8_t
     executing,
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

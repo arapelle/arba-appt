@@ -1,13 +1,14 @@
-#include <arba/appt/application/application.hpp>
-#include <arba/appt/application/decorator/logging.hpp>
-#include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/module/module.hpp>
-#include <arba/appt/application/module/decorator/logging.hpp>
-#include <arba/appt/application/module/decorator/loop.hpp>
-#include <gtest/gtest.h>
 #include "modules/bad_crtp_module.hpp"
 #include "util/stream_capture.hpp"
 #include "util/text_file_content.hpp"
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/logging.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/module/decorator/logging.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/module.hpp>
+
+#include <gtest/gtest.h>
 
 using logging_application = appt::adec::logging<appt::application<>>;
 using multi_task_application = appt::adec::multi_task<appt::application<>>;
@@ -47,10 +48,7 @@ public:
             std::abort();
     }
 
-    virtual void finish() override
-    {
-        ++finish_count;
-    }
+    virtual void finish() override { ++finish_count; }
 
     uint16_t init_count = 0;
     uint16_t run_count = 0;
@@ -213,7 +211,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("The init status is 'ready' (should be at least 'executing'). "
-                                     "Did you forget to call parent init()?"), std::string::npos);
+                                     "Did you forget to call parent init()?"),
+              std::string::npos);
 }
 
 TEST(exception_handling_tests, test_main_module_init_fails__bad_derived_module)

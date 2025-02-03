@@ -1,11 +1,13 @@
+#include "modules/counting_module.hpp"
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
+#include <arba/appt/application/module/module.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
-#include "modules/counting_module.hpp"
 
 using namespace std::string_literals;
 
@@ -58,12 +60,13 @@ TEST(multi_user_multi_task_application_tests, test_constructor)
 
 using counting_module = ut::counting_module<ut_application>;
 
-class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
-                                                        multi_user_module>
+class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>,
+                                                        appt::module<ut_application>, multi_user_module>
 {
 private:
     using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
                                          multi_user_module>;
+
 public:
     using base_::base_;
 

@@ -1,8 +1,10 @@
-#include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/application.hpp>
-#include <gtest/gtest.h>
-#include <cstdlib>
 #include "modules/counting_module.hpp"
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+
+#include <gtest/gtest.h>
+
+#include <cstdlib>
 
 using namespace std::string_literals;
 

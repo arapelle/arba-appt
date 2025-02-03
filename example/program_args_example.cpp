@@ -1,5 +1,6 @@
-#include <iostream>
 #include <arba/appt/application/program_args.hpp>
+
+#include <iostream>
 
 int main(int argc, char** argv)
 {

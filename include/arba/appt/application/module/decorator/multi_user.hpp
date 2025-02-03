@@ -2,6 +2,7 @@
 
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/user/user_set.hpp>
+
 #include <memory>
 
 inline namespace arba
@@ -24,8 +25,7 @@ public:
     template <typename OtherType>
     using rebind_t = multi_user<UserType, UserSptrHash, ModuleBase, OtherType>;
 
-    explicit multi_user(application_type& app, std::string_view name = std::string_view())
-        : ModuleBase(app, name)
+    explicit multi_user(application_type& app, std::string_view name = std::string_view()) : ModuleBase(app, name)
     {
         users_.set_user_manager(app.usr_manager());
     }
@@ -49,6 +49,6 @@ public:
     virtual ~multi_user() override = default;
 };
 
-}
-}
-}
+} // namespace mdec
+} // namespace appt
+} // namespace arba

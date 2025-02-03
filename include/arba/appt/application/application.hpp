@@ -1,7 +1,8 @@
-#pragma once 
+#pragma once
 
-#include "decorator/toolkit.hpp"
 #include "basic_application.hpp"
+#include "decorator/toolkit.hpp"
+
 #include <string>
 
 inline namespace arba
@@ -19,5 +20,5 @@ public:
     using toolkit<basic_application<ApplicationType>>::toolkit;
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

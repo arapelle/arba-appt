@@ -1,5 +1,6 @@
 #include <arba/appt/application/module/decorator/logging.hpp>
 #include <arba/appt/util/logging/logger_make_helper.hpp>
+
 #include <spdlog/spdlog.h>
 
 inline namespace arba
@@ -31,7 +32,7 @@ void logging_impl::destroy_logger(std::shared_ptr<spdlog::logger> logger)
     spdlog::drop(logger->name());
 }
 
-}
-}
-}
-}
+} // namespace private_
+} // namespace mdec
+} // namespace appt
+} // namespace arba

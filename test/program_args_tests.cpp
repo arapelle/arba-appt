@@ -1,5 +1,7 @@
 #include <arba/appt/application/program_args.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;

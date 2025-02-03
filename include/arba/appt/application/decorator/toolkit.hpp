@@ -1,8 +1,10 @@
-#pragma once 
+#pragma once
 
 #include <arba/appt/application/program_args.hpp>
-#include <arba/rsce/resource_manager.hpp>
+
 #include <arba/evnt/evnt.hpp>
+#include <arba/rsce/resource_manager.hpp>
+
 #include <string>
 
 inline namespace arba
@@ -30,11 +32,11 @@ public:
     }
 
     inline const rsce::resource_manager& resource_manager() const { return resource_manager_; }
-    inline       rsce::resource_manager& resource_manager() { return resource_manager_; }
+    inline rsce::resource_manager& resource_manager() { return resource_manager_; }
     inline const evnt::event_manager& event_manager() const { return event_manager_; }
-    inline       evnt::event_manager& event_manager() { return event_manager_; }
+    inline evnt::event_manager& event_manager() { return event_manager_; }
     inline const vlfs::virtual_filesystem& virtual_filesystem() const { return virtual_filesystem_; }
-    inline       vlfs::virtual_filesystem& virtual_filesystem() { return virtual_filesystem_; }
+    inline vlfs::virtual_filesystem& virtual_filesystem() { return virtual_filesystem_; }
 
 private:
     vlfs::virtual_filesystem virtual_filesystem_;
@@ -52,6 +54,6 @@ public:
     using base_::base_;
 };
 
-}
-}
-}
+} // namespace adec
+} // namespace appt
+} // namespace arba

@@ -1,15 +1,17 @@
 #pragma once
 
-#include <source_location>
-#include <memory>
-#include <format>
-#include <thread>
-#include <spdlog/spdlog.h>
-#include <arba/core/sbrm/sbrm.hpp>
 #include <arba/appt/application/execution_status.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
 #include <arba/appt/application/module/concepts/concrete_derived_basic_module.hpp>
 #include <arba/appt/util/logging/log_critical_message.hpp>
+
+#include <arba/core/sbrm/sbrm.hpp>
+#include <spdlog/spdlog.h>
+
+#include <format>
+#include <memory>
+#include <source_location>
+#include <thread>
 
 inline namespace arba
 {
@@ -130,8 +132,8 @@ execution_status multi_task<ApplicationBase, SelfType>::run()
 
         run_status_ = execution_status::executing;
 
-        core::sbrm join_side_modules = [this]{ join_side_modules_(); };
-        core::sbrm stop_side_modules_iferr = [this]{ stop_side_modules(); };
+        core::sbrm join_side_modules = [this] { join_side_modules_(); };
+        core::sbrm stop_side_modules_iferr = [this] { stop_side_modules(); };
 
         for (auto& entry : side_modules_)
         {
@@ -180,10 +182,9 @@ void multi_task<ApplicationBase, SelfType>::join_side_modules_()
     }
 }
 
-
 template <typename ApplicationBase, typename SelfType>
 void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::source_location location,
-                                                                                   std::exception_ptr ex_ptr)
+                                                                    std::exception_ptr ex_ptr)
 {
     std::string error_msg;
     try
@@ -200,7 +201,9 @@ void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::s
         error_msg = "Unknown exception caught.";
     }
 
-    if constexpr (requires(SelfType& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
+    if constexpr (requires(SelfType& app) {
+                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+                  })
     {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
         spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
@@ -296,6 +299,6 @@ module_type& multi_task<ApplicationBase, SelfType>::create_main_module()
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
-}
-}
-}
+} // namespace adec
+} // namespace appt
+} // namespace arba

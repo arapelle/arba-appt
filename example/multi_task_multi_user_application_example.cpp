@@ -1,11 +1,12 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
-#include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <random>
+#include <arba/appt/application/module/decorator/multi_user.hpp>
+#include <arba/appt/application/module/module.hpp>
+
 #include <iostream>
+#include <random>
 
 namespace example
 {
@@ -31,10 +32,7 @@ private:
 public:
     using base_::base_;
 
-    void init()
-    {
-        base_::init();
-    }
+    void init() { base_::init(); }
 };
 
 struct number_event
@@ -47,8 +45,7 @@ using multi_user_module = appt::mdec::multi_user<user, appt::user_sptr_name_hash
 template <class module_type>
 using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
 
-class consumer_module : public loop_multi_user_module<consumer_module>,
-                        public evnt::event_listener<number_event>
+class consumer_module : public loop_multi_user_module<consumer_module>, public evnt::event_listener<number_event>
 {
 private:
     using base_ = loop_multi_user_module<consumer_module>;
@@ -115,10 +112,7 @@ public:
         app().event_manager().emit(event);
     }
 
-    virtual void finish() override
-    {
-        std::cout << "generator finished" << std::endl;
-    }
+    virtual void finish() override { std::cout << "generator finished" << std::endl; }
 
 private:
     unsigned die100()
@@ -131,7 +125,7 @@ private:
     std::mt19937_64 int_generator_;
 };
 
-}
+} // namespace example
 
 int main(int argc, char** argv)
 {

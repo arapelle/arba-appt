@@ -1,6 +1,7 @@
 #pragma once
 
 #include <arba/appt/user/user_manager.hpp>
+
 #include <memory>
 
 inline namespace arba
@@ -42,6 +43,6 @@ public:
     using base_::base_;
 };
 
-}
-}
-}
+} // namespace adec
+} // namespace appt
+} // namespace arba

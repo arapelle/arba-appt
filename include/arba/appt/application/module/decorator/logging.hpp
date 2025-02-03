@@ -1,7 +1,9 @@
 #pragma once
 
 #include <arba/appt/application/program_args.hpp>
+
 #include <spdlog/spdlog.h>
+
 #include <source_location>
 
 inline namespace arba
@@ -22,7 +24,7 @@ protected:
     static void destroy_logger(std::shared_ptr<spdlog::logger> logger);
 };
 
-}
+} // namespace private_
 
 template <class ModuleBase, class SelfType = void>
 class logging;
@@ -44,8 +46,7 @@ public:
 };
 
 template <class ModuleBase, class SelfType>
-class logging : public logging<typename ModuleBase::template rebind_t<SelfType>>,
-                private private_::logging_impl
+class logging : public logging<typename ModuleBase::template rebind_t<SelfType>>, private private_::logging_impl
 {
 private:
     using base_ = logging<typename ModuleBase::template rebind_t<SelfType>>;
@@ -55,10 +56,10 @@ public:
 
 public:
     explicit logging(application_type& app, std::string_view name = std::string_view())
-        : base_(app, name),
-        log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
-        logger_(this->self().make_logger())
-    {}
+        : base_(app, name), log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
+          logger_(this->self().make_logger())
+    {
+    }
 
     virtual ~logging() override
     {
@@ -108,8 +109,8 @@ template <class ModuleBase, class SelfType>
 std::shared_ptr<spdlog::logger> logging<ModuleBase, SelfType>::make_logger() const
 {
     std::vector<spdlog::sink_ptr> sink_list = this->self().make_sink_list();
-    std::shared_ptr logger = std::make_shared<spdlog::logger>(this->self().make_logger_name(),
-                                                              sink_list.begin(), sink_list.end());
+    std::shared_ptr logger =
+        std::make_shared<spdlog::logger>(this->self().make_logger_name(), sink_list.begin(), sink_list.end());
     logger->set_level(static_cast<decltype(spdlog::level::info)>(SPDLOG_ACTIVE_LEVEL));
     logging_impl::initialize_logger(logger);
     return logger;
@@ -134,7 +135,7 @@ std::vector<spdlog::sink_ptr> logging<ModuleBase, SelfType>::make_sink_list() co
 
 template <class ModuleBase, class SelfType>
 void logging<ModuleBase, SelfType>::handle_caught_exception(const std::source_location& location,
-                                                                     std::exception_ptr ex_ptr)
+                                                            std::exception_ptr ex_ptr)
 {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
     std::string error_msg;
@@ -163,6 +164,6 @@ void logging<ModuleBase, SelfType>::destroy_logger(std::shared_ptr<spdlog::logge
     logging_impl::destroy_logger(mod_logger);
 }
 
-}
-}
-}
+} // namespace mdec
+} // namespace appt
+} // namespace arba

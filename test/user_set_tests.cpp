@@ -1,7 +1,9 @@
 #include <arba/appt/user/user_set.hpp>
+
 #include <gtest/gtest.h>
-#include <unordered_set>
+
 #include <cstdlib>
+#include <unordered_set>
 
 using namespace std::string_literals;
 

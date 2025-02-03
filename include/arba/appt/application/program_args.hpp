@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cassert>
 #include <filesystem>
 #include <iterator>
-#include <cassert>
 
 inline namespace arba
 {
@@ -20,16 +20,32 @@ private:
         using reference = std::string_view;
         using iterator_category = std::iterator_traits<char**>::iterator_category;
 
-        explicit arg_iterator(char** arg_ptr = nullptr)
-        : arg_ptr_(arg_ptr)
-        {}
+        explicit arg_iterator(char** arg_ptr = nullptr) : arg_ptr_(arg_ptr) {}
 
         inline reference operator*() const { return *arg_ptr_; }
         inline reference operator*() { return *arg_ptr_; }
-        inline arg_iterator& operator++() { ++arg_ptr_; return *this; }
-        inline arg_iterator operator++(int) { arg_iterator res(*this); ++(*this); return res; }
-        inline arg_iterator& operator--() { --arg_ptr_; return *this; }
-        inline arg_iterator operator--(int) { arg_iterator res(*this); --(*this); return res; }
+        inline arg_iterator& operator++()
+        {
+            ++arg_ptr_;
+            return *this;
+        }
+        inline arg_iterator operator++(int)
+        {
+            arg_iterator res(*this);
+            ++(*this);
+            return res;
+        }
+        inline arg_iterator& operator--()
+        {
+            --arg_ptr_;
+            return *this;
+        }
+        inline arg_iterator operator--(int)
+        {
+            arg_iterator res(*this);
+            --(*this);
+            return res;
+        }
         inline arg_iterator operator+(std::ptrdiff_t off) const { return arg_iterator(arg_ptr_ + off); }
         inline arg_iterator operator-(std::ptrdiff_t off) const { return arg_iterator(arg_ptr_ - off); }
         inline bool operator==(const arg_iterator& rhs) const = default;
@@ -44,8 +60,7 @@ public:
     using const_iterator = const arg_iterator;
 
     inline program_args() = default;
-    inline program_args(int ac, char** av)
-        : argc(ac), argv(ac > 0 ? av : nullptr)
+    inline program_args(int ac, char** av) : argc(ac), argv(ac > 0 ? av : nullptr)
     {
         assert(argc == 0 || argv != nullptr);
     }
@@ -59,7 +74,11 @@ public:
     inline const_iterator cbegin() const { return begin(); }
     inline const_iterator cend() const { return end(); }
 
-    inline std::string_view operator[](std::size_t index) const { assert(index < argc); return argv[index]; }
+    inline std::string_view operator[](std::size_t index) const
+    {
+        assert(index < argc);
+        return argv[index];
+    }
 
     inline std::filesystem::path program_path() const { return (*this)[0]; }
     inline std::filesystem::path program_dir() const { return program_path().parent_path(); }
@@ -67,7 +86,7 @@ public:
     inline std::filesystem::path program_stem() const { return program_path().stem(); }
 
     const std::size_t argc = 0;
-    char**const argv = nullptr;
+    char** const argv = nullptr;
 };
-}
-}
+} // namespace appt
+} // namespace arba
