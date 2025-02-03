@@ -21,8 +21,8 @@ template <class ApplicationType>
 class basic_module<ApplicationType, void> : public module_base
 {
 public:
-    template <typename OtherModuleType>
-    using rebind_t = basic_module<ApplicationType, OtherModuleType>;
+    template <typename OtherType>
+    using rebind_t = basic_module<ApplicationType, OtherType>;
 
     using application_type = ApplicationType;
 
@@ -65,7 +65,7 @@ private:
     execution_status init_status_ = execution_status::ready;
     execution_status run_status_ = execution_status::ready;
 
-    template <class OtherApplicationType, class OtherModuleType>
+    template <class /*ApplicationType*/, class /*ModuleType*/>
     friend class basic_module;
 };
 
@@ -77,7 +77,7 @@ void basic_module<ApplicationType>::init()
     throw std::runtime_error("CRTP class is not used correctly.\n"
                              "You forgot to provide the ModuleType in your custom module type,\n"
                              "or you are using a decorator around basic_module<AppType> "
-                             "which forgot to call rebind_t<OtherModuleType>,\n"
+                             "which forgot to call rebind_t<OtherType>,\n"
                              "or you are doing something very nasty. >.>");
 }
 

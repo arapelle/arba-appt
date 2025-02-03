@@ -30,28 +30,28 @@ protected:
 
 }
 
-template <class application_base_type, class application_type = void>
+template <class ApplicationBase, class SelfType = void>
 class logging;
 
-template <class application_base_type>
-class logging<application_base_type> : public application_base_type
+template <class ApplicationBase>
+class logging<ApplicationBase> : public ApplicationBase
 {
 private:
-    using base_ = application_base_type;
+    using base_ = ApplicationBase;
 
 public:
-    template <typename other_application_type>
-    using rebind_t = logging<application_base_type, other_application_type>;
+    template <typename OtherType>
+    using rebind_t = logging<ApplicationBase, OtherType>;
 
     using base_::base_;
 };
 
-template <class application_base_type, class application_type>
-class logging : public logging<typename application_base_type::template rebind_t<application_type>>,
+template <class ApplicationBase, class SelfType>
+class logging : public logging<typename ApplicationBase::template rebind_t<SelfType>>,
                 private_::logging_impl
 {
 private:
-    using base_ = logging<typename application_base_type::template rebind_t<application_type>>;
+    using base_ = logging<typename ApplicationBase::template rebind_t<SelfType>>;
 
 public:
     explicit logging(const appt::program_args& args = appt::program_args());
@@ -78,15 +78,15 @@ private:
     std::shared_ptr<spdlog::logger> logger_;
 };
 
-template <class application_base_type, class application_type>
-logging<application_base_type, application_type>::logging(const appt::program_args& args)
+template <class ApplicationBase, class SelfType>
+logging<ApplicationBase, SelfType>::logging(const appt::program_args& args)
     : base_(args),
     log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
     logger_(this->self().make_logger())
 {}
 
-template <class application_base_type, class application_type>
-logging<application_base_type, application_type>::~logging()
+template <class ApplicationBase, class SelfType>
+logging<ApplicationBase, SelfType>::~logging()
 {
     if (logger_)
     {
@@ -95,20 +95,20 @@ logging<application_base_type, application_type>::~logging()
     }
 }
 
-template <class application_base_type, class application_type>
-std::filesystem::path logging<application_base_type, application_type>::make_log_dirpath() const
+template <class ApplicationBase, class SelfType>
+std::filesystem::path logging<ApplicationBase, SelfType>::make_log_dirpath() const
 {
     return logging_impl::make_log_dirpath(this->args());
 }
 
-template <class application_base_type, class application_type>
-std::filesystem::path logging<application_base_type, application_type>::make_log_filename() const
+template <class ApplicationBase, class SelfType>
+std::filesystem::path logging<ApplicationBase, SelfType>::make_log_filename() const
 {
     return this->self().make_logger_name() + ".log";
 }
 
-template <class application_base_type, class application_type>
-std::shared_ptr<spdlog::logger> logging<application_base_type, application_type>::make_logger() const
+template <class ApplicationBase, class SelfType>
+std::shared_ptr<spdlog::logger> logging<ApplicationBase, SelfType>::make_logger() const
 {
     std::vector<spdlog::sink_ptr> sink_list = this->self().make_sink_list();
     std::shared_ptr logger = std::make_shared<spdlog::logger>(this->self().make_logger_name(),
@@ -118,14 +118,14 @@ std::shared_ptr<spdlog::logger> logging<application_base_type, application_type>
     return logger;
 }
 
-template <class application_base_type, class application_type>
-std::string logging<application_base_type, application_type>::make_logger_name() const
+template <class ApplicationBase, class SelfType>
+std::string logging<ApplicationBase, SelfType>::make_logger_name() const
 {
     return logging_impl::make_logger_name(this->args());
 }
 
-template <class application_base_type, class application_type>
-std::vector<spdlog::sink_ptr> logging<application_base_type, application_type>::make_sink_list() const
+template <class ApplicationBase, class SelfType>
+std::vector<spdlog::sink_ptr> logging<ApplicationBase, SelfType>::make_sink_list() const
 {
     std::vector<spdlog::sink_ptr> sink_list;
     if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr) [[likely]]
@@ -135,8 +135,8 @@ std::vector<spdlog::sink_ptr> logging<application_base_type, application_type>::
     return sink_list;
 }
 
-template <class application_base_type, class application_type>
-void logging<application_base_type, application_type>::destroy_logger(std::shared_ptr<spdlog::logger> app_logger) const
+template <class ApplicationBase, class SelfType>
+void logging<ApplicationBase, SelfType>::destroy_logger(std::shared_ptr<spdlog::logger> app_logger) const
 {
     logging_impl::destroy_logger(app_logger);
 }

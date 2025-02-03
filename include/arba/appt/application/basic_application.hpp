@@ -15,8 +15,8 @@ template <>
 class basic_application<void>
 {
 public:
-    template <typename OtherApplicationType>
-    using rebind_t = basic_application<OtherApplicationType>;
+    template <typename OtherType>
+    using rebind_t = basic_application<OtherType>;
 
     explicit basic_application(const program_args& args = program_args());
 

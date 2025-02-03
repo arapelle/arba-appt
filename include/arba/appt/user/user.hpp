@@ -23,8 +23,8 @@ public:
     inline bool operator!=(const user& rhs) const = default;
 
 private:
-    template <class user_type>
-    requires std::is_base_of_v<user, user_type>
+    template <class UserType>
+    requires std::is_base_of_v<user, UserType>
     friend class user_manager;
     void set_id(id_type id);
     void unset_id();

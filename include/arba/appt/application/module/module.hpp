@@ -19,8 +19,8 @@ private:
     using base_ = basic_module<ApplicationType, ModuleType>;
 
 public:
-    template <typename OtherModuleType>
-    using rebind_t = module<ApplicationType, OtherModuleType>;
+    template <typename OtherType>
+    using rebind_t = module<ApplicationType, OtherType>;
 
     using base_::base_;
     virtual ~module() override = default;

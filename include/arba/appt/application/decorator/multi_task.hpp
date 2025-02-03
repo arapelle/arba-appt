@@ -18,26 +18,26 @@ namespace appt
 inline namespace adec // application_decorator
 {
 
-template <typename application_base_type, typename application_type = void>
+template <typename ApplicationBase, typename SelfType = void>
 class multi_task;
 
-template <typename application_base_type>
-class multi_task<application_base_type> : public application_base_type
+template <typename ApplicationBase>
+class multi_task<ApplicationBase> : public ApplicationBase
 {
 public:
-    template <typename other_application_type>
-    using rebind_t = multi_task<application_base_type, other_application_type>;
+    template <typename OtherType>
+    using rebind_t = multi_task<ApplicationBase, OtherType>;
 
-    using application_base_type::application_base_type;
+    using ApplicationBase::ApplicationBase;
 };
 
-template <typename application_base_type, typename application_type>
-class multi_task : public multi_task<typename application_base_type::template rebind_t<application_type>>
+template <typename ApplicationBase, typename SelfType>
+class multi_task : public multi_task<typename ApplicationBase::template rebind_t<SelfType>>
 {
-    using base_ = multi_task<typename application_base_type::template rebind_t<application_type>>;
+    using base_ = multi_task<typename ApplicationBase::template rebind_t<SelfType>>;
 
 public:
-    using module_base = basic_module<application_type>;
+    using module_base = basic_module<SelfType>;
     using module_base_uptr = std::unique_ptr<module_base>;
 
     using base_::base_;
@@ -87,8 +87,8 @@ private:
     std::mutex mutex_;
 };
 
-template <typename application_base_type, typename application_type>
-execution_status multi_task<application_base_type, application_type>::init()
+template <typename ApplicationBase, typename SelfType>
+execution_status multi_task<ApplicationBase, SelfType>::init()
 {
     try
     {
@@ -120,8 +120,8 @@ execution_status multi_task<application_base_type, application_type>::init()
     return init_status_;
 }
 
-template <typename application_base_type, typename application_type>
-execution_status multi_task<application_base_type, application_type>::run()
+template <typename ApplicationBase, typename SelfType>
+execution_status multi_task<ApplicationBase, SelfType>::run()
 {
     try
     {
@@ -155,8 +155,8 @@ execution_status multi_task<application_base_type, application_type>::run()
     return run_status_;
 }
 
-template <typename application_base_type, typename application_type>
-bool multi_task<application_base_type, application_type>::check_init_status_()
+template <typename ApplicationBase, typename SelfType>
+bool multi_task<ApplicationBase, SelfType>::check_init_status_()
 {
     if (init_status_ != execution_status::execution_success) [[unlikely]]
     {
@@ -168,8 +168,8 @@ bool multi_task<application_base_type, application_type>::check_init_status_()
     return true;
 }
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::join_side_modules_()
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::join_side_modules_()
 {
     for (auto& entry : side_modules_)
     {
@@ -181,8 +181,8 @@ void multi_task<application_base_type, application_type>::join_side_modules_()
 }
 
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::handle_caught_exception(const std::source_location location,
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::source_location location,
                                                                                    std::exception_ptr ex_ptr)
 {
     std::string error_msg;
@@ -200,7 +200,7 @@ void multi_task<application_base_type, application_type>::handle_caught_exceptio
         error_msg = "Unknown exception caught.";
     }
 
-    if constexpr (requires(application_type& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
+    if constexpr (requires(SelfType& app){ { *(app.logger()) } -> std::convertible_to<spdlog::logger&>; })
     {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
         spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
@@ -213,16 +213,16 @@ void multi_task<application_base_type, application_type>::handle_caught_exceptio
     }
 }
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::stop_side_modules()
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::stop_side_modules()
 {
     std::lock_guard lock(mutex_);
     for (auto& entry : side_modules_)
         entry.first->stop();
 }
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::stop()
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::stop()
 {
     stop_side_modules();
     std::lock_guard lock(mutex_);
@@ -230,16 +230,16 @@ void multi_task<application_base_type, application_type>::stop()
         main_module_->stop();
 }
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::set_main_module(module_base_uptr module_uptr)
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::set_main_module(module_base_uptr module_uptr)
 {
     assert((&module_uptr->app()) == (&this->self()));
     main_module_ = std::move(module_uptr);
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::set_main_module(std::unique_ptr<module_type> module_uptr)
+module_type& multi_task<ApplicationBase, SelfType>::set_main_module(std::unique_ptr<module_type> module_uptr)
 {
     assert((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
@@ -247,16 +247,16 @@ module_type& multi_task<application_base_type, application_type>::set_main_modul
     return *module_ptr;
 }
 
-template <typename application_base_type, typename application_type>
-void multi_task<application_base_type, application_type>::add_module(module_base_uptr module_uptr)
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::add_module(module_base_uptr module_uptr)
 {
     assert((&module_uptr->app()) == (&this->self()));
     side_modules_.emplace_back(std::move(module_uptr), std::thread());
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::add_module(std::unique_ptr<module_type> module_uptr)
+module_type& multi_task<ApplicationBase, SelfType>::add_module(std::unique_ptr<module_type> module_uptr)
 {
     assert((&module_uptr->app()) == (&this->self()));
     module_type* module_ptr = module_uptr.get();
@@ -264,33 +264,33 @@ module_type& multi_task<application_base_type, application_type>::add_module(std
     return *module_ptr;
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::create_module(std::string_view module_name)
+module_type& multi_task<ApplicationBase, SelfType>::create_module(std::string_view module_name)
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(this->self(), module_name);
     return add_module<module_type>(std::move(module_uptr));
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::create_main_module(std::string_view module_name)
+module_type& multi_task<ApplicationBase, SelfType>::create_main_module(std::string_view module_name)
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(this->self(), module_name);
     return set_main_module<module_type>(std::move(module_uptr));
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::create_module()
+module_type& multi_task<ApplicationBase, SelfType>::create_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(this->self());
     return add_module<module_type>(std::move(module_uptr));
 }
 
-template <typename application_base_type, typename application_type>
+template <typename ApplicationBase, typename SelfType>
 template <ConcreteDerivedBasicModule module_type>
-module_type& multi_task<application_base_type, application_type>::create_main_module()
+module_type& multi_task<ApplicationBase, SelfType>::create_main_module()
 {
     std::unique_ptr module_uptr = std::make_unique<module_type>(this->self());
     return set_main_module<module_type>(std::move(module_uptr));

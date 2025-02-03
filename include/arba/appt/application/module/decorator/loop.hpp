@@ -20,29 +20,29 @@ public:
     using duration = typename clock::duration;
 };
 
-template <typename module_base_type, typename module_type = void>
+template <typename ModuleBase, typename SelfType = void>
 class loop;
 
-template <typename module_base_type>
-class loop<module_base_type> : public module_base_type,
+template <typename ModuleBase>
+class loop<ModuleBase> : public ModuleBase,
                                public loop_base
 
 {
 public:
-    template <typename other_module_type>
-    using rebind_t = loop<module_base_type, other_module_type>;
+    template <typename OtherType>
+    using rebind_t = loop<ModuleBase, OtherType>;
 
-    using module_base_type::module_base_type;
+    using ModuleBase::ModuleBase;
 
 protected:
     virtual ~loop() override = default;
 };
 
-template <typename module_base_type, typename module_type>
-class loop : public loop<typename module_base_type::template rebind_t<module_type>>
+template <typename ModuleBase, typename SelfType>
+class loop : public loop<typename ModuleBase::template rebind_t<SelfType>>
 {
 private:
-    using base_ = loop<typename module_base_type::template rebind_t<module_type>>;
+    using base_ = loop<typename ModuleBase::template rebind_t<SelfType>>;
 
 public:
     using application_type = typename base_::application_type;
@@ -72,8 +72,8 @@ private:
     duration delta_time_;
 };
 
-template <typename module_base_type, typename module_type>
-void loop<module_base_type, module_type>::run()
+template <typename ModuleBase, typename SelfType>
+void loop<ModuleBase, SelfType>::run()
 {
     run_token_ = true;
     clock loop_clock;
@@ -93,16 +93,16 @@ void loop<module_base_type, module_type>::run()
     finish();
 }
 
-template <typename module_base_type, typename module_type>
-void loop<module_base_type, module_type>::set_frequency(uint16_t times_per_second)
+template <typename ModuleBase, typename SelfType>
+void loop<ModuleBase, SelfType>::set_frequency(uint16_t times_per_second)
 {
     assert(times_per_second > 0);
     frequency_ = times_per_second;
     loop_duration_ = compute_loop_duration_();
 }
 
-template <typename module_base_type, typename module_type>
-std::chrono::nanoseconds loop<module_base_type, module_type>::compute_loop_duration_() const
+template <typename ModuleBase, typename SelfType>
+std::chrono::nanoseconds loop<ModuleBase, SelfType>::compute_loop_duration_() const
 {
     return std::chrono::nanoseconds(static_cast<intmax_t>(static_cast<long double>(1000000000.) / frequency_));
 }
