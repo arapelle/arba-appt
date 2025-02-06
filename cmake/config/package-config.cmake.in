@@ -2,6 +2,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
+find_dependency(arba-core 0.29.0 CONFIG)
 find_dependency(arba-stdx 0.2.0 CONFIG)
 find_dependency(arba-rsce 0.4.0 CONFIG)
 find_dependency(arba-evnt 0.6.0 CONFIG)

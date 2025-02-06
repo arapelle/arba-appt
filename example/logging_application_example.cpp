@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 {
     std::filesystem::path app_log_path;
     {
-        example::logging_application app(appt::program_args(argc, argv));
+        example::logging_application app(core::program_args(argc, argv));
         app_log_path = app.log_path();
         app.init();
         app.run();

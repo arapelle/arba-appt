@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/appt/application/program_args.hpp>
+#include <arba/core/program_args.hpp>
 
 #include <arba/evnt/evnt.hpp>
 #include <arba/rsce/resource_manager.hpp>
@@ -24,7 +24,7 @@ public:
     template <typename OtherType>
     using rebind_t = toolkit<ApplicationBase, OtherType>;
 
-    explicit toolkit(const program_args& args = program_args())
+    explicit toolkit(const core::program_args& args = core::program_args())
         : ApplicationBase(args), resource_manager_(virtual_filesystem_)
     {
         if (!args.empty())

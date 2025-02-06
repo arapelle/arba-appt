@@ -19,7 +19,6 @@ add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
         multi_task_application_mm_tests.cpp
         multi_task_multi_user_application_tests.cpp
         multi_user_application_tests.cpp
-        program_args_tests.cpp
         user_hash_tests.cpp
         user_manager_tests.cpp
         user_set_tests.cpp

@@ -56,14 +56,14 @@ TEST(multi_user_application_tests, test_constructor_empty)
 
 TEST(multi_user_application_tests, test_constructor)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
 
 TEST(multi_user_application_tests, test_run)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     app.run();
     ASSERT_EQ(app.usr_manager().size(), 3);
     std::shared_ptr user_sptr = app.usr_manager().shared_user(0);

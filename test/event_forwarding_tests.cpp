@@ -94,7 +94,7 @@ public:
 
 TEST(event_forwarding_tests, test_forwarding)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ut_first_event_module& first_module = app.create_module<ut_first_event_module>();
     ut_second_event_module& second_module = app.create_module<ut_second_event_module>();
     app.init();

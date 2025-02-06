@@ -56,6 +56,7 @@ class ArbaApptRecipe(ConanFile):
         check_min_cppstd(self, 20)
     
     def requirements(self):
+        self.requires("arba-core/[^0.29]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-stdx/[^0.2]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-rsce/[^0.4]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-evnt/[^0.6]", transitive_headers=True, transitive_libs=True)

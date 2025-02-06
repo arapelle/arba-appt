@@ -139,7 +139,7 @@ TEST(logging_tests, test_logs__no_args)
 
 TEST(logging_tests, test_logs)
 {
-    ut::application app(appt::program_args(argc, argv));
+    ut::application app(core::program_args(argc, argv));
     ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);
     std::filesystem::path app_log_file = app.log_dir() / "program_name.v2.log";

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/appt/application/program_args.hpp>
+#include <arba/core/program_args.hpp>
 
 #include <spdlog/logger.h>
 
@@ -21,9 +21,9 @@ public:
     static constexpr std::string_view default_logger_name = "application";
 
 protected:
-    static std::filesystem::path make_log_dirpath(const program_args& args);
+    static std::filesystem::path make_log_dirpath(const core::program_args& args);
 
-    static std::string make_logger_name(const program_args& args);
+    static std::string make_logger_name(const core::program_args& args);
     static spdlog::sink_ptr make_console_sink();
     static spdlog::sink_ptr make_file_sink(const std::filesystem::path& log_fpath);
     static void initialize_logger(std::shared_ptr<spdlog::logger>& logger);
@@ -55,7 +55,7 @@ private:
     using base_ = logging<typename ApplicationBase::template rebind_t<SelfType>>;
 
 public:
-    explicit logging(const appt::program_args& args = appt::program_args());
+    explicit logging(const core::program_args& args = core::program_args());
     ~logging();
 
     inline std::filesystem::path log_dir() const { return log_fpath_.parent_path(); }
@@ -80,7 +80,7 @@ private:
 };
 
 template <class ApplicationBase, class SelfType>
-logging<ApplicationBase, SelfType>::logging(const appt::program_args& args)
+logging<ApplicationBase, SelfType>::logging(const core::program_args& args)
     : base_(args), log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
       logger_(this->self().make_logger())
 {

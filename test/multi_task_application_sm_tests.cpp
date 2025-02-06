@@ -33,7 +33,7 @@ TEST(multi_task_application_sm_tests, test_constructor_empty)
 
 TEST(multi_task_application_sm_tests, test_constructor)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
@@ -50,7 +50,7 @@ using counting_module = ut::counting_module<ut_application>;
 
 TEST(multi_task_application_sm_tests, test_side_modules)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>("counting_module_2");
     counting_module& module_3 = app.create_module<counting_module>();

@@ -13,12 +13,12 @@ inline namespace adec // application_decorator
 namespace private_
 {
 
-std::filesystem::path logging_impl::make_log_dirpath(const program_args& args)
+std::filesystem::path logging_impl::make_log_dirpath(const core::program_args& args)
 {
     return std::filesystem::temp_directory_path() / make_logger_name(args) / "log" / format_filename_Ymd_HMS_mcs();
 }
 
-std::string logging_impl::make_logger_name(const program_args& args)
+std::string logging_impl::make_logger_name(const core::program_args& args)
 {
     return args.empty() ? std::string(default_logger_name) : args.program_stem().generic_string();
 }

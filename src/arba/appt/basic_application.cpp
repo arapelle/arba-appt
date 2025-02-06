@@ -5,7 +5,7 @@ inline namespace arba
 namespace appt
 {
 
-basic_application<>::basic_application(const program_args& args) : program_args_(args)
+basic_application<>::basic_application(const core::program_args& args) : program_args_(args)
 {
 }
 

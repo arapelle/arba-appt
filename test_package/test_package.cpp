@@ -4,6 +4,7 @@
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/module.hpp>
+#include <arba/core/program_args.hpp>
 
 #include <iostream>
 #include <random>
@@ -129,7 +130,7 @@ private:
 
 int main(int argc, char** argv)
 {
-    example::application app(appt::program_args(argc, argv));
+    example::application app(core::program_args(argc, argv));
     app.create_main_module<example::consumer_module>().set_frequency(60);
     app.create_module<example::generator_module>().set_frequency(40);
     app.init();
