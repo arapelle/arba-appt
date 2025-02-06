@@ -57,7 +57,6 @@ set(headers
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
     include/arba/appt/util/delta_time.hpp
-    include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logging/log_critical_message.hpp
     include/arba/appt/util/logging/logger_make_helper.hpp
@@ -69,7 +68,6 @@ set(sources
     src/arba/appt/application/decorator/logging.cpp
     src/arba/appt/application/module/decorator/logging.cpp
     src/arba/appt/basic_application.cpp
-    src/arba/appt/format_time_point.cpp
     src/arba/appt/log_critical_message.cpp
     src/arba/appt/logger_make_helper.cpp
     src/arba/appt/module_base.cpp

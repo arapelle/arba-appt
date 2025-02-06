@@ -1,7 +1,6 @@
 #pragma once
 
 #include <arba/core/program_args.hpp>
-
 #include <spdlog/logger.h>
 
 #include <filesystem>

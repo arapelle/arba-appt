@@ -1,7 +1,6 @@
 #pragma once
 
 #include <arba/core/program_args.hpp>
-
 #include <arba/evnt/evnt.hpp>
 #include <arba/rsce/resource_manager.hpp>
 

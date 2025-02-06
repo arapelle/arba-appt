@@ -6,8 +6,8 @@
 #include <arba/appt/application/module/decorator/logging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/module.hpp>
-#include <arba/appt/util/format_time_point.hpp>
 
+#include <arba/stdx/chrono/format_time_point.hpp>
 #include <gtest/gtest.h>
 
 #include <cstdlib>
@@ -45,7 +45,7 @@ public:
 
     inline std::filesystem::path make_log_directory_path() const
     {
-        std::filesystem::path subpath = std::filesystem::path("log") / appt::format_filename_Ymd_HMS();
+        std::filesystem::path subpath = std::filesystem::path("log") / stdx::format_Ymd_HMS_as_filename();
         if (!args().empty())
             return args().program_dir() / subpath;
         return subpath;

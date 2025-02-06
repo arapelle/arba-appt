@@ -1,4 +1,3 @@
-#include <arba/appt/util/format_time_point.hpp>
 #include <arba/appt/util/logging/logger_make_helper.hpp>
 
 #include <spdlog/sinks/rotating_file_sink.h>
