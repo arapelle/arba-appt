@@ -1,9 +1,10 @@
 #pragma once
 
-#include "user_manager.hpp"
 #include "user_hash.hpp"
-#include <unordered_set>
+#include "user_manager.hpp"
+
 #include <algorithm>
+#include <unordered_set>
 
 inline namespace arba
 {
@@ -11,48 +12,48 @@ namespace appt
 {
 namespace priv
 {
-template <typename user_type, typename user_sptr_hash>
+template <typename UserType, typename UserSptrHash>
 struct user_sptr_equal_to
 {
     using is_transparent = void;
 
-    constexpr bool operator()(const std::shared_ptr<user_type>& lhs, const std::shared_ptr<user_type>& rhs) const
+    constexpr bool operator()(const std::shared_ptr<UserType>& lhs, const std::shared_ptr<UserType>& rhs) const
     {
         if (lhs && rhs)
-            return user_sptr_hash::user_id(*lhs) == user_sptr_hash::user_id(*rhs);
+            return UserSptrHash::user_id(*lhs) == UserSptrHash::user_id(*rhs);
         return !lhs && !rhs;
     }
 
-    constexpr bool operator()(const typename user_sptr_hash::key_type& lhs, const std::shared_ptr<user_type>& rhs) const
+    constexpr bool operator()(const typename UserSptrHash::key_type& lhs, const std::shared_ptr<UserType>& rhs) const
     {
-        return rhs && user_sptr_hash::user_id(*rhs) == lhs;
+        return rhs && UserSptrHash::user_id(*rhs) == lhs;
     }
 };
-}
+} // namespace priv
 
-template <class user_type, class user_sptr_hash>
-class user_set : private std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash,
-                                            priv::user_sptr_equal_to<user_type, user_sptr_hash>>
+template <class UserType, class UserSptrHash>
+class user_set : private std::unordered_set<std::shared_ptr<UserType>, UserSptrHash,
+                                            priv::user_sptr_equal_to<UserType, UserSptrHash>>
 {
 private:
-    using base_ = std::unordered_set<std::shared_ptr<user_type>, user_sptr_hash,
-                                     priv::user_sptr_equal_to<user_type, user_sptr_hash>>;
+    using base_ =
+        std::unordered_set<std::shared_ptr<UserType>, UserSptrHash, priv::user_sptr_equal_to<UserType, UserSptrHash>>;
 
 private:
-    using user_type_sptr = std::shared_ptr<user_type>;
+    using UserType_sptr = std::shared_ptr<UserType>;
     using user_set_container = base_;
-    using key_type = typename user_sptr_hash::key_type;
+    using key_type = typename UserSptrHash::key_type;
 
 public:
-    inline void set_user_manager(user_manager<user_type>& usr_manager);
+    inline void set_user_manager(user_manager<UserType>& usr_manager);
 
-    using user_set_container::empty;
-    using user_set_container::size;
     using user_set_container::begin;
-    using user_set_container::end;
     using user_set_container::cbegin;
     using user_set_container::cend;
+    using user_set_container::empty;
+    using user_set_container::end;
     using user_set_container::reserve;
+    using user_set_container::size;
     using iterator = user_set_container::iterator;
     using const_iterator = user_set_container::const_iterator;
 
@@ -62,14 +63,14 @@ public:
     user_set& operator=(const user_set& other);
     user_set& operator=(user_set&& other);
 
-    inline auto insert_user(const user_type_sptr& user_sptr);
+    inline auto insert_user(const UserType_sptr& user_sptr);
     inline void erase_user(const_iterator iter) { this->erase(iter); }
 
-    template <typename... args_types>
-    std::shared_ptr<user_type> create_user(args_types&&... args);
+    template <typename... ArgsTypes>
+    std::shared_ptr<UserType> create_user(ArgsTypes&&... args);
     inline const_iterator find_user(const key_type& key) const { return this->find(key); }
     inline iterator find_user(const key_type& key) { return this->find(key); }
-    inline user_type_sptr find_user_sptr(const key_type& key) const;
+    inline UserType_sptr find_user_sptr(const key_type& key) const;
     void erase_user(const key_type& key);
     void clear_users();
 
@@ -77,20 +78,20 @@ public:
     void set_max_number_of_users(std::size_t max_count) { max_number_of_users_ = max_count; }
 
 private:
-    user_manager<user_type>* user_manager_ = nullptr;
+    user_manager<UserType>* user_manager_ = nullptr;
     std::size_t max_number_of_users_ = std::numeric_limits<std::size_t>::max();
 };
 
-template <class user_type, class user_sptr_hash>
-inline auto user_set<user_type, user_sptr_hash>::insert_user(const user_type_sptr& user_sptr)
+template <class UserType, class UserSptrHash>
+inline auto user_set<UserType, UserSptrHash>::insert_user(const UserType_sptr& user_sptr)
 {
     if (this->size() < max_number_of_users_)
         return this->insert(user_sptr);
     return std::make_pair(this->end(), false);
 }
 
-template <class user_type, class user_sptr_hash>
-void user_set<user_type, user_sptr_hash>::set_user_manager(user_manager<user_type>& usr_manager)
+template <class UserType, class UserSptrHash>
+void user_set<UserType, UserSptrHash>::set_user_manager(user_manager<UserType>& usr_manager)
 {
     if (user_manager_)
         throw std::runtime_error("The user_set is already using another user_manager.");
@@ -99,9 +100,8 @@ void user_set<user_type, user_sptr_hash>::set_user_manager(user_manager<user_typ
     user_manager_ = &usr_manager;
 }
 
-template <class user_type, class user_sptr_hash>
-user_set<user_type, user_sptr_hash>&
-user_set<user_type, user_sptr_hash>::operator=(const user_set &other)
+template <class UserType, class UserSptrHash>
+user_set<UserType, UserSptrHash>& user_set<UserType, UserSptrHash>::operator=(const user_set& other)
 {
     if (&other != this)
         clear_users();
@@ -110,9 +110,8 @@ user_set<user_type, user_sptr_hash>::operator=(const user_set &other)
     return *this;
 }
 
-template <class user_type, class user_sptr_hash>
-user_set<user_type, user_sptr_hash>&
-user_set<user_type, user_sptr_hash>::operator=(user_set&& other)
+template <class UserType, class UserSptrHash>
+user_set<UserType, UserSptrHash>& user_set<UserType, UserSptrHash>::operator=(user_set&& other)
 {
     if (&other != this)
         clear_users();
@@ -122,16 +121,16 @@ user_set<user_type, user_sptr_hash>::operator=(user_set&& other)
     return *this;
 }
 
-template <class user_type, class user_sptr_hash>
-user_set<user_type, user_sptr_hash>::user_type_sptr
-user_set<user_type, user_sptr_hash>::find_user_sptr(const user_set::key_type &key) const
+template <class UserType, class UserSptrHash>
+user_set<UserType, UserSptrHash>::UserType_sptr
+user_set<UserType, UserSptrHash>::find_user_sptr(const user_set::key_type& key) const
 {
     auto iter = find_user(key);
     return iter != end() ? *iter : nullptr;
 }
 
-template <class user_type, class user_sptr_hash>
-void user_set<user_type, user_sptr_hash>::erase_user(const key_type& key)
+template <class UserType, class UserSptrHash>
+void user_set<UserType, UserSptrHash>::erase_user(const key_type& key)
 {
     auto iter = find_user(key);
     if (iter != end())
@@ -143,8 +142,8 @@ void user_set<user_type, user_sptr_hash>::erase_user(const key_type& key)
     }
 }
 
-template <class user_type, class user_sptr_hash>
-void user_set<user_type, user_sptr_hash>::clear_users()
+template <class UserType, class UserSptrHash>
+void user_set<UserType, UserSptrHash>::clear_users()
 {
     if (user_manager_)
     {
@@ -160,16 +159,16 @@ void user_set<user_type, user_sptr_hash>::clear_users()
         this->clear();
 }
 
-template <class user_type, class user_sptr_hash>
-template <typename... args_types>
-std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args_types&&... args)
+template <class UserType, class UserSptrHash>
+template <typename... ArgsTypes>
+std::shared_ptr<UserType> user_set<UserType, UserSptrHash>::create_user(ArgsTypes&&... args)
 {
     if (this->size() < max_number_of_users_)
     {
-        user_type_sptr user_sptr;
+        UserType_sptr user_sptr;
         if (user_manager_)
         {
-            user_sptr = user_manager_->create_user(std::forward<args_types>(args)...);
+            user_sptr = user_manager_->create_user(std::forward<ArgsTypes>(args)...);
             if (user_sptr)
             {
                 if (this->insert(user_sptr).second)
@@ -179,7 +178,7 @@ std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args
         }
         else
         {
-            user_sptr = std::make_shared<user_type>(std::forward<args_types>(args)...);
+            user_sptr = std::make_shared<UserType>(std::forward<ArgsTypes>(args)...);
             if (user_sptr && this->insert(user_sptr).second)
                 return user_sptr;
         }
@@ -187,5 +186,5 @@ std::shared_ptr<user_type> user_set<user_type, user_sptr_hash>::create_user(args
     return nullptr;
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

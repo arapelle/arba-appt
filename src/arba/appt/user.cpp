@@ -1,4 +1,5 @@
 #include <arba/appt/user/user.hpp>
+
 #include <stdexcept>
 
 inline namespace arba
@@ -20,5 +21,5 @@ void user::unset_id()
     id_ = bad_id;
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

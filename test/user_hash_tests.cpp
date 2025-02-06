@@ -1,8 +1,10 @@
 #include <arba/appt/user/user_hash.hpp>
 #include <arba/appt/user/user_manager.hpp>
+
 #include <gtest/gtest.h>
-#include <unordered_set>
+
 #include <cstdlib>
+#include <unordered_set>
 
 using namespace std::string_literals;
 
@@ -125,7 +127,7 @@ TEST(user_hash_tests, test_unordered_set_user_sptr_name)
     auto iter = ut_user_set.find(user_sptr);
     ASSERT_TRUE(iter != ut_user_set.end());
     ASSERT_EQ((*iter)->name(), user_name);
-//    ut_user_set.find(user_name);
+    //    ut_user_set.find(user_name);
 }
 
 TEST(user_hash_tests, test_unordered_set_user_2_sptr_name)
@@ -138,7 +140,7 @@ TEST(user_hash_tests, test_unordered_set_user_2_sptr_name)
     auto iter = ut_user_set.find(user_sptr);
     ASSERT_TRUE(iter != ut_user_set.end());
     ASSERT_EQ((*iter)->name, user_name);
-//    ut_user_set.find(user_name);
+    //    ut_user_set.find(user_name);
 }
 
 int main(int argc, char** argv)

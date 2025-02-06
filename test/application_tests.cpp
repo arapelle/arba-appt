@@ -1,5 +1,7 @@
 #include <arba/appt/application/application.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;
@@ -18,7 +20,7 @@ TEST(application_tests, test_constructor_empty)
 
 TEST(application_tests, test_constructor)
 {
-    appt::application<> app(appt::program_args(argc, argv));
+    appt::application<> app(core::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
@@ -27,7 +29,5 @@ int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

@@ -1,9 +1,10 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <random>
+#include <arba/appt/application/module/module.hpp>
+
 #include <iostream>
+#include <random>
 
 namespace example
 {
@@ -15,10 +16,7 @@ private:
 public:
     using base_::base_;
 
-    void init()
-    {
-        base_::init();
-    }
+    void init() { base_::init(); }
 };
 
 struct number_event
@@ -30,8 +28,7 @@ using module = appt::module<application>;
 template <class module_type>
 using loop_module = appt::loop<module, module_type>;
 
-class consumer_module : public loop_module<consumer_module>,
-                        public evnt::event_listener<number_event>
+class consumer_module : public loop_module<consumer_module>, public evnt::event_listener<number_event>
 {
 private:
     using base_ = loop_module<consumer_module>;
@@ -87,7 +84,8 @@ private:
 public:
     generator_module(application_type& app, std::string_view name = std::string_view())
         : base_(app, name), int_generator_(std::random_device{}())
-    {}
+    {
+    }
 
     virtual ~generator_module() override = default;
 
@@ -97,10 +95,7 @@ public:
         app().event_manager().emit(event);
     }
 
-    virtual void finish() override
-    {
-        std::cout << "generator finished" << std::endl;
-    }
+    virtual void finish() override { std::cout << "generator finished" << std::endl; }
 
 private:
     unsigned die6()
@@ -113,11 +108,11 @@ private:
     std::mt19937_64 int_generator_;
 };
 
-}
+} // namespace example
 
 int main(int argc, char** argv)
 {
-    example::application app(appt::program_args(argc, argv));
+    example::application app(core::program_args(argc, argv));
     app.create_main_module<example::consumer_module>("consumer_module").set_frequency(3);
     app.create_module<example::generator_module>("generator_module").set_frequency(2);
     app.init();

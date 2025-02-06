@@ -1,13 +1,15 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include <arba/appt/application/application.hpp>
-#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/logging.hpp>
-#include <arba/appt/application/module/module.hpp>
-#include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/logging.hpp>
-#include <arba/appt/util/format_time_point.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/module.hpp>
+
+#include <arba/stdx/chrono/format_time_point.hpp>
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 #include <fstream>
 
@@ -43,7 +45,7 @@ public:
 
     inline std::filesystem::path make_log_directory_path() const
     {
-        std::filesystem::path subpath = std::filesystem::path("log") / appt::format_filename_Ymd_HMS();
+        std::filesystem::path subpath = std::filesystem::path("log") / stdx::format_Ymd_HMS_as_filename();
         if (!args().empty())
             return args().program_dir() / subpath;
         return subpath;
@@ -82,15 +84,9 @@ public:
     first_module(application_type& app) : base_(app, "first_module") {}
     virtual ~first_module() override = default;
 
-    void run_loop(appt::dt::seconds)
-    {
-        SPDLOG_LOGGER_INFO(logger(), "");
-    }
+    void run_loop(appt::dt::seconds) { SPDLOG_LOGGER_INFO(logger(), ""); }
 
-    virtual void finish() override
-    {
-        SPDLOG_LOGGER_INFO(logger(), "");
-    }
+    virtual void finish() override { SPDLOG_LOGGER_INFO(logger(), ""); }
 };
 
 class second_module : public appt::mdec::loop<appt::mdec::logging<appt::module<application>>, second_module>
@@ -108,18 +104,12 @@ public:
         logger()->set_level(spdlog::level::debug);
     }
 
-    void run_loop(appt::dt::seconds)
-    {
-        SPDLOG_LOGGER_DEBUG(logger(), "");
-    }
+    void run_loop(appt::dt::seconds) { SPDLOG_LOGGER_DEBUG(logger(), ""); }
 
-    virtual void finish() override
-    {
-        SPDLOG_LOGGER_DEBUG(logger(), "");
-    }
+    virtual void finish() override { SPDLOG_LOGGER_DEBUG(logger(), ""); }
 };
 
-}
+} // namespace ut
 
 TEST(logging_tests, test_logs__no_args)
 {
@@ -131,7 +121,7 @@ TEST(logging_tests, test_logs__no_args)
         ASSERT_TRUE(std::filesystem::exists(app_log_file));
         ut::first_module& first_module = app.create_module<ut::first_module>();
         ASSERT_NE(first_module.logger(), nullptr);
-        std::filesystem::path first_module_log_file = app.log_dir()/"first_module.log";
+        std::filesystem::path first_module_log_file = app.log_dir() / "first_module.log";
         ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
     }
     {
@@ -149,7 +139,7 @@ TEST(logging_tests, test_logs__no_args)
 
 TEST(logging_tests, test_logs)
 {
-    ut::application app(appt::program_args(argc, argv));
+    ut::application app(core::program_args(argc, argv));
     ASSERT_TRUE(std::filesystem::exists(app.log_dir()));
     ASSERT_NE(app.logger(), nullptr);
     std::filesystem::path app_log_file = app.log_dir() / "program_name.v2.log";
@@ -178,9 +168,15 @@ TEST(logging_tests, test_logs)
     ASSERT_TRUE(std::filesystem::exists(app_log_file));
     ASSERT_TRUE(std::filesystem::exists(first_module_log_file));
     ASSERT_TRUE(std::filesystem::exists(second_module_log_file));
-    { std::ifstream stream(app_log_file); }
-    { std::ifstream stream(first_module_log_file); }
-    { std::ifstream stream(second_module_log_file); }
+    {
+        std::ifstream stream(app_log_file);
+    }
+    {
+        std::ifstream stream(first_module_log_file);
+    }
+    {
+        std::ifstream stream(second_module_log_file);
+    }
     ASSERT_GT(std::filesystem::file_size(app_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(first_module_log_file), 0);
     ASSERT_GT(std::filesystem::file_size(second_module_log_file), 0);
@@ -190,7 +186,5 @@ int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

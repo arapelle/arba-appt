@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 
-#include "program_args.hpp"
+#include <arba/core/program_args.hpp>
+
 #include <string>
 
 inline namespace arba
@@ -15,15 +16,15 @@ template <>
 class basic_application<void>
 {
 public:
-    template <typename OtherApplicationType>
-    using rebind_t = basic_application<OtherApplicationType>;
+    template <typename OtherType>
+    using rebind_t = basic_application<OtherType>;
 
-    explicit basic_application(const program_args& args = program_args());
+    explicit basic_application(const core::program_args& args = core::program_args());
 
-    inline const program_args& args() const { return program_args_; }
+    inline const core::program_args& args() const { return program_args_; }
 
 private:
-    program_args program_args_;
+    core::program_args program_args_;
 };
 
 template <class ApplicationType>
@@ -42,5 +43,5 @@ protected:
     [[nodiscard]] inline self_type& self() noexcept { return static_cast<self_type&>(*this); }
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

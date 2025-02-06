@@ -22,10 +22,7 @@ public:
         std::abort();
     }
 
-    virtual void run() override
-    {
-        std::abort();
-    }
+    virtual void run() override { std::abort(); }
 };
 
-}
+} // namespace ut

@@ -1,7 +1,9 @@
-#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/module.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;
@@ -19,10 +21,7 @@ class ut_application : public appt::adec::multi_task<appt::application<>, ut_app
 public:
     using base_::base_;
 
-    void init()
-    {
-        this->base_::init();
-    }
+    void init() { this->base_::init(); }
 };
 
 class ut_event
@@ -54,15 +53,12 @@ public:
         event_manager().emit(event_box());
         if (run_count == 1)
         {
-            event_manager().emit(ut_event{"local"});
-            app().event_manager().emit(ut_event{"global"});
+            event_manager().emit(ut_event{ "local" });
+            app().event_manager().emit(ut_event{ "global" });
         }
     }
 
-    void receive(ut_event& event)
-    {
-        messages.push_back(event.message);
-    }
+    void receive(ut_event& event) { messages.push_back(event.message); }
 
     uint16_t run_count = 0;
     std::vector<std::string> messages;
@@ -90,10 +86,7 @@ public:
         event_manager().emit(event_box());
     }
 
-    void receive(ut_event& event)
-    {
-        messages.push_back(event.message);
-    }
+    void receive(ut_event& event) { messages.push_back(event.message); }
 
     uint16_t run_count = 0;
     std::vector<std::string> messages;
@@ -101,7 +94,7 @@ public:
 
 TEST(event_forwarding_tests, test_forwarding)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ut_first_event_module& first_module = app.create_module<ut_first_event_module>();
     ut_second_event_module& second_module = app.create_module<ut_second_event_module>();
     app.init();
@@ -125,7 +118,5 @@ int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

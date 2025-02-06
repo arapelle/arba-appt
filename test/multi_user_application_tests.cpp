@@ -1,7 +1,9 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
 #include <arba/appt/user/user.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;
@@ -54,14 +56,14 @@ TEST(multi_user_application_tests, test_constructor_empty)
 
 TEST(multi_user_application_tests, test_constructor)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
 
 TEST(multi_user_application_tests, test_run)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     app.run();
     ASSERT_EQ(app.usr_manager().size(), 3);
     std::shared_ptr user_sptr = app.usr_manager().shared_user(0);
@@ -73,10 +75,8 @@ TEST(multi_user_application_tests, test_run)
     ASSERT_EQ(user_sptr->name, "Gamma");
 }
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     std::filesystem::create_directories(program_dir);
-    auto res = RUN_ALL_TESTS();
-    std::filesystem::remove_all(program_dir);
-    return res;
+    return RUN_ALL_TESTS();
 }

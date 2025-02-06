@@ -2,6 +2,7 @@
 
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/user/user_set.hpp>
+
 #include <memory>
 
 inline namespace arba
@@ -11,21 +12,20 @@ namespace appt
 inline namespace mdec // module_decorator
 {
 
-template <typename user_type, typename user_sptr_hash, typename module_base_type, typename module_type = void>
+template <typename UserType, typename UserSptrHash, typename ModuleBase, typename SelfType = void>
 class multi_user;
 
-template <typename user_type, typename user_sptr_hash, typename module_base_type>
-class multi_user<user_type, user_sptr_hash, module_base_type> : public module_base_type
+template <typename UserType, typename UserSptrHash, typename ModuleBase>
+class multi_user<UserType, UserSptrHash, ModuleBase> : public ModuleBase
 {
 public:
-    using user_set = appt::user_set<user_type, user_sptr_hash>;
-    using application_type = typename module_base_type::application_type;
+    using user_set = appt::user_set<UserType, UserSptrHash>;
+    using application_type = typename ModuleBase::application_type;
 
-    template <typename other_module_type>
-    using rebind_t = multi_user<user_type, user_sptr_hash, module_base_type, other_module_type>;
+    template <typename OtherType>
+    using rebind_t = multi_user<UserType, UserSptrHash, ModuleBase, OtherType>;
 
-    explicit multi_user(application_type& app, std::string_view name = std::string_view())
-        : module_base_type(app, name)
+    explicit multi_user(application_type& app, std::string_view name = std::string_view()) : ModuleBase(app, name)
     {
         users_.set_user_manager(app.usr_manager());
     }
@@ -38,17 +38,17 @@ private:
     user_set users_;
 };
 
-template <typename user_type, typename user_sptr_hash, typename module_base_type, typename module_type>
-class multi_user : public multi_user<user_type, user_sptr_hash, typename module_base_type::template rebind_t<module_type>>
+template <typename UserType, typename UserSptrHash, typename ModuleBase, typename SelfType>
+class multi_user : public multi_user<UserType, UserSptrHash, typename ModuleBase::template rebind_t<SelfType>>
 {
 private:
-    using base_ = multi_user<user_type, user_sptr_hash, typename module_base_type::template rebind_t<module_type>>;
+    using base_ = multi_user<UserType, UserSptrHash, typename ModuleBase::template rebind_t<SelfType>>;
 
 public:
     using base_::base_;
     virtual ~multi_user() override = default;
 };
 
-}
-}
-}
+} // namespace mdec
+} // namespace appt
+} // namespace arba

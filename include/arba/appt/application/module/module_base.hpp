@@ -28,5 +28,5 @@ private:
     std::string name_;
 };
 
-}
-}
+} // namespace appt
+} // namespace arba

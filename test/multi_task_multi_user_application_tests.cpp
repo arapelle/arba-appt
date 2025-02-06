@@ -1,12 +1,13 @@
+#include "modules/counting_module.hpp"
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
-#include <arba/core/sbrm.hpp>
+#include <arba/appt/application/module/module.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
-#include "modules/counting_module.hpp"
 
 using namespace std::string_literals;
 
@@ -48,7 +49,7 @@ TEST(multi_user_multi_task_application_tests, test_constructor_empty)
 
 TEST(multi_user_multi_task_application_tests, test_constructor)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     ASSERT_EQ(app.args().argc, argc);
     ASSERT_EQ(app.args().argv, argv);
 }
@@ -59,12 +60,13 @@ TEST(multi_user_multi_task_application_tests, test_constructor)
 
 using counting_module = ut::counting_module<ut_application>;
 
-class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
-                                                        multi_user_module>
+class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>,
+                                                        appt::module<ut_application>, multi_user_module>
 {
 private:
     using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
                                          multi_user_module>;
+
 public:
     using base_::base_;
 
@@ -100,7 +102,7 @@ public:
 
 TEST(multi_user_multi_task_application_tests, test_side_modules)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>();
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
@@ -115,7 +117,7 @@ TEST(multi_user_multi_task_application_tests, test_side_modules)
 
 TEST(multi_user_multi_task_application_tests, test_main_module)
 {
-    ut_application app(appt::program_args(argc, argv));
+    ut_application app(core::program_args(argc, argv));
     counting_module& module = app.set_main_module(std::make_unique<counting_module>(std::ref(app)));
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
     ASSERT_EQ(app.run(), appt::execution_status::execution_success);
@@ -156,7 +158,6 @@ TEST(multi_user_multi_task_application_tests, test_create_multi_user_module)
 int main(int argc, char** argv)
 {
     std::filesystem::create_directories(program_dir);
-    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

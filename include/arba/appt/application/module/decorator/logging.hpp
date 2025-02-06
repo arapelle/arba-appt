@@ -1,7 +1,8 @@
 #pragma once
 
-#include <arba/appt/application/program_args.hpp>
 #include <spdlog/spdlog.h>
+
+#include <filesystem>
 #include <source_location>
 
 inline namespace arba
@@ -22,43 +23,42 @@ protected:
     static void destroy_logger(std::shared_ptr<spdlog::logger> logger);
 };
 
-}
+} // namespace private_
 
-template <class module_base_type, class module_type = void>
+template <class ModuleBase, class SelfType = void>
 class logging;
 
-template <class module_base_type>
-class logging<module_base_type> : public module_base_type
+template <class ModuleBase>
+class logging<ModuleBase> : public ModuleBase
 {
 private:
-    using base_ = module_base_type;
+    using base_ = ModuleBase;
 
 public:
-    using application_type = typename module_base_type::application_type;
+    using application_type = typename ModuleBase::application_type;
 
-    template <typename other_module_type>
-    using rebind_t = logging<module_base_type, other_module_type>;
+    template <typename OtherType>
+    using rebind_t = logging<ModuleBase, OtherType>;
 
     using base_::base_;
     virtual ~logging() override = default;
 };
 
-template <class module_base_type, class module_type>
-class logging : public logging<typename module_base_type::template rebind_t<module_type>>,
-                private private_::logging_impl
+template <class ModuleBase, class SelfType>
+class logging : public logging<typename ModuleBase::template rebind_t<SelfType>>, private private_::logging_impl
 {
 private:
-    using base_ = logging<typename module_base_type::template rebind_t<module_type>>;
+    using base_ = logging<typename ModuleBase::template rebind_t<SelfType>>;
 
 public:
     using application_type = typename base_::application_type;
 
 public:
     explicit logging(application_type& app, std::string_view name = std::string_view())
-        : base_(app, name),
-        log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
-        logger_(this->self().make_logger())
-    {}
+        : base_(app, name), log_fpath_(this->self().make_log_dirpath() / this->self().make_log_filename()),
+          logger_(this->self().make_logger())
+    {
+    }
 
     virtual ~logging() override
     {
@@ -92,37 +92,37 @@ private:
     std::shared_ptr<spdlog::logger> logger_;
 };
 
-template <class module_base_type, class module_type>
-std::filesystem::path logging<module_base_type, module_type>::make_log_dirpath() const
+template <class ModuleBase, class SelfType>
+std::filesystem::path logging<ModuleBase, SelfType>::make_log_dirpath() const
 {
     return this->app().log_dir();
 }
 
-template <class module_base_type, class module_type>
-std::filesystem::path logging<module_base_type, module_type>::make_log_filename() const
+template <class ModuleBase, class SelfType>
+std::filesystem::path logging<ModuleBase, SelfType>::make_log_filename() const
 {
     return this->self().make_logger_name() + ".log";
 }
 
-template <class module_base_type, class module_type>
-std::shared_ptr<spdlog::logger> logging<module_base_type, module_type>::make_logger() const
+template <class ModuleBase, class SelfType>
+std::shared_ptr<spdlog::logger> logging<ModuleBase, SelfType>::make_logger() const
 {
     std::vector<spdlog::sink_ptr> sink_list = this->self().make_sink_list();
-    std::shared_ptr logger = std::make_shared<spdlog::logger>(this->self().make_logger_name(),
-                                                              sink_list.begin(), sink_list.end());
+    std::shared_ptr logger =
+        std::make_shared<spdlog::logger>(this->self().make_logger_name(), sink_list.begin(), sink_list.end());
     logger->set_level(static_cast<decltype(spdlog::level::info)>(SPDLOG_ACTIVE_LEVEL));
     logging_impl::initialize_logger(logger);
     return logger;
 }
 
-template <class module_base_type, class module_type>
-std::string logging<module_base_type, module_type>::make_logger_name() const
+template <class ModuleBase, class SelfType>
+std::string logging<ModuleBase, SelfType>::make_logger_name() const
 {
     return this->name();
 }
 
-template <class module_base_type, class module_type>
-std::vector<spdlog::sink_ptr> logging<module_base_type, module_type>::make_sink_list() const
+template <class ModuleBase, class SelfType>
+std::vector<spdlog::sink_ptr> logging<ModuleBase, SelfType>::make_sink_list() const
 {
     std::vector<spdlog::sink_ptr> sink_list;
     if (spdlog::sink_ptr sink_ptr = this->self().make_console_sink(); sink_ptr) [[likely]]
@@ -132,9 +132,9 @@ std::vector<spdlog::sink_ptr> logging<module_base_type, module_type>::make_sink_
     return sink_list;
 }
 
-template <class module_base_type, class module_type>
-void logging<module_base_type, module_type>::handle_caught_exception(const std::source_location& location,
-                                                                     std::exception_ptr ex_ptr)
+template <class ModuleBase, class SelfType>
+void logging<ModuleBase, SelfType>::handle_caught_exception(const std::source_location& location,
+                                                            std::exception_ptr ex_ptr)
 {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
     std::string error_msg;
@@ -157,12 +157,12 @@ void logging<module_base_type, module_type>::handle_caught_exception(const std::
 #endif
 }
 
-template <class module_base_type, class module_type>
-void logging<module_base_type, module_type>::destroy_logger(std::shared_ptr<spdlog::logger> mod_logger) const
+template <class ModuleBase, class SelfType>
+void logging<ModuleBase, SelfType>::destroy_logger(std::shared_ptr<spdlog::logger> mod_logger) const
 {
     logging_impl::destroy_logger(mod_logger);
 }
 
-}
-}
-}
+} // namespace mdec
+} // namespace appt
+} // namespace arba

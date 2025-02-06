@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.26)
 
+# EXTERNAL DEPENDENCIES
+
+add_subdirectory(external)
+
 # CMAKE INCLUDES
 
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/external/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/external/cmake/)
 include(CMakePrintHelpers)
 include(cmtk/CppLibraryProject)
 
@@ -13,24 +17,24 @@ set_build_type_ifndef()
 
 # C++ PROJECT
 
-set(PROJECT_NAME "arba-appt")
-set(project_namespace "arba")
-set(project_base_name "appt")
-set(PROJECT_VERSION 0.14.0)
+set_project_name(NAMESPACE "arba" BASE_NAME "appt")
+string(TIMESTAMP configure_datetime "%Y%m%d-%H%M%S")
+set_project_semantic_version("0.15.0" BUILD_METADATA "${configure_datetime}")
+
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
-        DESCRIPTION "A C++ library providing application objects embedding useful tools."
+        DESCRIPTION "A C++ library providing application classes embedding useful tools."
         HOMEPAGE_URL "https://github.com/arapelle/arba-appt"
         LANGUAGES CXX)
-message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_VERSION} ${CMAKE_BUILD_TYPE}")
-include(CTest)
+message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_SEMANTIC_VERSION} ${CMAKE_BUILD_TYPE}")
 
 # C++ LIBRARY
 
 ## Generated/Configured headers:
-generate_version_macro_header(generated_version_header
-                              ${project_namespace}_${project_base_name}
-                              ${project_namespace}/${project_base_name}/version.hpp)
+configure_headers(configured_headers
+    FILES
+        include/${PROJECT_NAMESPACE}/${PROJECT_BASE_NAME}/version.hpp.in
+)
 
 ## Headers:
 set(headers
@@ -46,15 +50,13 @@ set(headers
     include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
-    include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/module.hpp
-    include/arba/appt/application/program_args.hpp
-    include/arba/appt/user/user_hash.hpp
+    include/arba/appt/application/module/module_base.hpp
     include/arba/appt/user/user.hpp
+    include/arba/appt/user/user_hash.hpp
     include/arba/appt/user/user_manager.hpp
     include/arba/appt/user/user_set.hpp
     include/arba/appt/util/delta_time.hpp
-    include/arba/appt/util/format_time_point.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logging/log_critical_message.hpp
     include/arba/appt/util/logging/logger_make_helper.hpp
@@ -63,61 +65,60 @@ set(headers
 
 ## Sources:
 set(sources
-    src/application/decorator/logging.cpp
-    src/application/module/decorator/logging.cpp
-    src/basic_application.cpp
-    src/format_time_point.cpp
-    src/log_critical_message.cpp
-    src/logger_make_helper.cpp
-    src/module_base.cpp
-    src/user.cpp
+    src/arba/appt/application/decorator/logging.cpp
+    src/arba/appt/application/module/decorator/logging.cpp
+    src/arba/appt/basic_application.cpp
+    src/arba/appt/log_critical_message.cpp
+    src/arba/appt/logger_make_helper.cpp
+    src/arba/appt/module_base.cpp
+    src/arba/appt/user.cpp
 )
 
 ## Add C++ library:
-add_cpp_library(
-    SHARED ${PROJECT_NAME}
-    STATIC ${PROJECT_NAME}-static
-    BUILD_SHARED BUILD_arba-arba
-    BUILD_STATIC BUILD_arba-arba-static
-    HEADERS ${headers} ${generated_version_header}
-    SOURCES ${sources}
-    CXX_STANDARD 20
+shared_or_static_option(${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE "SHARED")
+if("${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}" STREQUAL "SHARED")
+  set(LIBRARY_TYPE_POSTFIX "")
+  set(PROJECT_TARGET_NAME "${PROJECT_NAME}")
+else()
+  set(LIBRARY_TYPE_POSTFIX "-static")
+  set(PROJECT_TARGET_NAME "${PROJECT_NAME}${LIBRARY_TYPE_POSTFIX}")
+endif()
+
+add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
+  HEADERS ${headers} ${configured_headers}
+  SOURCES ${sources}
+  HEADERS_BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
+  CXX_STANDARD 20
+  DEFAULT_WARNING_OPTIONS
 )
+add_library("${PROJECT_NAMESPACE}::${PROJECT_BASE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
 
 ## Link C++ targets:
-if(NOT TARGET arba-rsce)
-    find_package(arba-rsce 0.3.0 REQUIRED CONFIG)
-endif()
-if(NOT TARGET arba-evnt)
-    find_package(arba-evnt 0.5.0 REQUIRED CONFIG)
-endif()
-find_package(spdlog 1.8 REQUIRED CONFIG)
-cpp_library_link_libraries(
-    SHARED ${PROJECT_NAME}
-    STATIC ${PROJECT_NAME}-static
-    PUBLIC arba-rsce arba-evnt spdlog::spdlog
+find_package(arba-core 0.29.0 REQUIRED CONFIG)
+find_package(arba-stdx 0.2.0 REQUIRED CONFIG)
+find_package(arba-rsce 0.4.0 REQUIRED CONFIG)
+find_package(arba-evnt 0.6.0 REQUIRED CONFIG)
+find_package(spdlog 1.8.0 REQUIRED CONFIG)
+target_link_libraries(${PROJECT_TARGET_NAME}
+    PUBLIC
+        arba::core
+        arba::stdx
+        arba::rsce
+        arba::evnt
+        spdlog::spdlog
 )
 
+## Add tests:
+add_test_subdirectory_if_build(test)
+
+## Add examples:
+add_example_subdirectory_if_build(example)
+
+# C++ INSTALL
+
 ## Install C++ library:
-install_cpp_library(
-    SHARED ${PROJECT_NAME}
-    STATIC ${PROJECT_NAME}-static
-    EXPORT ${PROJECT_NAME}-targets
-)
+install_cpp_libraries(TARGETS ${PROJECT_TARGET_NAME} EXPORT ${PROJECT_NAME}-targets)
 
 ## Install project package
 install_library_package(${PROJECT_NAME} INPUT_PACKAGE_CONFIG_FILE cmake/config/package-config.cmake.in)
-install_uninstall_script(${PROJECT_NAME} FILENAME uninstall.cmake)
-
-## Add examples:
-option_or_set_ifdef(BUILD_${PROJECT_NAME}_EXAMPLES "Build ${PROJECT_NAME} examples or not" OFF BUILD_arba-arba_EXAMPLES)
-if(BUILD_${PROJECT_NAME}_EXAMPLES)
-    add_subdirectory(example)
-endif()
-
-## Add tests:
-option_or_set_ifdef(BUILD_${PROJECT_NAME}_TESTS "Build ${PROJECT_NAME} tests or not" OFF BUILD_arba-arba_TESTS)
-option(BUILD_${PROJECT_NAME}_TESTS "Build ${PROJECT_NAME} tests or not" OFF)
-if(BUILD_${PROJECT_NAME}_TESTS AND BUILD_TESTING)
-    add_subdirectory(test)
-endif()
+install_uninstall_script(${PROJECT_NAME})

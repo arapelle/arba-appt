@@ -1,8 +1,10 @@
-#include <arba/appt/util/delta_time.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/util/delta_time.hpp>
+
 #include <gtest/gtest.h>
-#include <type_traits>
+
 #include <cstdlib>
+#include <type_traits>
 
 using namespace std::chrono_literals;
 

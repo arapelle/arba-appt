@@ -1,8 +1,10 @@
-#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/application.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/module.hpp>
+
 #include <gtest/gtest.h>
+
 #include <cstdlib>
 
 using namespace std::string_literals;
@@ -51,10 +53,7 @@ public:
             stop();
     }
 
-    virtual void finish() override
-    {
-        ++finish_count;
-    }
+    virtual void finish() override { ++finish_count; }
 
     uint16_t init_count = 0;
     uint16_t run_count = 0;

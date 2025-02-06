@@ -4,11 +4,12 @@
 #include <arba/appt/application/decorator/logging.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
 #include <arba/appt/application/module/decorator/logging.hpp>
-#include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/decorator/multi_user.hpp>
+#include <arba/appt/application/module/module.hpp>
 #include <arba/appt/util/logging/logging_macro.hpp>
+
 #include <random>
 
 namespace example
@@ -68,7 +69,7 @@ namespace priv
 using module_ = appt::module<application>;
 using logging_module_ = appt::mdec::logging<module_>;
 using multi_user_logging_module_ = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, logging_module_>;
-}
+} // namespace priv
 
 template <class module_type>
 using loop_multi_user_logging_module = appt::mdec::loop<priv::multi_user_logging_module_, module_type>;
@@ -152,10 +153,7 @@ public:
         app().event_manager().emit(event);
     }
 
-    virtual void finish() override
-    {
-        ARBA_APPT_LOGGER_TRACE(logger());
-    }
+    virtual void finish() override { ARBA_APPT_LOGGER_TRACE(logger()); }
 
 private:
     unsigned die100()
@@ -168,11 +166,11 @@ private:
     std::mt19937_64 int_generator_;
 };
 
-}
+} // namespace example
 
 int main(int argc, char** argv)
 {
-    example::application app(appt::program_args(argc, argv));
+    example::application app(core::program_args(argc, argv));
     app.create_main_module<example::consumer_module>().set_frequency(3);
     app.create_module<example::generator_module>().set_frequency(2);
     app.init();

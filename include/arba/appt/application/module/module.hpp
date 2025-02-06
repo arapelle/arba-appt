@@ -1,8 +1,9 @@
 #pragma once
 
 #include "basic_module.hpp"
-#include <arba/rsce/resource_manager.hpp>
+
 #include <arba/evnt/evnt.hpp>
+#include <arba/rsce/resource_manager.hpp>
 
 inline namespace arba
 {
@@ -19,8 +20,8 @@ private:
     using base_ = basic_module<ApplicationType, ModuleType>;
 
 public:
-    template <typename OtherModuleType>
-    using rebind_t = module<ApplicationType, OtherModuleType>;
+    template <typename OtherType>
+    using rebind_t = module<ApplicationType, OtherType>;
 
     using base_::base_;
     virtual ~module() override = default;
@@ -47,5 +48,5 @@ void module<ApplicationType, ModuleType>::init()
         this->app().event_manager().connect(event_box_);
 }
 
-}
-}
+} // namespace appt
+} // namespace arba

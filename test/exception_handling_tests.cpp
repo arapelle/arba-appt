@@ -1,13 +1,14 @@
-#include <arba/appt/application/application.hpp>
-#include <arba/appt/application/decorator/logging.hpp>
-#include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/module/module.hpp>
-#include <arba/appt/application/module/decorator/logging.hpp>
-#include <arba/appt/application/module/decorator/loop.hpp>
-#include <gtest/gtest.h>
 #include "modules/bad_crtp_module.hpp"
 #include "util/stream_capture.hpp"
 #include "util/text_file_content.hpp"
+#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/decorator/logging.hpp>
+#include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/module/decorator/logging.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
+#include <arba/appt/application/module/module.hpp>
+
+#include <gtest/gtest.h>
 
 using logging_application = appt::adec::logging<appt::application<>>;
 using multi_task_application = appt::adec::multi_task<appt::application<>>;
@@ -47,10 +48,7 @@ public:
             std::abort();
     }
 
-    virtual void finish() override
-    {
-        ++finish_count;
-    }
+    virtual void finish() override { ++finish_count; }
 
     uint16_t init_count = 0;
     uint16_t run_count = 0;
@@ -105,6 +103,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__logging)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -147,6 +146,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__logging)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -211,7 +211,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called
     std::string log_file_contents = text_file_content(log_fpath);
     ASSERT_NE(log_file_contents.find("[critical]"), std::string::npos);
     ASSERT_NE(log_file_contents.find("The init status is 'ready' (should be at least 'executing'). "
-                                     "Did you forget to call parent init()?"), std::string::npos);
+                                     "Did you forget to call parent init()?"),
+              std::string::npos);
 }
 
 TEST(exception_handling_tests, test_main_module_init_fails__bad_derived_module)
@@ -271,6 +272,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
     ASSERT_EQ(app.run(), appt::execution_failure);
 
     app.logger()->flush();
+    app.logger()->flush_on(spdlog::level::critical);
 
     std::filesystem::path log_fpath = app.log_path();
     ASSERT_TRUE(std::filesystem::exists(log_fpath));
@@ -302,13 +304,7 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_cerr)
 int main(int argc, char** argv)
 {
     const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "application";
-    core::sbrm program_dir_remover = core::make_sb_all_files_remover(program_dir);
     std::filesystem::create_directories(program_dir);
-
     ::testing::InitGoogleTest(&argc, argv);
-    int exit_value = RUN_ALL_TESTS();
-    if (exit_value != 0)
-        program_dir_remover.disable();
-
-    return exit_value;
+    return RUN_ALL_TESTS();
 }
