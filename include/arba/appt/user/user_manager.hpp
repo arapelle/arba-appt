@@ -23,8 +23,8 @@ public:
     inline user_manager() {}
     template <typename... ArgsTypes>
     std::shared_ptr<UserType> create_user(ArgsTypes&&... args);
-    std::shared_ptr<UserType> shared_user(const id_type& user_id);
-    void release_user(const id_type& user_id);
+    std::shared_ptr<UserType> shared_user(const id_type& uid);
+    void release_user(const id_type& uid);
     void reset_user_shared_ptr(std::shared_ptr<UserType>& user_sptr);
     std::size_t size() const
     {
@@ -74,10 +74,10 @@ std::shared_ptr<UserType> user_manager<UserType>::create_user(ArgsTypes&&... arg
 
 template <class UserType>
     requires std::is_base_of_v<user, UserType>
-std::shared_ptr<UserType> user_manager<UserType>::shared_user(const id_type& user_id)
+std::shared_ptr<UserType> user_manager<UserType>::shared_user(const id_type& uid)
 {
     std::lock_guard lock(mutex_);
-    std::weak_ptr<UserType>& user_wptr = users_[user_id];
+    std::weak_ptr<UserType>& user_wptr = users_[uid];
     if (!user_wptr.expired()) [[likely]]
         return user_wptr.lock();
     return std::shared_ptr<UserType>();
@@ -85,12 +85,12 @@ std::shared_ptr<UserType> user_manager<UserType>::shared_user(const id_type& use
 
 template <class UserType>
     requires std::is_base_of_v<user, UserType>
-void user_manager<UserType>::release_user(const id_type& user_id)
+void user_manager<UserType>::release_user(const id_type& uid)
 {
     std::lock_guard lock(mutex_);
-    std::weak_ptr<UserType>& user_wptr = users_[user_id];
+    std::weak_ptr<UserType>& user_wptr = users_[uid];
     if (user_wptr.expired()) [[likely]]
-        release_user_(user_id, user_wptr);
+        release_user_(uid, user_wptr);
     else
         throw std::invalid_argument("The user cannot be removed as it is still used.");
 }

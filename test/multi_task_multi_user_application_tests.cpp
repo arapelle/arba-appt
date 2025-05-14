@@ -18,8 +18,8 @@ using namespace std::string_literals;
 const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "root/dir";
 std::array s_args = { (program_dir / "program_name.v2.run").generic_string(), "6"s, "-c"s, "Debug"s };
 std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_args[3].data() };
-int argc = cs_args.size();
-char** argv = cs_args.data();
+int pargc = cs_args.size();
+char** pargv = cs_args.data();
 
 class ut_user : public appt::user
 {
@@ -49,9 +49,9 @@ TEST(multi_user_multi_task_application_tests, test_constructor_empty)
 
 TEST(multi_user_multi_task_application_tests, test_constructor)
 {
-    ut_application app(core::program_args(argc, argv));
-    ASSERT_EQ(app.args().argc, argc);
-    ASSERT_EQ(app.args().argv, argv);
+    ut_application app(core::program_args(pargc, pargv));
+    ASSERT_EQ(app.args().argc, pargc);
+    ASSERT_EQ(app.args().argv, pargv);
 }
 
 //-------------------
@@ -102,7 +102,7 @@ public:
 
 TEST(multi_user_multi_task_application_tests, test_side_modules)
 {
-    ut_application app(core::program_args(argc, argv));
+    ut_application app(core::program_args(pargc, pargv));
     counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>();
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
@@ -117,7 +117,7 @@ TEST(multi_user_multi_task_application_tests, test_side_modules)
 
 TEST(multi_user_multi_task_application_tests, test_main_module)
 {
-    ut_application app(core::program_args(argc, argv));
+    ut_application app(core::program_args(pargc, pargv));
     counting_module& module = app.set_main_module(std::make_unique<counting_module>(std::ref(app)));
     ASSERT_EQ(app.init(), appt::execution_status::execution_success);
     ASSERT_EQ(app.run(), appt::execution_status::execution_success);

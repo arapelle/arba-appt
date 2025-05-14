@@ -17,9 +17,9 @@ set_build_type_ifndef()
 
 # C++ PROJECT
 
-set_project_name(NAMESPACE "arba" BASE_NAME "appt")
+set_project_name(NAMESPACE "arba" FEATURE_NAME "appt")
 string(TIMESTAMP configure_datetime "%Y%m%d-%H%M%S")
-set_project_semantic_version("0.15.0" BUILD_METADATA "${configure_datetime}")
+set_project_semantic_version("0.16.0" BUILD_METADATA "${configure_datetime}")
 
 project(${PROJECT_NAME}
         VERSION ${PROJECT_VERSION}
@@ -33,7 +33,7 @@ message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_SEMANTIC_VERSION} ${CMAKE_BU
 ## Generated/Configured headers:
 configure_headers(configured_headers
     FILES
-        include/${PROJECT_NAMESPACE}/${PROJECT_BASE_NAME}/version.hpp.in
+        include/${PROJECT_NAMESPACE}/${PROJECT_FEATURE_NAME}/version.hpp.in
 )
 
 ## Headers:
@@ -75,6 +75,8 @@ set(sources
 )
 
 ## Add C++ library:
+cxx_standard_option(${PROJECT_UPPER_VAR_NAME}_CXX_STANDARD MIN 20 MAX 26)
+
 shared_or_static_option(${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE "SHARED")
 if("${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}" STREQUAL "SHARED")
   set(LIBRARY_TYPE_POSTFIX "")
@@ -87,17 +89,17 @@ endif()
 add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
   HEADERS ${headers} ${configured_headers}
   SOURCES ${sources}
-  HEADERS_BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
-  CXX_STANDARD 20
+  CXX_STANDARD ${${PROJECT_UPPER_VAR_NAME}_CXX_STANDARD}
   DEFAULT_WARNING_OPTIONS
+  DEFAULT_ERROR_OPTIONS
 )
-add_library("${PROJECT_NAMESPACE}::${PROJECT_BASE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
+add_library("${PROJECT_NAMESPACE}::${PROJECT_FEATURE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
 
 ## Link C++ targets:
-find_package(arba-core 0.29.0 REQUIRED CONFIG)
-find_package(arba-stdx 0.2.0 REQUIRED CONFIG)
-find_package(arba-rsce 0.4.0 REQUIRED CONFIG)
-find_package(arba-evnt 0.6.0 REQUIRED CONFIG)
+find_package(arba-core 0.30.0 REQUIRED CONFIG)
+find_package(arba-stdx 0.3.0 REQUIRED CONFIG)
+find_package(arba-rsce 0.5.0 REQUIRED CONFIG)
+find_package(arba-evnt 0.7.0 REQUIRED CONFIG)
 find_package(spdlog 1.8.0 REQUIRED CONFIG)
 target_link_libraries(${PROJECT_TARGET_NAME}
     PUBLIC
