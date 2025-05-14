@@ -31,7 +31,7 @@ conan create . --build=missing -c
 Add a requirement in your conanfile project file.
 ```python
     def requirements(self):
-        self.requires("arba-appt/0.16.0")
+        self.requires("arba-appt/0.17.0")
 ```
 
 ## Quick Install ##
