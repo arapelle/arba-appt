@@ -11,8 +11,8 @@ using namespace std::string_literals;
 const std::filesystem::path program_dir = std::filesystem::temp_directory_path() / "root/dir";
 std::array s_args = { (program_dir / "program_name.v2.run").generic_string(), "6"s, "-c"s, "Debug"s };
 std::array cs_args = { s_args[0].data(), s_args[1].data(), s_args[2].data(), s_args[3].data() };
-int argc = cs_args.size();
-char** argv = cs_args.data();
+int pargc = cs_args.size();
+char** pargv = cs_args.data();
 
 class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
 {
@@ -94,7 +94,7 @@ public:
 
 TEST(event_forwarding_tests, test_forwarding)
 {
-    ut_application app(core::program_args(argc, argv));
+    ut_application app(core::program_args(pargc, pargv));
     ut_first_event_module& first_module = app.create_module<ut_first_event_module>();
     ut_second_event_module& second_module = app.create_module<ut_second_event_module>();
     app.init();

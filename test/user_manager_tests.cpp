@@ -9,7 +9,7 @@ class ut_user : public appt::user
 public:
     virtual ~ut_user() = default;
 
-    ut_user(const std::string& name = "") : name(name) {}
+    ut_user(const std::string& input_name = "") : name(input_name) {}
 
     std::string name;
 };

@@ -27,7 +27,7 @@ class ut_user_2 : public appt::user
 public:
     virtual ~ut_user_2() = default;
 
-    ut_user_2(const std::string& name = "") : name(name) {}
+    ut_user_2(const std::string& input_name = "") : name(input_name) {}
 
     std::string name;
 };
