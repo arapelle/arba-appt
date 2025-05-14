@@ -96,10 +96,10 @@ add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
 add_library("${PROJECT_NAMESPACE}::${PROJECT_FEATURE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
 
 ## Link C++ targets:
-find_package(arba-core 0.29.0 REQUIRED CONFIG)
-find_package(arba-stdx 0.2.0 REQUIRED CONFIG)
-find_package(arba-rsce 0.4.0 REQUIRED CONFIG)
-find_package(arba-evnt 0.6.0 REQUIRED CONFIG)
+find_package(arba-core 0.30.0 REQUIRED CONFIG)
+find_package(arba-stdx 0.3.0 REQUIRED CONFIG)
+find_package(arba-rsce 0.5.0 REQUIRED CONFIG)
+find_package(arba-evnt 0.7.0 REQUIRED CONFIG)
 find_package(spdlog 1.8.0 REQUIRED CONFIG)
 target_link_libraries(${PROJECT_TARGET_NAME}
     PUBLIC
