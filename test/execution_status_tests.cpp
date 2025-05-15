@@ -16,6 +16,19 @@ TEST(execution_status_tests, compare_values)
     ASSERT_GT(appt::executing, appt::ready);
 }
 
+TEST(execution_status_tests, compare_values_)
+{
+    static_assert(std::totally_ordered_with<appt::neo::execution_status, int8_t>);
+    ASSERT_NE(appt::neo::execution_statuses::success, appt::neo::execution_statuses::failure);
+    ASSERT_EQ(appt::neo::execution_statuses::success, EXIT_SUCCESS);
+    ASSERT_EQ(appt::neo::execution_statuses::failure, EXIT_FAILURE);
+    const int res = appt::neo::execution_statuses::success;
+    ASSERT_EQ(res, 0);
+    ASSERT_GT(appt::neo::execution_statuses::ready, appt::neo::execution_statuses::success);
+    ASSERT_GT(appt::neo::execution_statuses::ready, appt::neo::execution_statuses::failure);
+    ASSERT_GT(appt::neo::execution_statuses::executing, appt::neo::execution_statuses::ready);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
