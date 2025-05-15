@@ -10,19 +10,9 @@ inline namespace arba
 namespace appt
 {
 
-enum execution_status : int8_t
-{
-    execution_success = EXIT_SUCCESS,
-    execution_failure = EXIT_FAILURE,
-    ready = (execution_success > execution_failure ? execution_success : execution_failure) + 1,
-    executing,
-};
-
-namespace neo
-{
 class execution_statuses;
 
-class execution_status : public meta::enumerator<int8_t, execution_statuses>
+class execution_status : public meta::enumerator<int8_t, execution_statuses, meta::enum_conversion::implicit_conversion>
 {
 private:
     using base_ = meta::enumerator<int8_t, execution_statuses>;
@@ -30,10 +20,9 @@ private:
 public:
     constexpr execution_status() {}
     consteval execution_status(const base_& val) : base_(val) {}
-    constexpr auto operator<=>(const execution_status& other) const noexcept = default;//{ return this->value() <=> value; }
-    constexpr auto operator<=>(int8_t value) const noexcept { return this->value() <=> value; }
+    constexpr auto operator<=>(const execution_status& other) const noexcept = default;
+    constexpr auto operator<=>(value_type value) const noexcept { return this->value() <=> value; }
 };
-
 
 class execution_statuses : public meta::enumeration<execution_status, execution_statuses>
 {
@@ -42,8 +31,17 @@ public:
     static constexpr execution_status failure = make_enumerator(EXIT_FAILURE);
     static constexpr execution_status ready = make_enumerator((success > failure ? success : failure) + 1);
     static constexpr execution_status executing = make_enumerator(ready + 1);
+
+    static constexpr std::array<std::string_view, 4> enumerator_names{
+        "success",
+        "failure",
+        "ready",
+        "executing"
+    };
+
+    static constexpr std::size_t enumerator_index_offset() { return (success < failure ? success : failure); }
+    static constexpr std::size_t enumerator_index_factor() { return 1; }
 };
-} // namespace neo
 
 } // namespace appt
 } // namespace arba

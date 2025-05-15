@@ -105,10 +105,10 @@ TEST(multi_user_multi_task_application_tests, test_side_modules)
     ut_application app(core::program_args(pargc, pargv));
     counting_module& module = app.add_module(std::make_unique<counting_module>(std::ref(app)));
     counting_module& module_2 = app.create_module<counting_module>();
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
     ASSERT_EQ(module.run_count, 2);
     ASSERT_EQ(module_2.run_count, 2);
     ASSERT_EQ(module.init_count, 2);
@@ -119,13 +119,13 @@ TEST(multi_user_multi_task_application_tests, test_main_module)
 {
     ut_application app(core::program_args(pargc, pargv));
     counting_module& module = app.set_main_module(std::make_unique<counting_module>(std::ref(app)));
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
     ASSERT_EQ(module.init_count, 1);
     ASSERT_EQ(module.run_count, 1);
     counting_module& module_2 = app.create_main_module<counting_module>();
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
     ASSERT_EQ(module_2.init_count, 1);
     ASSERT_EQ(module_2.run_count, 1);
 }
