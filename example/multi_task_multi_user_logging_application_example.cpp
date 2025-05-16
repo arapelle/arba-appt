@@ -174,7 +174,7 @@ int main(int argc, char** argv)
     app.create_main_module<example::consumer_module>().set_frequency(3);
     app.create_module<example::generator_module>().set_frequency(2);
     app.init();
-    int res = app.run();
+    int res = app.run().value();
 
     SPDLOG_LOGGER_INFO(app.logger(), "EXIT");
     return res;
