@@ -57,10 +57,10 @@ TEST(multi_task_application_sm_tests, test_side_modules)
     ASSERT_EQ(module.name(), "module_0");
     ASSERT_EQ(module_2.name(), "counting_module_2");
     ASSERT_EQ(module_3.name(), "module_1");
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.init(), appt::execution_status::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_status::execution_success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::success);
     ASSERT_EQ(module.run_count, 2);
     ASSERT_EQ(module_2.run_count, 2);
     ASSERT_EQ(module_3.run_count, 2);

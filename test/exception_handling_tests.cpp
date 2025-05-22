@@ -99,8 +99,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__logging)
     main_module.init_fails = true;
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(20);
-    ASSERT_EQ(app.init(), appt::execution_failure);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::failure);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
     app.logger()->flush_on(spdlog::level::critical);
@@ -124,8 +124,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__printing)
     main_module.init_fails = true;
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(20);
-    ASSERT_EQ(app.init(), appt::execution_failure);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::failure);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     std::string log_stream_contents = cerr_capture.str();
     ASSERT_NE(log_stream_contents.find("[critical]"), std::string::npos);
@@ -142,8 +142,8 @@ TEST(exception_handling_tests, test_main_module_run_fails__logging)
     main_module.run_fails = true;
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(20);
-    ASSERT_EQ(app.init(), appt::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
     app.logger()->flush_on(spdlog::level::critical);
@@ -167,8 +167,8 @@ TEST(exception_handling_tests, test_main_module_run_fails__printing)
     main_module.run_fails = true;
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(20);
-    ASSERT_EQ(app.init(), appt::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     std::string log_stream_contents = cerr_capture.str();
     ASSERT_NE(log_stream_contents.find("[critical]"), std::string::npos);
@@ -180,7 +180,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__init_not_called_loggi
     using app_type = ut_application<multi_task_logging_application>;
 
     app_type app;
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
 
@@ -201,8 +201,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__base_init_not_called
     main_module.base_init_not_called = true;
     auto& loop_module = app.create_module<ut_counting_module<mod_type>>();
     loop_module.set_frequency(20);
-    ASSERT_EQ(app.init(), appt::execution_failure);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::failure);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
 
@@ -222,8 +222,8 @@ TEST(exception_handling_tests, test_main_module_init_fails__bad_derived_module)
     app_type app;
     app_type::module_base_uptr mod_uptr = std::make_unique<ut::bad_crtp_module<app_type>>(std::ref(app));
     app.set_main_module(std::move(mod_uptr));
-    ASSERT_EQ(app.init(), appt::execution_failure);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::failure);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
 
@@ -246,8 +246,8 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_module_logger)
     main_module.set_frequency(20);
     auto& side_module = app.create_module<ut_failing_module<mod_type>>();
     side_module.run_fails = true;
-    ASSERT_EQ(app.init(), appt::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     side_module.logger()->flush();
 
@@ -268,8 +268,8 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_app_logger)
     main_module.set_frequency(20);
     auto& side_module = app.create_module<ut_failing_module<mod_type>>();
     side_module.run_fails = true;
-    ASSERT_EQ(app.init(), appt::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     app.logger()->flush();
     app.logger()->flush_on(spdlog::level::critical);
@@ -293,8 +293,8 @@ TEST(exception_handling_tests, test_side_module_run_fails__log_to_cerr)
     main_module.set_frequency(20);
     auto& side_module = app.create_module<ut_failing_module<mod_type>>();
     side_module.run_fails = true;
-    ASSERT_EQ(app.init(), appt::execution_success);
-    ASSERT_EQ(app.run(), appt::execution_failure);
+    ASSERT_EQ(app.init(), appt::execution_statuses::success);
+    ASSERT_EQ(app.run(), appt::execution_statuses::failure);
 
     std::string log_stream_contents = cerr_capture.str();
     ASSERT_NE(log_stream_contents.find("[critical]"), std::string::npos);
