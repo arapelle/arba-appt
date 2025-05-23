@@ -28,6 +28,8 @@ project(${PROJECT_NAME}
         LANGUAGES CXX)
 message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_SEMANTIC_VERSION} ${CMAKE_BUILD_TYPE}")
 
+option(ARBA_APPT_USE_SPDLOG "Use spdlog to provide logging features." ON)
+
 # C++ LIBRARY
 
 ## Generated/Configured headers:
@@ -40,14 +42,12 @@ configure_headers(configured_headers
 set(headers
     include/arba/appt/application/application.hpp
     include/arba/appt/application/basic_application.hpp
-    include/arba/appt/application/decorator/logging.hpp
     include/arba/appt/application/decorator/multi_task.hpp
     include/arba/appt/application/decorator/multi_user.hpp
     include/arba/appt/application/decorator/toolkit.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/module/basic_module.hpp
     include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
-    include/arba/appt/application/module/decorator/logging.hpp
     include/arba/appt/application/module/decorator/loop.hpp
     include/arba/appt/application/module/decorator/multi_user.hpp
     include/arba/appt/application/module/module.hpp
@@ -59,20 +59,32 @@ set(headers
     include/arba/appt/util/delta_time.hpp
     include/arba/appt/util/integer_id_factory.hpp
     include/arba/appt/util/logging/log_critical_message.hpp
-    include/arba/appt/util/logging/logger_make_helper.hpp
-    include/arba/appt/util/logging/logging_macro.hpp
 )
+
+if(${ARBA_APPT_USE_SPDLOG})
+    list(APPEND headers
+        include/arba/appt/application/decorator/logging.hpp
+        include/arba/appt/application/module/decorator/logging.hpp
+        include/arba/appt/util/logging/logger_make_helper.hpp
+        include/arba/appt/util/logging/logging_macro.hpp
+    )
+endif()
 
 ## Sources:
 set(sources
-    src/arba/appt/application/decorator/logging.cpp
-    src/arba/appt/application/module/decorator/logging.cpp
     src/arba/appt/basic_application.cpp
     src/arba/appt/log_critical_message.cpp
-    src/arba/appt/logger_make_helper.cpp
     src/arba/appt/module_base.cpp
     src/arba/appt/user.cpp
 )
+
+if(${ARBA_APPT_USE_SPDLOG})
+    list(APPEND sources
+        src/arba/appt/logger_make_helper.cpp
+        src/arba/appt/application/decorator/logging.cpp
+        src/arba/appt/application/module/decorator/logging.cpp
+    )
+endif()
 
 ## Add C++ library:
 cxx_standard_option(${PROJECT_UPPER_VAR_NAME}_CXX_STANDARD MIN 20 MAX 26)
@@ -100,15 +112,21 @@ find_package(arba-core 0.30.0 REQUIRED CONFIG)
 find_package(arba-stdx 0.3.0 REQUIRED CONFIG)
 find_package(arba-rsce 0.5.0 REQUIRED CONFIG)
 find_package(arba-evnt 0.7.0 REQUIRED CONFIG)
-find_package(spdlog 1.8.0 REQUIRED CONFIG)
 target_link_libraries(${PROJECT_TARGET_NAME}
     PUBLIC
         arba::core
         arba::stdx
         arba::rsce
         arba::evnt
-        spdlog::spdlog
 )
+
+if(${ARBA_APPT_USE_SPDLOG})
+    find_package(spdlog 1.8.0 REQUIRED CONFIG)
+    target_link_libraries(${PROJECT_TARGET_NAME}
+        PUBLIC
+            spdlog::spdlog
+    )
+endif()
 
 ## Add tests:
 add_test_subdirectory_if_build(test)
