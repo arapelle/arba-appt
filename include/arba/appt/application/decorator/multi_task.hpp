@@ -6,7 +6,6 @@
 #include <arba/appt/util/logging/log_critical_message.hpp>
 
 #include <arba/core/sbrm/sbrm.hpp>
-#include <spdlog/spdlog.h>
 
 #include <format>
 #include <memory>
@@ -73,6 +72,8 @@ public:
 
     template <ConcreteDerivedBasicModule module_type>
     module_type& create_main_module();
+
+    void log_critical_message(const std::source_location& location, std::string_view message);
 
 protected:
     inline void handle_caught_exception(const std::source_location location, std::exception_ptr ex_ptr);
@@ -201,18 +202,21 @@ void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::s
         error_msg = "Unknown exception caught.";
     }
 
-    if constexpr (requires(SelfType& app) {
-                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+    this->self().log_critical_message(location, error_msg);
+}
+
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::log_critical_message(const std::source_location &location, std::string_view message)
+{
+    if constexpr (requires(base_& app) {
+                      { app.log_critical_message(location, message) };
                   })
     {
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-        (*this->self().logger()).log(src_loc, spdlog::level::critical, error_msg);
-#endif
+        this->base_::log_critical_message(location, message);
     }
     else
     {
-        log_critical_message_to_cerr(error_msg);
+        log_critical_message_to_cerr(message);
     }
 }
 

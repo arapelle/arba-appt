@@ -6,8 +6,8 @@
 
 #include <arba/core/sbrm/sbrm.hpp>
 #include <arba/meta/policy/exception_policy.hpp>
-#include <spdlog/spdlog.h>
 
+#include <cassert>
 #include <exception>
 #include <source_location>
 
@@ -139,13 +139,10 @@ void basic_module<ApplicationType>::handle_caught_exception(const std::source_lo
     }
 
     if constexpr (requires(application_type& app) {
-                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+                      { app.log_critical_message(location, error_msg) };
                   })
     {
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-        (*this->app().logger()).log(src_loc, spdlog::level::critical, error_msg);
-#endif
+        this->app().log_critical_message(location, error_msg);
     }
     else
     {
