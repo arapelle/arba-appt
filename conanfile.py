@@ -26,12 +26,14 @@ class ArbaApptRecipe(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "test": [True, False]
+        "test": [True, False],
+        "use_spdlog": [True, False]
     }
     default_options = {
         "shared": True,
         "fPIC": True,
-        "test": False
+        "test": False,
+        "use_spdlog": True
     }
 
     # Build
@@ -60,7 +62,8 @@ class ArbaApptRecipe(ConanFile):
         self.requires("arba-stdx/[^0.3]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-rsce/[^0.5]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-evnt/[^0.7]", transitive_headers=True, transitive_libs=True)
-        self.requires("spdlog/[^1.8]", transitive_headers=True, transitive_libs=True)
+        if self.options.use_spdlog:
+            self.requires("spdlog/[^1.8]", transitive_headers=True, transitive_libs=True)
 
     def build_requirements(self):
         self.test_requires("gtest/[^1.14]")
@@ -73,6 +76,10 @@ class ArbaApptRecipe(ConanFile):
         tc.variables[f"{upper_name}_LIBRARY_TYPE"] = "SHARED" if self.options.shared else "STATIC"
         if self.options.test:
             tc.variables[f"BUILD_{upper_name}_TESTS"] = "TRUE"
+        if self.options.use_spdlog:
+            tc.variables[f"{upper_name}_USE_SPDLOG"] = "TRUE"
+        else:
+            tc.variables[f"{upper_name}_USE_SPDLOG"] = "FALSE"
         tc.generate()
 
     def build(self):

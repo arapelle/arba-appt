@@ -12,7 +12,6 @@ add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
         exception_handling_tests.cpp
         execution_status_tests.cpp
         integer_id_factory_tests.cpp
-        logging_tests.cpp
         loop_module_tests.cpp
         multi_task_application_sm_tests.cpp
         multi_task_application_mm_tests.cpp
@@ -22,3 +21,11 @@ add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
         user_manager_tests.cpp
         user_set_tests.cpp
 )
+
+if(${ARBA_APPT_USE_SPDLOG})
+    add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
+        SOURCES
+            logging_tests.cpp
+            exception_handling_with_spdlog_tests.cpp
+    )
+endif()

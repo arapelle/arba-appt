@@ -6,7 +6,6 @@
 #include <arba/appt/util/logging/log_critical_message.hpp>
 
 #include <arba/core/sbrm/sbrm.hpp>
-#include <spdlog/spdlog.h>
 
 #include <format>
 #include <memory>
@@ -74,6 +73,8 @@ public:
     template <ConcreteDerivedBasicModule module_type>
     module_type& create_main_module();
 
+    void log_critical_message(const std::source_location& location, std::string_view message);
+
 protected:
     inline void handle_caught_exception(const std::source_location location, std::exception_ptr ex_ptr);
 
@@ -84,8 +85,8 @@ private:
 private:
     std::vector<std::pair<module_base_uptr, std::thread>> side_modules_;
     module_base_uptr main_module_;
-    execution_status init_status_ = execution_status::ready;
-    execution_status run_status_ = execution_status::ready;
+    execution_status init_status_ = execution_statuses::ready;
+    execution_status run_status_ = execution_statuses::ready;
     std::mutex mutex_;
 };
 
@@ -94,29 +95,29 @@ execution_status multi_task<ApplicationBase, SelfType>::init()
 {
     try
     {
-        init_status_ = execution_status::executing;
+        init_status_ = execution_statuses::executing;
         if (main_module_)
         {
-            if (main_module_->init(meta::maythrow) != execution_status::execution_success)
-                init_status_ = execution_status::execution_failure;
+            if (main_module_->init(meta::maythrow) != execution_statuses::success)
+                init_status_ = execution_statuses::failure;
         }
-        if (init_status_ == execution_status::executing) [[likely]]
+        if (init_status_ == execution_statuses::executing) [[likely]]
         {
             for (auto& entry : side_modules_)
             {
                 init_status_ = entry.first->init(meta::maythrow);
-                if (init_status_ != execution_status::execution_success) [[unlikely]]
+                if (init_status_ != execution_statuses::success) [[unlikely]]
                 {
-                    init_status_ = execution_status::execution_failure;
+                    init_status_ = execution_statuses::failure;
                     break;
                 }
             }
         }
-        init_status_ = execution_status::execution_success;
+        init_status_ = execution_statuses::success;
     }
     catch (...)
     {
-        init_status_ = execution_status::execution_failure;
+        init_status_ = execution_statuses::failure;
         this->self().handle_caught_exception(std::source_location::current(), std::current_exception());
     }
     return init_status_;
@@ -130,7 +131,7 @@ execution_status multi_task<ApplicationBase, SelfType>::run()
         if (check_init_status_() == false) [[unlikely]]
             return run_status_;
 
-        run_status_ = execution_status::executing;
+        run_status_ = execution_statuses::executing;
 
         core::sbrm join_side_modules = [this] { join_side_modules_(); };
         core::sbrm stop_side_modules_iferr = [this] { stop_side_modules(); };
@@ -148,23 +149,23 @@ execution_status multi_task<ApplicationBase, SelfType>::run()
     }
     catch (...)
     {
-        run_status_ = execution_status::execution_failure;
+        run_status_ = execution_statuses::failure;
         this->self().handle_caught_exception(std::source_location::current(), std::current_exception());
     }
 
-    if (run_status_ == execution_status::executing)
-        run_status_ = execution_status::execution_success;
+    if (run_status_ == execution_statuses::executing)
+        run_status_ = execution_statuses::success;
     return run_status_;
 }
 
 template <typename ApplicationBase, typename SelfType>
 bool multi_task<ApplicationBase, SelfType>::check_init_status_()
 {
-    if (init_status_ != execution_status::execution_success) [[unlikely]]
+    if (init_status_ != execution_statuses::success) [[unlikely]]
     {
-        if (init_status_ == execution_status::ready)
+        if (init_status_ == execution_statuses::ready)
             throw std::runtime_error("init status is 'ready'. Did you forget to call init()?");
-        run_status_ = execution_status::execution_failure;
+        run_status_ = execution_statuses::failure;
         return false;
     }
     return true;
@@ -177,8 +178,8 @@ void multi_task<ApplicationBase, SelfType>::join_side_modules_()
     {
         if (entry.second.joinable())
             entry.second.join();
-        if (entry.first->run_status() != execution_status::execution_success)
-            run_status_ = execution_status::execution_failure;
+        if (entry.first->run_status() != execution_statuses::success)
+            run_status_ = execution_statuses::failure;
     }
 }
 
@@ -201,18 +202,21 @@ void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::s
         error_msg = "Unknown exception caught.";
     }
 
-    if constexpr (requires(SelfType& app) {
-                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+    this->self().log_critical_message(location, error_msg);
+}
+
+template <typename ApplicationBase, typename SelfType>
+void multi_task<ApplicationBase, SelfType>::log_critical_message(const std::source_location &location, std::string_view message)
+{
+    if constexpr (requires(base_& app) {
+                      { app.log_critical_message(location, message) };
                   })
     {
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-        (*this->self().logger()).log(src_loc, spdlog::level::critical, error_msg);
-#endif
+        this->base_::log_critical_message(location, message);
     }
     else
     {
-        log_critical_message_to_cerr(error_msg);
+        log_critical_message_to_cerr(message);
     }
 }
 

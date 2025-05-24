@@ -4,6 +4,7 @@
 #include <spdlog/logger.h>
 
 #include <filesystem>
+#include <source_location>
 
 inline namespace arba
 {
@@ -63,6 +64,8 @@ public:
     inline const std::shared_ptr<spdlog::logger>& logger() const { return logger_; }
     inline std::shared_ptr<spdlog::logger>& logger() { return logger_; }
 
+    void log_critical_message(const std::source_location& location, std::string_view message);
+
 protected:
     inline std::filesystem::path make_log_dirpath() const;
     inline std::filesystem::path make_log_filename() const;
@@ -93,6 +96,15 @@ logging<ApplicationBase, SelfType>::~logging()
         this->self().destroy_logger(logger_);
         logger_.reset();
     }
+}
+
+template <class ApplicationBase, class SelfType>
+void logging<ApplicationBase, SelfType>::log_critical_message(const std::source_location& location, std::string_view message)
+{
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
+    spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
+    logger_->log(src_loc, spdlog::level::critical, message);
+#endif
 }
 
 template <class ApplicationBase, class SelfType>

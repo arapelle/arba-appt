@@ -6,8 +6,8 @@
 
 #include <arba/core/sbrm/sbrm.hpp>
 #include <arba/meta/policy/exception_policy.hpp>
-#include <spdlog/spdlog.h>
 
+#include <cassert>
 #include <exception>
 #include <source_location>
 
@@ -40,14 +40,14 @@ public:
 
     execution_status init(meta::maythrow_t)
     {
-        core::sbrm set_execution_failure_if_err = [this] { init_status_ = execution_status::execution_failure; };
+        core::sbrm set_execution_failure_if_err = [this] { init_status_ = execution_statuses::failure; };
         this->init();
-        if (init_status_ == execution_status::ready) [[unlikely]]
+        if (init_status_ == execution_statuses::ready) [[unlikely]]
             throw std::runtime_error("The init status is 'ready' (should be at least 'executing'). "
                                      "Did you forget to call parent init()?");
         set_execution_failure_if_err.disable();
-        if (init_status_ == execution_status::executing) [[likely]]
-            init_status_ = execution_status::execution_success;
+        if (init_status_ == execution_statuses::executing) [[likely]]
+            init_status_ = execution_statuses::success;
         return init_status_;
     }
 
@@ -65,8 +65,8 @@ protected:
 
 private:
     application_type* application_ = nullptr;
-    execution_status init_status_ = execution_status::ready;
-    execution_status run_status_ = execution_status::ready;
+    execution_status init_status_ = execution_statuses::ready;
+    execution_status run_status_ = execution_statuses::ready;
 
     template <class /*ApplicationType*/, class /*ModuleType*/>
     friend class basic_module;
@@ -87,13 +87,13 @@ void basic_module<ApplicationType>::init()
 template <class ApplicationType>
 void basic_module<ApplicationType>::run(meta::maythrow_t)
 {
-    assert(init_status_ == execution_status::execution_success);
-    run_status_ = execution_status::executing;
-    core::sbrm set_execution_failure_if_err = [this] { run_status_ = execution_status::execution_failure; };
+    assert(init_status_ == execution_statuses::success);
+    run_status_ = execution_statuses::executing;
+    core::sbrm set_execution_failure_if_err = [this] { run_status_ = execution_statuses::failure; };
     this->run();
     set_execution_failure_if_err.disable();
-    if (run_status_ == execution_status::executing) [[likely]]
-        run_status_ = execution_status::execution_success;
+    if (run_status_ == execution_statuses::executing) [[likely]]
+        run_status_ = execution_statuses::success;
 }
 
 template <class ApplicationType>
@@ -139,13 +139,10 @@ void basic_module<ApplicationType>::handle_caught_exception(const std::source_lo
     }
 
     if constexpr (requires(application_type& app) {
-                      { *(app.logger()) } -> std::convertible_to<spdlog::logger&>;
+                      { app.log_critical_message(location, error_msg) };
                   })
     {
-#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-        spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());
-        (*this->app().logger()).log(src_loc, spdlog::level::critical, error_msg);
-#endif
+        this->app().log_critical_message(location, error_msg);
     }
     else
     {
@@ -167,7 +164,7 @@ public:
 protected:
     virtual void init()
     {
-        this->init_status_ = execution_status::executing;
+        this->init_status_ = execution_statuses::executing;
         assert(&(this->app()) != nullptr);
     }
 
