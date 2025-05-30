@@ -30,6 +30,15 @@ message(STATUS "PROJECT : ${PROJECT_NAME} ${PROJECT_SEMANTIC_VERSION} ${CMAKE_BU
 
 option(ARBA_APPT_USE_SPDLOG "Use spdlog to provide logging features." ON)
 
+cxx_standard_option(${PROJECT_UPPER_VAR_NAME}_CXX_STANDARD MIN 20 MAX 26)
+shared_or_static_option(${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE "SHARED")
+
+if("${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}" STREQUAL "SHARED")
+  set(LIBRARY_TYPE_POSTFIX "")
+else()
+  set(LIBRARY_TYPE_POSTFIX "-static")
+endif()
+
 # C++ LIBRARY
 
 ## Generated/Configured headers:
@@ -87,16 +96,7 @@ if(${ARBA_APPT_USE_SPDLOG})
 endif()
 
 ## Add C++ library:
-cxx_standard_option(${PROJECT_UPPER_VAR_NAME}_CXX_STANDARD MIN 20 MAX 26)
-
-shared_or_static_option(${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE "SHARED")
-if("${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}" STREQUAL "SHARED")
-  set(LIBRARY_TYPE_POSTFIX "")
-  set(PROJECT_TARGET_NAME "${PROJECT_NAME}")
-else()
-  set(LIBRARY_TYPE_POSTFIX "-static")
-  set(PROJECT_TARGET_NAME "${PROJECT_NAME}${LIBRARY_TYPE_POSTFIX}")
-endif()
+set(PROJECT_TARGET_NAME "${PROJECT_NAME}${LIBRARY_TYPE_POSTFIX}")
 
 add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
   HEADERS ${headers} ${configured_headers}
@@ -138,6 +138,8 @@ add_example_subdirectory_if_build(example)
 
 ## Install C++ library:
 install_cpp_libraries(TARGETS ${PROJECT_TARGET_NAME} EXPORT ${PROJECT_NAME}-targets)
+
+add_subdirectory(appt_feature)
 
 ## Install project package
 install_library_package(${PROJECT_NAME} INPUT_PACKAGE_CONFIG_FILE cmake/config/package-config.cmake.in)

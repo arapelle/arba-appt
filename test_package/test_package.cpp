@@ -4,7 +4,11 @@
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/module.hpp>
+
+#include <arba/appt/appinfo.hpp>
+
 #include <arba/core/program_args.hpp>
+#include <arba/stdx/chrono/stopwatch.hpp>
 
 #include <iostream>
 #include <random>
@@ -130,11 +134,13 @@ private:
 
 int main(int argc, char** argv)
 {
+    stdx::stopwatch stopwatch;
     example::application app(core::program_args(argc, argv));
     app.create_main_module<example::consumer_module>().set_frequency(60);
     app.create_module<example::generator_module>().set_frequency(40);
     app.init();
     auto app_result = app.run();
-    std::cout << "TEST PACKAGE SUCCESS" << std::endl;
+    std::cout << appt::appinfo() << std::endl;
+    std::cout << "TEST PACKAGE SUCCESS " << stdx::milliseconds_f64(stopwatch.elapsed()) << std::endl;
     return app_result;
 }
