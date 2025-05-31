@@ -9,7 +9,7 @@ add_executable(${test_program}
 
 set(lib_namespace "arba")
 set(lib_feature_name "appt")
-find_package(${lib_namespace}-${lib_feature_name} CONFIG REQUIRED COMPONENTS feature)
+find_package(${lib_namespace}-${lib_feature_name} CONFIG REQUIRED COMPONENTS feature toto OPTIONAL_COMPONENTS titi)
 
 if(TARGET ${lib_namespace}::${lib_feature_name})
     set(lib_target "${lib_namespace}::${lib_feature_name}")
@@ -19,7 +19,7 @@ endif()
 target_link_libraries(${test_program}
     PRIVATE
         ${lib_target}
-        ${lib_target}_feature
+        ${lib_target}-feature
 )
 
 target_compile_features(${test_program} PRIVATE cxx_std_20)
