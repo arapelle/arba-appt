@@ -41,7 +41,7 @@ class ArbaApptRecipe(ConanFile):
     no_copy_source = True
 
     # Sources
-    exports_sources = "LICENSE.md", "CMakeLists.txt", "test/*", "include/*", "src/*", "external/*", "cmake/*"
+    exports_sources = "LICENSE.md", "CMakeLists.txt", "test/*", "include/*", "src/*", "external/*", "cmake/*", "appt_feature/*"
 
     # Other
     implements = ["auto_shared_fpic"]
@@ -70,6 +70,7 @@ class ArbaApptRecipe(ConanFile):
 
     def generate(self):
         deps = CMakeDeps(self)
+        deps.check_components_exist = True
         deps.generate()
         tc = CMakeToolchain(self)
         upper_name = f"{self.project_namespace}_{self.project_base_name}".upper()
@@ -96,9 +97,22 @@ class ArbaApptRecipe(ConanFile):
         rmdir(self, os.path.join(self.package_folder, "lib", "cmake"))
 
     def package_info(self):
-        postfix = "" if self.options.shared else "-static"
-        name = self.name + postfix
-        self.cpp_info.set_property("cmake_target_name", name.replace('-', '::', 1))
-        if self.settings.build_type == "Debug":
-            name += "-d"
-        self.cpp_info.libs = [name]
+        lib_type_postfix = "" if self.options.shared else "-static"
+        build_type_postfix = "-d" if self.settings.build_type == "Debug" else ""
+        # arba-appt::basic
+        comp_name = "basic"
+        basic_component = self.cpp_info.components[comp_name]
+        basic_component.set_property("cmake_target_name", f"{self.name}::{comp_name}{lib_type_postfix}")
+        basic_component.libs = [f"{self.name}-{comp_name}{lib_type_postfix}{build_type_postfix}"]
+        basic_component.requires = ["arba-core::arba-core", "arba-stdx::arba-stdx", "arba-rsce::arba-rsce", "arba-evnt::arba-evnt"]
+        if self.options.use_spdlog:
+            basic_component.requires.append("spdlog::spdlog")
+        # arba-appt::feature
+        comp_name = "feature"
+        feature_component = self.cpp_info.components[comp_name]
+        feature_component.set_property("cmake_target_name", f"{self.name}::{comp_name}{lib_type_postfix}")
+        feature_component.libs = [f"{self.name}-{comp_name}{lib_type_postfix}{build_type_postfix}"]
+        # arba-appt::arba-appt
+        self.cpp_info.set_property("cmake_target_name", f"{self.name}::{self.name}{lib_type_postfix}")
+        self.cpp_info.libs = [f"{self.name}{lib_type_postfix}{build_type_postfix}"]
+        self.cpp_info.requires = ["basic"]

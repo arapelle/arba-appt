@@ -7,19 +7,20 @@ add_executable(${test_program}
     test_package.cpp
 )
 
-set(lib_namespace "arba")
-set(lib_feature_name "appt")
-find_package(${lib_namespace}-${lib_feature_name} CONFIG REQUIRED COMPONENTS feature toto OPTIONAL_COMPONENTS titi)
+set(package_name "arba-appt")
+find_package(${package_name} CONFIG COMPONENTS REQUIRED basic feature) # toto OPTIONAL_COMPONENTS titi)
 
-if(TARGET ${lib_namespace}::${lib_feature_name})
-    set(lib_target "${lib_namespace}::${lib_feature_name}")
+if(TARGET "${package_name}::${package_name}")
+    set(lib_target "${package_name}::${package_name}")
 else()
-    set(lib_target "${lib_namespace}::${lib_feature_name}-static")
+    set(lib_target "${package_name}::${package_name}-static")
 endif()
+
 target_link_libraries(${test_program}
     PRIVATE
-        ${lib_target}
-        ${lib_target}-feature
+#        ${lib_target}
+        ${package_name}::basic
+        ${package_name}::feature
 )
 
 target_compile_features(${test_program} PRIVATE cxx_std_20)

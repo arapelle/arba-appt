@@ -41,6 +41,10 @@ endif()
 
 # C++ LIBRARY
 
+set(COMPONENT_NAME "basic")
+set(PROJECT_COMPONENT_NAME "${PROJECT_NAME}-${COMPONENT_NAME}")
+set(PROJECT_TARGET_NAME "${PROJECT_COMPONENT_NAME}${LIBRARY_TYPE_POSTFIX}")
+
 ## Generated/Configured headers:
 configure_headers(configured_headers
     FILES
@@ -96,7 +100,7 @@ if(${ARBA_APPT_USE_SPDLOG})
 endif()
 
 ## Add C++ library:
-set(PROJECT_TARGET_NAME "${PROJECT_NAME}${LIBRARY_TYPE_POSTFIX}")
+#set(PROJECT_TARGET_NAME "${PROJECT_NAME}${LIBRARY_TYPE_POSTFIX}")
 
 add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
   HEADERS ${headers} ${configured_headers}
@@ -105,7 +109,8 @@ add_cpp_library(${PROJECT_TARGET_NAME} ${${PROJECT_UPPER_VAR_NAME}_LIBRARY_TYPE}
   DEFAULT_WARNING_OPTIONS
   DEFAULT_ERROR_OPTIONS
 )
-add_library("${PROJECT_NAMESPACE}::${PROJECT_FEATURE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
+#add_library("${PROJECT_NAMESPACE}::${PROJECT_FEATURE_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
+add_library("${PROJECT_NAMESPACE}::${PROJECT_FEATURE_NAME}-${COMPONENT_NAME}${LIBRARY_TYPE_POSTFIX}" ALIAS ${PROJECT_TARGET_NAME})
 
 ## Link C++ targets:
 find_package(arba-core 0.30.0 REQUIRED CONFIG)
@@ -137,7 +142,8 @@ add_example_subdirectory_if_build(example)
 # C++ INSTALL
 
 ## Install C++ library:
-install_cpp_libraries(TARGETS ${PROJECT_TARGET_NAME} EXPORT ${PROJECT_NAME}-targets)
+#install_cpp_libraries(TARGETS ${PROJECT_TARGET_NAME} EXPORT ${PROJECT_NAME}-targets)
+install_cpp_libraries(TARGETS ${PROJECT_TARGET_NAME} EXPORT ${PROJECT_COMPONENT_NAME}-targets)
 
 add_subdirectory(appt_feature)
 
