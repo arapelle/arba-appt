@@ -1,31 +1,20 @@
-include(cmtk/CppLibraryTests)
-include(GoogleTest)
+include(cmtk/CppLibraryProject)
 
-find_package(GTest 1.14 CONFIG REQUIRED)
+# C++ LIBRARY
+project("${PACKAGE_NAME}-ut")
 
-add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
-    SOURCES
-        project_version_tests.cpp
-        application_tests.cpp
-        delta_time_tests.cpp
-        event_forwarding_tests.cpp
-        exception_handling_tests.cpp
-        execution_status_tests.cpp
-        integer_id_factory_tests.cpp
-        loop_module_tests.cpp
-        multi_task_application_sm_tests.cpp
-        multi_task_application_mm_tests.cpp
-        multi_task_multi_user_application_tests.cpp
-        multi_user_application_tests.cpp
-        user_hash_tests.cpp
-        user_manager_tests.cpp
-        user_set_tests.cpp
+## Headers:
+set(headers
+    include/arba-appt-ut/modules/counting_module.hpp
+    include/arba-appt-ut/modules/bad_crtp_module.hpp
+    include/arba-appt-ut/util/stream_capture.hpp
+    include/arba-appt-ut/util/text_file_content.hpp
 )
 
-if(${ARBA_APPT_USE_SPDLOG})
-    add_cpp_library_basic_tests(${PROJECT_TARGET_NAME} GTest::gtest_main
-        SOURCES
-            logging_tests.cpp
-            exception_handling_with_spdlog_tests.cpp
-    )
-endif()
+## Add C++ library:
+add_cpp_library(${PROJECT_NAME} HEADER_ONLY
+    HEADERS ${headers}
+    CXX_STANDARD ${${PACKAGE_UPPER_VAR_NAME}_CXX_STANDARD}
+    DEFAULT_WARNING_OPTIONS
+    DEFAULT_ERROR_OPTIONS
+)
