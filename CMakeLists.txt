@@ -47,9 +47,7 @@ add_test_subdirectory_if_built(test NAME ${PACKAGE_NAME})
 build_examples_option(NAME ${PACKAGE_NAME})
 
 # Add components:
-set(PACKAGE_REQUIRED_COMPONENTS base)
-set(PACKAGE_OPTIONAL_COMPONENTS multi_user spdlogging)
-set(PACKAGE_COMPONENTS ${PACKAGE_REQUIRED_COMPONENTS} ${PACKAGE_OPTIONAL_COMPONENTS})
+set_package_component_names(REQUIRED base OPTIONAL multi_user spdlogging)
 foreach(component ${PACKAGE_REQUIRED_COMPONENTS})
     add_subdirectory(component/${component})
 endforeach()
