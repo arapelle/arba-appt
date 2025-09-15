@@ -43,16 +43,20 @@ if(${BUILD_${PACKAGE_UPPER_VAR_NAME}_SPDLOGGING})
 endif()
 
 # Add main target:
-add_library(${PACKAGE_NAME} INTERFACE)
 add_test_subdirectory_if_built(test NAME ${PACKAGE_NAME})
 build_examples_option(NAME ${PACKAGE_NAME})
 
 # Add components:
-add_subdirectory(component/base)
-add_component_subdirectory_if_built(component/spdlogging COMPONENT_NAME spdlogging)
-
-# Install main target:
-install_cpp_targets(TARGETS ${PACKAGE_NAME} EXPORT ${PACKAGE_NAME}-targets NAMESPACE "${PACKAGE_NAME}::")
+set(PACKAGE_REQUIRED_COMPONENTS base)
+set(PACKAGE_OPTIONAL_COMPONENTS multi_user spdlogging)
+set(PACKAGE_COMPONENTS ${PACKAGE_REQUIRED_COMPONENTS} ${PACKAGE_OPTIONAL_COMPONENTS})
+foreach(component ${PACKAGE_REQUIRED_COMPONENTS})
+    add_subdirectory(component/${component})
+endforeach()
+foreach(component ${PACKAGE_OPTIONAL_COMPONENTS})
+    add_component_subdirectory_if_built(component/${component} COMPONENT_NAME ${component})
+endforeach()
+add_subdirectory(component/${PACKAGE_NAME})
 
 ## Install package:
 install_package(${PACKAGE_NAME} INPUT_PACKAGE_CONFIG_FILE cmake/config/package-config.cmake.in)

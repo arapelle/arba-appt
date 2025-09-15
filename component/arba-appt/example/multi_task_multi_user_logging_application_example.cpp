@@ -3,10 +3,10 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/decorator/multi_user.hpp>
+#include <arba/appt/application/decorator/multi_user/multi_user.hpp>
 #include <arba/appt/application/module/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/decorator/multi_user.hpp>
+#include <arba/appt/application/module/decorator/multi_user/multi_user.hpp>
 #include <arba/appt/application/module/module.hpp>
 #include <arba/appt/util/spdlogging/logging_macro.hpp>
 

@@ -1,36 +1,17 @@
 #include <arba/appt/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/decorator/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/module.hpp>
-
-#include <arba/core/program_args.hpp>
-#include <arba/stdx/chrono/stopwatch.hpp>
 
 #include <iostream>
 #include <random>
 
 namespace example
 {
-class user : public appt::user
-{
-public:
-    virtual ~user() = default;
-
-    user(const std::string& name = "") : name_(name) {}
-    const std::string& name() const { return name_; }
-
-public:
-    std::string name_;
-};
-
-using multi_user_application = appt::adec::multi_user<user, appt::application<>>;
-
-class application : public appt::adec::multi_task<multi_user_application, application>
+class application : public appt::multi_task<appt::application<>, application>
 {
 private:
-    using base_ = appt::adec::multi_task<multi_user_application, application>;
+    using base_ = appt::multi_task<appt::application<>, application>;
 
 public:
     using base_::base_;
@@ -44,14 +25,13 @@ struct number_event
 };
 
 using module = appt::module<application>;
-using multi_user_module = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, module>;
 template <class module_type>
-using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
+using loop_module = appt::loop<module, module_type>;
 
-class consumer_module : public loop_multi_user_module<consumer_module>, public evnt::event_listener<number_event>
+class consumer_module : public loop_module<consumer_module>, public evnt::event_listener<number_event>
 {
 private:
-    using base_ = loop_multi_user_module<consumer_module>;
+    using base_ = loop_module<consumer_module>;
 
 public:
     using base_::base_;
@@ -62,7 +42,7 @@ public:
     {
         this->base_::init();
         event_manager().connect<number_event>(*this);
-        users().reserve(6);
+        numbers_.reserve(6);
     }
 
     void run_loop(appt::dt::seconds)
@@ -70,10 +50,10 @@ public:
         event_manager().emit(event_box());
 
         std::cout << "[ ";
-        for (const auto& user_sptr : users())
-            std::cout << user_sptr->name() << "  ";
+        for (unsigned n : numbers_)
+            std::cout << n << " ";
         std::cout << " ]" << std::endl;
-        if (users().size() >= 6)
+        if (numbers_.size() >= 6)
             stop();
     }
 
@@ -85,42 +65,42 @@ public:
 
     void receive(number_event& event)
     {
-        if (users().size() < 6)
+        if (numbers_.size() < 6)
         {
             std::cout << "received: " << event.number << std::endl;
-            std::string name;
-            {
-                std::ostringstream stream;
-                stream << "User#" << event.number;
-                name = stream.str();
-            }
-            if (users().find_user(name) == users().end())
-                users().create_user(name);
+            numbers_.push_back(event.number);
         }
     }
+
+private:
+    std::vector<unsigned> numbers_;
 };
 
-class generator_module : public loop_multi_user_module<generator_module>
+class generator_module : public loop_module<generator_module>
 {
 private:
-    using base_ = loop_multi_user_module<generator_module>;
+    using base_ = loop_module<generator_module>;
 
 public:
-    generator_module(application_type& app) : base_(app, "first_module"), int_generator_(std::random_device{}()) {}
+    generator_module(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name), int_generator_(std::random_device{}())
+    {
+    }
+
     virtual ~generator_module() override = default;
 
     void run_loop(appt::dt::seconds)
     {
-        number_event event{ die100() };
+        number_event event{ die6() };
         app().event_manager().emit(event);
     }
 
     virtual void finish() override { std::cout << "generator finished" << std::endl; }
 
 private:
-    unsigned die100()
+    unsigned die6()
     {
-        static std::uniform_int_distribution<> die(1, 100);
+        static std::uniform_int_distribution<> die(1, 6);
         return die(int_generator_);
     }
 
@@ -132,12 +112,9 @@ private:
 
 int main(int argc, char** argv)
 {
-    stdx::stopwatch stopwatch;
     example::application app(core::program_args(argc, argv));
-    app.create_main_module<example::consumer_module>().set_frequency(60);
-    app.create_module<example::generator_module>().set_frequency(40);
+    app.create_main_module<example::consumer_module>("consumer_module").set_frequency(3);
+    app.create_module<example::generator_module>("generator_module").set_frequency(2);
     app.init();
-    auto app_result = app.run();
-    std::cout << "TEST PACKAGE SUCCESS " << stdx::milliseconds_f64(stopwatch.elapsed()) << std::endl;
-    return app_result;
+    return app.run();
 }

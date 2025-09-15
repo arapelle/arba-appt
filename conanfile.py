@@ -23,18 +23,18 @@ class ArbaApptRecipe(ConanFile):
 
     # Components
     required_components = ["base"]
-    optional_components = ["spdlogging"]
+    optional_components = ["multi_user", "spdlogging"]
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-    } | dict((x, [True, False]) for x in optional_components)
+    } | dict((comp, [True, False]) for comp in optional_components)
     default_options = {
         "shared": True,
         "fPIC": True,
-    } | dict((x, True) for x in optional_components)
+    } | dict((comp, True) for comp in optional_components)
 
     # Build
     win_bash = os.environ.get('MSYSTEM', None) is not None
@@ -110,6 +110,12 @@ class ArbaApptRecipe(ConanFile):
         comp_info = self.cpp_info.components[comp_name]
         comp_info.libs = [f"{comp_name}{build_type_postfix}"]
         comp_info.requires = ["arba-core::arba-core", "arba-stdx::arba-stdx", "arba-rsce::arba-rsce", "arba-evnt::arba-evnt"]
+        # arba-appt::multi_user
+        if self.options.multi_user:
+            comp_name = "multi_user"
+            comp_info = self.cpp_info.components[comp_name]
+            comp_info.libs = [f"{comp_name}{build_type_postfix}"]
+            comp_info.requires = ["base"]
         # arba-appt::spdlog_logging
         if self.options.spdlogging:
             comp_name = "spdlogging"

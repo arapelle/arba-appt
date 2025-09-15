@@ -15,11 +15,6 @@ add_cpp_library_basic_tests(${PROJECT_NAME} GTest::gtest_main
         loop_module_tests.cpp
         multi_task_application_sm_tests.cpp
         multi_task_application_mm_tests.cpp
-        multi_task_multi_user_application_tests.cpp
-        multi_user_application_tests.cpp
-        user_hash_tests.cpp
-        user_manager_tests.cpp
-        user_set_tests.cpp
     DEPENDENCIES
         ${PACKAGE_NAME}-ut
 )

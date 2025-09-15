@@ -15,21 +15,15 @@ set(headers
     include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/basic_module.hpp
     include/arba/appt/application/module/decorator/loop.hpp
-    include/arba/appt/application/module/decorator/multi_user.hpp
     include/arba/appt/application/module/module.hpp
     include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
     include/arba/appt/application/decorator/multi_task.hpp
     include/arba/appt/application/decorator/toolkit.hpp
-    include/arba/appt/application/decorator/multi_user.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/basic_application.hpp
     include/arba/appt/util/delta_time.hpp
     include/arba/appt/util/log_critical_message.hpp
     include/arba/appt/util/integer_id_factory.hpp
-    include/arba/appt/user/user_hash.hpp
-    include/arba/appt/user/user.hpp
-    include/arba/appt/user/user_manager.hpp
-    include/arba/appt/user/user_set.hpp
 )
 
 ## Sources:
@@ -37,7 +31,6 @@ set(sources
     src/arba/appt/application/module/module_base.cpp
     src/arba/appt/application/basic_application.cpp
     src/arba/appt/util/log_critical_message.cpp
-    src/arba/appt/user/user.cpp
 )
 
 ## Add C++ library:
@@ -68,5 +61,3 @@ endif()
 if(${BUILD_${PACKAGE_UPPER_VAR_NAME}_EXAMPLES})
     add_example_subdirectory_if_built(example)
 endif()
-
-target_link_libraries(${PACKAGE_NAME} INTERFACE ${PROJECT_NAME})

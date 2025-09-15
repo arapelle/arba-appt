@@ -26,6 +26,9 @@ class PackageTestConan(ConanFile):
         if can_run(self):
             cmd = os.path.join(self.cpp.build.bindir, "test_package-base")
             self.run(cmd, env="conanrun")
+            cmd = os.path.join(self.cpp.build.bindir, "test_package-multi_user")
+            if os.path.exists(cmd):
+                self.run(cmd, env="conanrun")
             cmd = os.path.join(self.cpp.build.bindir, "test_package-spdlogging")
             if os.path.exists(cmd):
                 self.run(cmd, env="conanrun")

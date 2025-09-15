@@ -1,21 +1,21 @@
 
 # C++ LIBRARY
-set_project_name(NAME "spdlogging")
+set_project_name(NAME "multi_user")
 project(${PROJECT_NAME})
 
 ## Headers:
 set(headers
-    include/arba/appt/application/module/decorator/spdlogging/spdlogging.hpp
-    include/arba/appt/application/decorator/spdlogging/spdlogging.hpp
-    include/arba/appt/util/spdlogging/spdlog_helper.hpp
-    include/arba/appt/util/spdlogging/logging_macro.hpp
+    include/arba/appt/application/module/decorator/multi_user/multi_user.hpp
+    include/arba/appt/application/decorator/multi_user/multi_user.hpp
+    include/arba/appt/user/user_hash.hpp
+    include/arba/appt/user/user.hpp
+    include/arba/appt/user/user_manager.hpp
+    include/arba/appt/user/user_set.hpp
 )
 
 ## Sources:
 set(sources
-    src/arba/appt/application/module/decorator/spdlogging/spdlogging.cpp
-    src/arba/appt/application/decorator/spdlogging/spdlogging.cpp
-    src/arba/appt/util/spdlogging/spdlog_helper.cpp
+    src/arba/appt/user/user.cpp
 )
 
 ## Add C++ library:
@@ -29,10 +29,9 @@ add_cpp_library(${PROJECT_NAME} ${${PACKAGE_UPPER_VAR_NAME}_LIBRARY_TYPE}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         base
-        spdlog::spdlog
 )
 
-## Install component targets:
+# Install component targets:
 install_cpp_targets(TARGETS ${PROJECT_NAME} EXPORT ${PACKAGE_NAME}-targets NAMESPACE "${PACKAGE_NAME}::")
 
 ## Add tests:
