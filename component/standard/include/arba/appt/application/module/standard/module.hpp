@@ -1,6 +1,6 @@
 #pragma once
 
-#include "basic_module.hpp"
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <arba/evnt/evnt.hpp>
 #include <arba/rsce/resource_manager.hpp>

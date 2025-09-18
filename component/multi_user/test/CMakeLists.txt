@@ -11,5 +11,5 @@ add_cpp_library_basic_tests(${PROJECT_NAME} GTest::gtest_main
         user_manager_tests.cpp
         user_set_tests.cpp
     DEPENDENCIES
-        ${PACKAGE_NAME}-ut
+        ${PACKAGE_NAME}-base-ut
 )

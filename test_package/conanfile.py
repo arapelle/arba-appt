@@ -24,11 +24,12 @@ class PackageTestConan(ConanFile):
 
     def test(self):
         if can_run(self):
-            cmd = os.path.join(self.cpp.build.bindir, "test_package-base")
-            self.run(cmd, env="conanrun")
-            cmd = os.path.join(self.cpp.build.bindir, "test_package-multi_user")
-            if os.path.exists(cmd):
+            required_components = ["base"]
+            for comp in required_components:
+                cmd = os.path.join(self.cpp.build.bindir, f"test_package-{comp}")
                 self.run(cmd, env="conanrun")
-            cmd = os.path.join(self.cpp.build.bindir, "test_package-spdlogging")
-            if os.path.exists(cmd):
-                self.run(cmd, env="conanrun")
+            optional_components = ["standard", "multi_user", "spdlogging"]
+            for comp in optional_components:
+                cmd = os.path.join(self.cpp.build.bindir, f"test_package-{comp}")
+                if os.path.exists(cmd):
+                    self.run(cmd, env="conanrun")

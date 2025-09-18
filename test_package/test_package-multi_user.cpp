@@ -1,9 +1,9 @@
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user/multi_user.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <iostream>
 #include <random>
@@ -22,7 +22,7 @@ public:
     std::string name_;
 };
 
-using multi_user_application = appt::adec::multi_user<user, appt::application<>>;
+using multi_user_application = appt::adec::multi_user<user, appt::basic_application<>>;
 
 class application : public appt::adec::multi_task<multi_user_application, application>
 {
@@ -40,12 +40,12 @@ struct number_event
     unsigned number;
 };
 
-using module = appt::module<application>;
+using module = appt::basic_module<application>;
 using multi_user_module = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, module>;
 template <class module_type>
 using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
 
-class consumer_module : public loop_multi_user_module<consumer_module>, public evnt::event_listener<number_event>
+class consumer_module : public loop_multi_user_module<consumer_module>
 {
 private:
     using base_ = loop_multi_user_module<consumer_module>;
@@ -58,14 +58,12 @@ public:
     virtual void init() override
     {
         this->base_::init();
-        event_manager().connect<number_event>(*this);
         users().reserve(6);
     }
 
     void run_loop(appt::dt::seconds)
     {
-        event_manager().emit(event_box());
-
+        std::lock_guard lock(mutex_);
         std::cout << "[ ";
         for (const auto& user_sptr : users())
             std::cout << user_sptr->name() << "  ";
@@ -82,6 +80,7 @@ public:
 
     void receive(number_event& event)
     {
+        std::lock_guard lock(mutex_);
         if (users().size() < 6)
         {
             std::cout << "received: " << event.number << std::endl;
@@ -95,6 +94,9 @@ public:
                 users().create_user(name);
         }
     }
+
+private:
+    std::mutex mutex_;
 };
 
 class generator_module : public loop_multi_user_module<generator_module>
@@ -106,10 +108,16 @@ public:
     generator_module(application_type& app) : base_(app, "first_module"), int_generator_(std::random_device{}()) {}
     virtual ~generator_module() override = default;
 
+    void set_consumer_module(consumer_module& c_module)
+    {
+        assert(!is_running());
+        consumer_module_ = &c_module;
+    }
+
     void run_loop(appt::dt::seconds)
     {
         number_event event{ die100() };
-        app().event_manager().emit(event);
+        consumer_module_->receive(event);
     }
 
     virtual void finish() override { std::cout << "generator finished" << std::endl; }
@@ -123,6 +131,7 @@ private:
 
 private:
     std::mt19937_64 int_generator_;
+    consumer_module* consumer_module_ = nullptr;
 };
 
 } // namespace example
@@ -130,8 +139,11 @@ private:
 int main(int argc, char** argv)
 {
     example::application app(core::program_args(argc, argv));
-    app.create_main_module<example::consumer_module>().set_frequency(3);
-    app.create_module<example::generator_module>().set_frequency(2);
+    auto& cons_module = app.create_main_module<example::consumer_module>();
+    cons_module.set_frequency(3);
+    auto& gen_module = app.create_module<example::generator_module>();
+    gen_module.set_frequency(2);
+    gen_module.set_consumer_module(cons_module);
     app.init();
     return app.run();
 }

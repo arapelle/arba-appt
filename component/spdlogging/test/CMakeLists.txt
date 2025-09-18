@@ -8,6 +8,5 @@ add_cpp_library_basic_tests(${PROJECT_NAME} GTest::gtest_main
         logging_tests.cpp
         exception_handling_with_spdlog_tests.cpp
     DEPENDENCIES
-        ${PACKAGE_NAME}-ut
+        ${PACKAGE_NAME}-base-ut
 )
-

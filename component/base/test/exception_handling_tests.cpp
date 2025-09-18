@@ -1,14 +1,13 @@
-#include <arba-appt-ut/modules/bad_crtp_module.hpp>
 #include <arba-appt-ut/util/stream_capture.hpp>
 #include <arba-appt-ut/util/text_file_content.hpp>
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <gtest/gtest.h>
 
-using multi_task_application = appt::adec::multi_task<appt::application<>>;
+using multi_task_application = appt::adec::multi_task<appt::basic_application<>>;
 
 template <class ApplicationBaseType>
 class ut_application : public ApplicationBaseType::template rebind_t<ut_application<ApplicationBaseType>>
@@ -88,7 +87,7 @@ public:
 TEST(exception_handling_tests, test_main_module_init_fails__printing)
 {
     using app_type = ut_application<multi_task_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     stream_capture cerr_capture(std::cerr);
 
@@ -108,7 +107,7 @@ TEST(exception_handling_tests, test_main_module_init_fails__printing)
 TEST(exception_handling_tests, test_main_module_run_fails__printing)
 {
     using app_type = ut_application<multi_task_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     stream_capture cerr_capture(std::cerr);
 
@@ -130,7 +129,7 @@ TEST(exception_handling_tests, test_main_module_run_fails__printing)
 TEST(exception_handling_tests, test_side_module_run_fails__log_to_cerr)
 {
     using app_type = ut_application<multi_task_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     stream_capture cerr_capture(std::cerr);
 

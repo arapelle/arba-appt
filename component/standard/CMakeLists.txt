@@ -1,0 +1,44 @@
+
+# C++ LIBRARY
+set_project_name(NAME "standard")
+project(${PROJECT_NAME})
+
+## Generated/Configured headers:
+configure_headers(configured_headers
+    FILES
+        include/${PACKAGE_CONTEXT_NAME}/${PACKAGE_SUBJECT_NAME}/version.hpp.in
+)
+
+## Headers:
+set(headers
+    include/arba/appt/application/standard/application.hpp
+    include/arba/appt/application/module/standard/module.hpp
+    include/arba/appt/application/decorator/standard/toolkit.hpp
+)
+
+## Add C++ library:
+add_cpp_library(${PROJECT_NAME} HEADER_ONLY
+    HEADERS ${headers}
+    CXX_STANDARD ${${PACKAGE_UPPER_VAR_NAME}_CXX_STANDARD}
+    DEFAULT_WARNING_OPTIONS
+    DEFAULT_ERROR_OPTIONS
+)
+target_link_libraries(${PROJECT_NAME}
+    INTERFACE
+        base
+        arba::rsce
+        arba::evnt
+)
+
+# Install component targets:
+install_cpp_targets(TARGETS ${PROJECT_NAME} EXPORT ${PACKAGE_NAME}-targets NAMESPACE "${PACKAGE_NAME}::")
+
+## Add tests:
+if(${BUILD_${PACKAGE_UPPER_VAR_NAME}_TESTS})
+    add_test_subdirectory_if_built(test OPTION_DEFAULT ON)
+endif()
+
+## Add examples:
+if(${BUILD_${PACKAGE_UPPER_VAR_NAME}_EXAMPLES})
+    add_example_subdirectory_if_built(example OPTION_DEFAULT ON)
+endif()

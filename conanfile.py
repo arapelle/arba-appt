@@ -23,7 +23,7 @@ class ArbaApptRecipe(ConanFile):
 
     # Components
     required_components = ["base"]
-    optional_components = ["multi_user", "spdlogging"]
+    optional_components = ["standard", "multi_user", "spdlogging"]
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
@@ -60,8 +60,9 @@ class ArbaApptRecipe(ConanFile):
     def requirements(self):
         self.requires("arba-core/[^0.30]", transitive_headers=True, transitive_libs=True)
         self.requires("arba-stdx/[^0.3]", transitive_headers=True, transitive_libs=True)
-        self.requires("arba-rsce/[^0.5]", transitive_headers=True, transitive_libs=True)
-        self.requires("arba-evnt/[^0.7]", transitive_headers=True, transitive_libs=True)
+        if self.options.standard:
+            self.requires("arba-rsce/[^0.5]", transitive_headers=True, transitive_libs=True)
+            self.requires("arba-evnt/[^0.7]", transitive_headers=True, transitive_libs=True)
         if self.options.spdlogging:
             self.requires("spdlog/[^1.8]", transitive_headers=True, transitive_libs=True)
 
@@ -79,15 +80,11 @@ class ArbaApptRecipe(ConanFile):
         build_test = not self.conf.get("tools.build:skip_test", default=True)
         if build_test:
             tc.variables[f"BUILD_{upper_name}_TESTS"] = "TRUE"
-            for comp in self.required_components:
-                tc.variables[f"BUILD_{upper_name}_{comp.upper()}_TESTS"] = "TRUE"
-        for comp in self.optional_components:
-            comp_option = getattr(self.options, comp)
-            if comp_option:
-                if build_test:
-                    tc.variables[f"BUILD_{upper_name}_{comp.upper()}_TESTS"] = "TRUE"
-            else:
-                tc.variables[f"BUILD_{upper_name}_{comp.upper()}"] = "FALSE"
+        else:
+            for comp in self.optional_components:
+                comp_option = getattr(self.options, comp)
+                if not comp_option:
+                    tc.variables[f"BUILD_{upper_name}_{comp.upper()}"] = "FALSE"
         tc.generate()
 
     def build(self):
@@ -109,16 +106,23 @@ class ArbaApptRecipe(ConanFile):
         comp_name = "base"
         comp_info = self.cpp_info.components[comp_name]
         comp_info.libs = [f"{comp_name}{build_type_postfix}"]
-        comp_info.requires = ["arba-core::arba-core", "arba-stdx::arba-stdx", "arba-rsce::arba-rsce", "arba-evnt::arba-evnt"]
+        comp_info.requires = ["arba-core::arba-core", "arba-stdx::arba-stdx"]
+        # arba-appt::standard
+        comp_name = "standard"
+        if getattr(self.options, comp_name):
+            comp_info = self.cpp_info.components[comp_name]
+            comp_info.bindirs = []
+            comp_info.libdirs = []
+            comp_info.requires = ["base", "arba-rsce::arba-rsce", "arba-evnt::arba-evnt"]
         # arba-appt::multi_user
-        if self.options.multi_user:
-            comp_name = "multi_user"
+        comp_name = "multi_user"
+        if getattr(self.options, comp_name):
             comp_info = self.cpp_info.components[comp_name]
             comp_info.libs = [f"{comp_name}{build_type_postfix}"]
             comp_info.requires = ["base"]
         # arba-appt::spdlog_logging
-        if self.options.spdlogging:
-            comp_name = "spdlogging"
+        comp_name = "spdlogging"
+        if getattr(self.options, comp_name):
             comp_info = self.cpp_info.components[comp_name]
             comp_info.libs = [f"{comp_name}{build_type_postfix}"]
             comp_info.requires = ["base", "spdlog::spdlog"]

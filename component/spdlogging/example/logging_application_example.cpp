@@ -1,20 +1,21 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/util/spdlogging/logging_macro.hpp>
 
 #include <spdlog/spdlog.h>
 
 #include <iostream>
+#include <fstream>
 #include <source_location>
 
 namespace example
 {
-class logging_application : public appt::adec::spdlogging<appt::application<>, logging_application>
+class logging_application : public appt::adec::spdlogging<appt::basic_application<>, logging_application>
 {
 private:
-    using base_ = appt::adec::spdlogging<appt::application<>, logging_application>;
+    using base_ = appt::adec::spdlogging<appt::basic_application<>, logging_application>;
 
 public:
     using base_::base_;

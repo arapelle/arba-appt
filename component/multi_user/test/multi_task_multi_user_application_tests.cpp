@@ -1,9 +1,9 @@
-#include <arba-appt-ut/modules/counting_module.hpp>
-#include <arba/appt/application/application.hpp>
+#include <arba-appt-base-ut/modules/counting_basic_module.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/decorator/multi_user/multi_user.hpp>
 #include <arba/appt/application/module/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <gtest/gtest.h>
 
@@ -33,9 +33,9 @@ public:
     std::string name_;
 };
 
-class ut_application : public appt::multi_task<appt::adec::multi_user<ut_user, appt::application<>>, ut_application>
+class ut_application : public appt::multi_task<appt::adec::multi_user<ut_user, appt::basic_application<>>, ut_application>
 {
-    using base_ = appt::multi_task<appt::adec::multi_user<ut_user, appt::application<>>, ut_application>;
+    using base_ = appt::multi_task<appt::adec::multi_user<ut_user, appt::basic_application<>>, ut_application>;
 
 public:
     using base_::multi_task;
@@ -58,13 +58,13 @@ TEST(multi_user_multi_task_application_tests, test_constructor)
 // module
 //-------------------
 
-using counting_module = ut::counting_module<ut_application>;
+using counting_module = ut::counting_basic_module<ut_application>;
 
 class multi_user_module : public appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>,
-                                                        appt::module<ut_application>, multi_user_module>
+                                                        appt::basic_module<ut_application>, multi_user_module>
 {
 private:
-    using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::module<ut_application>,
+    using base_ = appt::mdec::multi_user<ut_user, appt::user_sptr_id_hash<ut_user>, appt::basic_module<ut_application>,
                                          multi_user_module>;
 
 public:

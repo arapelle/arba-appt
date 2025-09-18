@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 #include <arba/appt/user/user_set.hpp>
 
 #include <memory>

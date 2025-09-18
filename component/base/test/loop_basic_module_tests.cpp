@@ -1,7 +1,7 @@
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <gtest/gtest.h>
 
@@ -9,15 +9,15 @@
 
 using namespace std::string_literals;
 
-class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
+class ut_application : public appt::adec::multi_task<appt::basic_application<>, ut_application>
 {
 public:
-    using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
+    using appt::adec::multi_task<appt::basic_application<>, ut_application>::multi_task;
 };
 
-class ut_times_up_module : public appt::module<ut_application, ut_times_up_module>
+class ut_times_up_module : public appt::basic_module<ut_application, ut_times_up_module>
 {
-    using base_ = appt::module<ut_application, ut_times_up_module>;
+    using base_ = appt::basic_module<ut_application, ut_times_up_module>;
 
 public:
     using base_::base_;
@@ -31,10 +31,10 @@ public:
     }
 };
 
-class ut_loop_module : public appt::mdec::loop<appt::module<ut_application>, ut_loop_module>
+class ut_loop_module : public appt::mdec::loop<appt::basic_module<ut_application>, ut_loop_module>
 {
 private:
-    using base_ = appt::mdec::loop<appt::module<ut_application>, ut_loop_module>;
+    using base_ = appt::mdec::loop<appt::basic_module<ut_application>, ut_loop_module>;
 
 public:
     ut_loop_module(application_type& app) : base_(app, "ut_loop_module") {}
@@ -60,7 +60,7 @@ public:
     uint16_t finish_count = 0;
 };
 
-TEST(loop_module_tests, test_side_modules)
+TEST(loop_basic_module_tests, test_side_modules)
 {
     ut_application app;
     ut_times_up_module& times_up_module = app.create_main_module<ut_times_up_module>();

@@ -1,4 +1,4 @@
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_user/multi_user.hpp>
 #include <arba/appt/user/user.hpp>
 
@@ -30,10 +30,10 @@ public:
 
 using ut_user_sptr = std::shared_ptr<ut_user>;
 
-class ut_application : public appt::adec::multi_user<ut_user, appt::application<>, ut_application>
+class ut_application : public appt::adec::multi_user<ut_user, appt::basic_application<>, ut_application>
 {
 private:
-    using base_ = appt::adec::multi_user<ut_user, appt::application<>, ut_application>;
+    using base_ = appt::adec::multi_user<ut_user, appt::basic_application<>, ut_application>;
 
 public:
     using base_::multi_user;

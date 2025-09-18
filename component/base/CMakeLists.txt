@@ -11,14 +11,11 @@ configure_headers(configured_headers
 
 ## Headers:
 set(headers
-    include/arba/appt/application/application.hpp
     include/arba/appt/application/module/module_base.hpp
     include/arba/appt/application/module/basic_module.hpp
     include/arba/appt/application/module/decorator/loop.hpp
-    include/arba/appt/application/module/module.hpp
     include/arba/appt/application/module/concepts/concrete_derived_basic_module.hpp
     include/arba/appt/application/decorator/multi_task.hpp
-    include/arba/appt/application/decorator/toolkit.hpp
     include/arba/appt/application/execution_status.hpp
     include/arba/appt/application/basic_application.hpp
     include/arba/appt/util/delta_time.hpp
@@ -45,8 +42,6 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
         arba::core
         arba::stdx
-        arba::rsce
-        arba::evnt
 )
 
 # Install component targets:

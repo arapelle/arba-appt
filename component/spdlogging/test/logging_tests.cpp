@@ -1,11 +1,11 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <arba/stdx/chrono/format_time_point.hpp>
 #include <gtest/gtest.h>
@@ -27,7 +27,7 @@ class application_base
 {
 private:
     application_base() = delete;
-    using logging_application_ = appt::adec::spdlogging<appt::application<>>;
+    using logging_application_ = appt::adec::spdlogging<appt::basic_application<>>;
     using multi_task_application_ = appt::adec::multi_task<logging_application_>;
 
 public:
@@ -58,9 +58,9 @@ public:
     }
 };
 
-class times_up_module : public appt::module<application, times_up_module>
+class times_up_module : public appt::basic_module<application, times_up_module>
 {
-    using base_ = appt::module<application, times_up_module>;
+    using base_ = appt::basic_module<application, times_up_module>;
 
 public:
     using base_::base_;
@@ -75,10 +75,10 @@ public:
     }
 };
 
-class first_module : public appt::mdec::loop<appt::mdec::spdlogging<appt::module<application>>, first_module>
+class first_module : public appt::mdec::loop<appt::mdec::spdlogging<appt::basic_module<application>>, first_module>
 {
 private:
-    using base_ = appt::mdec::loop<appt::mdec::spdlogging<appt::module<application>>, first_module>;
+    using base_ = appt::mdec::loop<appt::mdec::spdlogging<appt::basic_module<application>>, first_module>;
 
 public:
     first_module(application_type& app) : base_(app, "first_module") {}
@@ -89,10 +89,10 @@ public:
     virtual void finish() override { SPDLOG_LOGGER_INFO(logger(), ""); }
 };
 
-class second_module : public appt::mdec::loop<appt::mdec::spdlogging<appt::module<application>>, second_module>
+class second_module : public appt::mdec::loop<appt::mdec::spdlogging<appt::basic_module<application>>, second_module>
 {
 private:
-    using base_ = appt::mdec::loop<appt::mdec::spdlogging<appt::module<application>>, second_module>;
+    using base_ = appt::mdec::loop<appt::mdec::spdlogging<appt::basic_module<application>>, second_module>;
 
 public:
     second_module(application_type& app) : base_(app, "second_module") {}

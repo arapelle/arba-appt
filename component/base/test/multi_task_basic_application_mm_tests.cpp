@@ -1,5 +1,5 @@
-#include <arba-appt-ut/modules/counting_module.hpp>
-#include <arba/appt/application/application.hpp>
+#include <arba-appt-base-ut/modules/counting_basic_module.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 
 #include <gtest/gtest.h>
@@ -12,23 +12,23 @@ using namespace std::string_literals;
 // application
 //------------
 
-class ut_application : public appt::adec::multi_task<appt::application<>, ut_application>
+class ut_application : public appt::adec::multi_task<appt::basic_application<>, ut_application>
 {
 public:
-    using appt::adec::multi_task<appt::application<>, ut_application>::multi_task;
+    using appt::adec::multi_task<appt::basic_application<>, ut_application>::multi_task;
 };
 
 //-------------------
 // module
 //-------------------
 
-using counting_module = ut::counting_module<ut_application>;
+using counting_module = ut::counting_basic_module<ut_application>;
 
 //-------------------
 // unit tests
 //-------------------
 
-TEST(multi_task_application_mm_tests, test_main_module)
+TEST(multi_task_basic_application_mm_tests, test_main_module)
 {
     ut_application app;
     counting_module& module = app.set_main_module(std::make_unique<counting_module>(app));

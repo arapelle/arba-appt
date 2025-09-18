@@ -1,16 +1,16 @@
-#include <arba-appt-ut/modules/bad_crtp_module.hpp>
+#include <arba-appt-base-ut/modules/bad_crtp_basic_module.hpp>
 #include <arba-appt-ut/util/stream_capture.hpp>
 #include <arba-appt-ut/util/text_file_content.hpp>
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
 #include <arba/appt/application/module/decorator/spdlogging/spdlogging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/module.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 
 #include <gtest/gtest.h>
 
-using logging_application = appt::adec::spdlogging<appt::application<>>;
+using logging_application = appt::adec::spdlogging<appt::basic_application<>>;
 using multi_task_logging_application = appt::adec::multi_task<logging_application>;
 
 template <class ApplicationBaseType>
@@ -91,7 +91,7 @@ public:
 TEST(exception_handling_with_spdlog_tests, test_main_module_init_fails__logging)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_failing_module<mod_type>>();
@@ -114,7 +114,7 @@ TEST(exception_handling_with_spdlog_tests, test_main_module_init_fails__logging)
 TEST(exception_handling_with_spdlog_tests, test_main_module_run_fails__logging)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_failing_module<mod_type>>();
@@ -153,7 +153,7 @@ TEST(exception_handling_with_spdlog_tests, test_main_module_run_fails__init_not_
 TEST(exception_handling_with_spdlog_tests, test_main_module_init_fails__base_init_not_called_logging)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_failing_module<mod_type>>();
@@ -198,7 +198,7 @@ TEST(exception_handling_with_spdlog_tests, test_main_module_init_fails__bad_deri
 TEST(exception_handling_with_spdlog_tests, test_side_module_run_fails__log_to_module_logger)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::mdec::spdlogging<appt::module<app_type>>>;
+    using mod_type = appt::mdec::loop<appt::mdec::spdlogging<appt::basic_module<app_type>>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
@@ -220,7 +220,7 @@ TEST(exception_handling_with_spdlog_tests, test_side_module_run_fails__log_to_mo
 TEST(exception_handling_with_spdlog_tests, test_side_module_run_fails__log_to_app_logger)
 {
     using app_type = ut_application<multi_task_logging_application>;
-    using mod_type = appt::mdec::loop<appt::module<app_type>>;
+    using mod_type = appt::mdec::loop<appt::basic_module<app_type>>;
 
     app_type app;
     auto& main_module = app.create_main_module<ut_counting_module<mod_type>>();
