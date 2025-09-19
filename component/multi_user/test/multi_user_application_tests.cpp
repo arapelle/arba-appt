@@ -1,6 +1,6 @@
 #include <arba/appt/application/basic_application.hpp>
-#include <arba/appt/application/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/user/user.hpp>
+#include <arba/appt/multi_user/application/decorator/multi_user.hpp>
+#include <arba/appt/multi_user/user/user.hpp>
 
 #include <gtest/gtest.h>
 

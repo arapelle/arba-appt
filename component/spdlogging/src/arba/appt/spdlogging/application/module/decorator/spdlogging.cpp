@@ -1,5 +1,5 @@
-#include <arba/appt/application/module/decorator/spdlogging/spdlogging.hpp>
-#include <arba/appt/util/spdlogging/spdlog_helper.hpp>
+#include <arba/appt/spdlogging/application/module/decorator/spdlogging.hpp>
+#include <arba/appt/spdlogging/util/spdlog_helper.hpp>
 
 #include <spdlog/spdlog.h>
 

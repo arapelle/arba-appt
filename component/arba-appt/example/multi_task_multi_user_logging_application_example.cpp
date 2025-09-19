@@ -1,14 +1,14 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
-#include <arba/appt/application/standard/application.hpp>
-#include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
+#include <arba/appt/standard/application/application.hpp>
+#include <arba/appt/spdlogging/application/decorator/spdlogging.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/application/module/decorator/spdlogging/spdlogging.hpp>
+#include <arba/appt/multi_user/application/decorator/multi_user.hpp>
+#include <arba/appt/spdlogging/application/module/decorator/spdlogging.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/application/module/standard/module.hpp>
-#include <arba/appt/util/spdlogging/logging_macro.hpp>
+#include <arba/appt/multi_user/application/module/decorator/multi_user.hpp>
+#include <arba/appt/standard/application/module/module.hpp>
+#include <arba/appt/spdlogging/util/logging_macro.hpp>
 
 #include <random>
 

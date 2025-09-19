@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/appt/application/module/standard/module.hpp>
+#include <arba/appt/standard/application/module/module.hpp>
 
 namespace ut
 {

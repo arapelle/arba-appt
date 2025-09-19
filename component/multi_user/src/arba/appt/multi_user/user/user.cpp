@@ -1,4 +1,4 @@
-#include <arba/appt/user/user.hpp>
+#include <arba/appt/multi_user/user/user.hpp>
 
 #include <stdexcept>
 

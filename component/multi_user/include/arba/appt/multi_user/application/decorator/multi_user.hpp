@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arba/appt/user/user_manager.hpp>
+#include <arba/appt/multi_user/user/user_manager.hpp>
 
 #include <memory>
 

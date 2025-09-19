@@ -1,5 +1,5 @@
-#include <arba/appt/application/decorator/spdlogging/spdlogging.hpp>
-#include <arba/appt/util/spdlogging/spdlog_helper.hpp>
+#include <arba/appt/spdlogging/application/decorator/spdlogging.hpp>
+#include <arba/appt/spdlogging/util/spdlog_helper.hpp>
 
 #include <arba/stdx/chrono/format_time_point.hpp>
 #include <spdlog/spdlog.h>

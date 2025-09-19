@@ -1,8 +1,8 @@
 #include <arba-appt-base-ut/modules/counting_basic_module.hpp>
 #include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/decorator/multi_user/multi_user.hpp>
-#include <arba/appt/application/module/decorator/multi_user/multi_user.hpp>
+#include <arba/appt/multi_user/application/decorator/multi_user.hpp>
+#include <arba/appt/multi_user/application/module/decorator/multi_user.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
 
 #include <gtest/gtest.h>

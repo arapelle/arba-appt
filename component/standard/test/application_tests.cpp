@@ -1,4 +1,4 @@
-#include <arba/appt/application/standard/application.hpp>
+#include <arba/appt/standard/application/application.hpp>
 
 #include <gtest/gtest.h>
 

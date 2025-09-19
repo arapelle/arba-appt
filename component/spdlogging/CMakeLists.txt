@@ -5,17 +5,17 @@ project(${PROJECT_NAME})
 
 ## Headers:
 set(headers
-    include/arba/appt/application/module/decorator/spdlogging/spdlogging.hpp
-    include/arba/appt/application/decorator/spdlogging/spdlogging.hpp
-    include/arba/appt/util/spdlogging/spdlog_helper.hpp
-    include/arba/appt/util/spdlogging/logging_macro.hpp
+    include/arba/appt/spdlogging/application/module/decorator/spdlogging.hpp
+    include/arba/appt/spdlogging/application/decorator/spdlogging.hpp
+    include/arba/appt/spdlogging/util/spdlog_helper.hpp
+    include/arba/appt/spdlogging/util/logging_macro.hpp
 )
 
 ## Sources:
 set(sources
-    src/arba/appt/application/module/decorator/spdlogging/spdlogging.cpp
-    src/arba/appt/application/decorator/spdlogging/spdlogging.cpp
-    src/arba/appt/util/spdlogging/spdlog_helper.cpp
+    src/arba/appt/spdlogging/application/module/decorator/spdlogging.cpp
+    src/arba/appt/spdlogging/application/decorator/spdlogging.cpp
+    src/arba/appt/spdlogging/util/spdlog_helper.cpp
 )
 
 ## Add C++ library:

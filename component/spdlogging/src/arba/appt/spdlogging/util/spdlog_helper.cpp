@@ -1,4 +1,4 @@
-#include <arba/appt/util/spdlogging/spdlog_helper.hpp>
+#include <arba/appt/spdlogging/util/spdlog_helper.hpp>
 
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <arba/appt/application/basic_application.hpp>
-#include <arba/appt/application/decorator/standard/toolkit.hpp>
+#include <arba/appt/standard/application/decorator/toolkit.hpp>
 
 #include <string>
 

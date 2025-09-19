@@ -11,9 +11,9 @@ configure_headers(configured_headers
 
 ## Headers:
 set(headers
-    include/arba/appt/application/standard/application.hpp
-    include/arba/appt/application/module/standard/module.hpp
-    include/arba/appt/application/decorator/standard/toolkit.hpp
+    include/arba/appt/standard/application/application.hpp
+    include/arba/appt/standard/application/module/module.hpp
+    include/arba/appt/standard/application/decorator/toolkit.hpp
 )
 
 ## Add C++ library:

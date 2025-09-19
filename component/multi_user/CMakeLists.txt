@@ -5,17 +5,17 @@ project(${PROJECT_NAME})
 
 ## Headers:
 set(headers
-    include/arba/appt/application/module/decorator/multi_user/multi_user.hpp
-    include/arba/appt/application/decorator/multi_user/multi_user.hpp
-    include/arba/appt/user/user_hash.hpp
-    include/arba/appt/user/user.hpp
-    include/arba/appt/user/user_manager.hpp
-    include/arba/appt/user/user_set.hpp
+    include/arba/appt/multi_user/application/module/decorator/multi_user.hpp
+    include/arba/appt/multi_user/application/decorator/multi_user.hpp
+    include/arba/appt/multi_user/user/user_hash.hpp
+    include/arba/appt/multi_user/user/user.hpp
+    include/arba/appt/multi_user/user/user_manager.hpp
+    include/arba/appt/multi_user/user/user_set.hpp
 )
 
 ## Sources:
 set(sources
-    src/arba/appt/user/user.cpp
+    src/arba/appt/multi_user/user/user.cpp
 )
 
 ## Add C++ library:
