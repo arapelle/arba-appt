@@ -79,12 +79,13 @@ class ArbaApptRecipe(ConanFile):
         # conan create . --build=missing -c:a "&:tools.build:skip_test=False"
         build_test = not self.conf.get("tools.build:skip_test", default=True)
         if build_test:
-            tc.variables[f"BUILD_{upper_name}_TESTS"] = "TRUE"
-        else:
-            for comp in self.optional_components:
-                comp_option = getattr(self.options, comp)
-                if not comp_option:
-                    tc.variables[f"BUILD_{upper_name}_{comp.upper()}"] = "FALSE"
+            tc.variables[f"{upper_name}_BUILD_TESTS"] = "TRUE"
+        for comp in self.optional_components:
+            comp_option = getattr(self.options, comp)
+            if not comp_option:
+                if build_test:
+                    tc.variables[f"{upper_name}_{comp.upper()}_BUILD_TESTS"] = "FALSE"
+                tc.variables[f"{upper_name}_{comp.upper()}_BUILD"] = "FALSE"
         tc.generate()
 
     def build(self):
