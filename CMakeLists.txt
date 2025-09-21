@@ -20,7 +20,7 @@ set_build_type_ifndef()
 # C++ PROJECT
 
 set_package_name(CONTEXT_NAME "arba" SUBJECT_NAME "appt")
-set_package_semantic_version("0.18.0" PRE_RELEASE "dev" BUILD_METADATA "${CONFIGURE_DATETIME}")
+set_package_semantic_version("0.18.0" BUILD_METADATA "${CONFIGURE_DATETIME}")
 
 project(${PACKAGE_NAME}
         VERSION ${PACKAGE_VERSION}
