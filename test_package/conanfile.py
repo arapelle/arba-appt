@@ -6,7 +6,7 @@ from conan.tools.build import can_run
 
 required_conan_version = ">=2.2.0"
 
-class TestbenchTestConan(ConanFile):
+class PackageTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeDeps", "CMakeToolchain"
     win_bash = os.environ.get('MSYSTEM', None) is not None
@@ -24,5 +24,12 @@ class TestbenchTestConan(ConanFile):
 
     def test(self):
         if can_run(self):
-            cmd = os.path.join(self.cpp.build.bindir, "test_package")
-            self.run(cmd, env="conanrun")
+            required_components = ["base"]
+            for comp in required_components:
+                cmd = os.path.join(self.cpp.build.bindir, f"test_package-{comp}")
+                self.run(cmd, env="conanrun")
+            optional_components = ["standard", "multi_user", "spdlogging"]
+            for comp in optional_components:
+                cmd = os.path.join(self.cpp.build.bindir, f"test_package-{comp}")
+                if os.path.exists(cmd):
+                    self.run(cmd, env="conanrun")

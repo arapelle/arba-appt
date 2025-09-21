@@ -2,19 +2,35 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(arba-core 0.30.0 CONFIG)
-find_dependency(arba-stdx 0.3.0 CONFIG)
-find_dependency(arba-rsce 0.5.0 CONFIG)
-find_dependency(arba-evnt 0.7.0 CONFIG)
-if(@ARBA_APPT_USE_SPDLOG@)
-    find_dependency(spdlog 1.8 CONFIG)
+find_dependency(arba-core 0.30.0 CONFIG) # base
+find_dependency(arba-stdx 0.3.0 CONFIG)  # base
+if(@ARBA_APPT_STANDARD_BUILD@)
+    find_dependency(arba-rsce 0.5.0 CONFIG)  # standard
+    find_dependency(arba-evnt 0.7.0 CONFIG)  # standard
+endif()
+if(@ARBA_APPT_SPDLOGGING_BUILD@)
+    find_dependency(spdlog 1.8 CONFIG)  # spdlogging
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake)
-check_required_components(@PROJECT_NAME@-targets)
+include(${CMAKE_CURRENT_LIST_DIR}/@PACKAGE_NAME@-targets.cmake)
 
-if(NOT TARGET "@PROJECT_NAMESPACE@::@PROJECT_FEATURE_NAME@@LIBRARY_TYPE_POSTFIX@")
-  add_library("@PROJECT_NAMESPACE@::@PROJECT_FEATURE_NAME@@LIBRARY_TYPE_POSTFIX@" ALIAS @PROJECT_TARGET_NAME@)
+foreach(component ${@PACKAGE_NAME@_FIND_COMPONENTS})
+    message(STATUS "Looking for @PACKAGE_NAME@ target: @PACKAGE_NAME@::${component}")
+    if(TARGET "@PACKAGE_NAME@::${component}")
+        set(@PACKAGE_NAME@_${component}_FOUND TRUE)
+        message(STATUS "Found @PACKAGE_NAME@ component: ${component}")
+    else()
+        if(@PACKAGE_NAME@_FIND_REQUIRED_${component})
+            message(SEND_ERROR "Missing required @PACKAGE_NAME@ component: ${component}")
+        else()
+            message(WARNING "Missing optional @PACKAGE_NAME@ component: ${component}")
+        endif()
+    endif()
+endforeach()
+
+check_required_components(@PACKAGE_NAME@)
+
+if(NOT DEFINED @PACKAGE_NAME@_FOUND)
+    set(@PACKAGE_NAME@_FOUND TRUE)
+    message(STATUS "Found package @PACKAGE_NAME@/@PACKAGE_VERSION@")
 endif()
-
-message(STATUS "Found package @PROJECT_NAME@ @PROJECT_VERSION@")
