@@ -1,8 +1,8 @@
-#include <arba-appt-standard-ut/modules/counting_module.hpp>
-#include <arba/appt/standard/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/standard/application/application.hpp>
 
 #include <arba/core/sbrm/sbrm.hpp>
+#include <arba-appt-standard-ut/modules/counting_module.hpp>
 #include <gtest/gtest.h>
 
 #include <cstdlib>

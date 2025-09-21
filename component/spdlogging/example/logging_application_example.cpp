@@ -6,8 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <source_location>
 
 namespace example

@@ -1,7 +1,7 @@
 #include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
 
 #include <gtest/gtest.h>
 

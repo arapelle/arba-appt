@@ -1,10 +1,10 @@
-#include <arba-appt-base-ut/modules/counting_basic_module.hpp>
 #include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 #include <arba/appt/multi_user/application/decorator/multi_user.hpp>
 #include <arba/appt/multi_user/application/module/decorator/multi_user.hpp>
-#include <arba/appt/application/module/basic_module.hpp>
 
+#include <arba-appt-base-ut/modules/counting_basic_module.hpp>
 #include <gtest/gtest.h>
 
 #include <cstdlib>
@@ -33,7 +33,8 @@ public:
     std::string name_;
 };
 
-class ut_application : public appt::multi_task<appt::adec::multi_user<ut_user, appt::basic_application<>>, ut_application>
+class ut_application
+    : public appt::multi_task<appt::adec::multi_user<ut_user, appt::basic_application<>>, ut_application>
 {
     using base_ = appt::multi_task<appt::adec::multi_user<ut_user, appt::basic_application<>>, ut_application>;
 

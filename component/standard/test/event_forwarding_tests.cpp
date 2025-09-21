@@ -1,5 +1,5 @@
-#include <arba/appt/standard/application/application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
+#include <arba/appt/standard/application/application.hpp>
 #include <arba/appt/standard/application/module/module.hpp>
 
 #include <gtest/gtest.h>

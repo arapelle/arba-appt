@@ -206,7 +206,8 @@ void multi_task<ApplicationBase, SelfType>::handle_caught_exception(const std::s
 }
 
 template <typename ApplicationBase, typename SelfType>
-void multi_task<ApplicationBase, SelfType>::log_critical_message(const std::source_location &location, std::string_view message)
+void multi_task<ApplicationBase, SelfType>::log_critical_message(const std::source_location& location,
+                                                                 std::string_view message)
 {
     if constexpr (requires(base_& app) {
                       { app.log_critical_message(location, message) };

@@ -45,7 +45,8 @@ public:
 };
 
 template <class ModuleBase, class SelfType>
-class spdlogging : public spdlogging<typename ModuleBase::template rebind_t<SelfType>>, private private_::spdlogging_impl
+class spdlogging : public spdlogging<typename ModuleBase::template rebind_t<SelfType>>,
+                   private private_::spdlogging_impl
 {
 private:
     using base_ = spdlogging<typename ModuleBase::template rebind_t<SelfType>>;
@@ -134,7 +135,7 @@ std::vector<spdlog::sink_ptr> spdlogging<ModuleBase, SelfType>::make_sink_list()
 
 template <class ModuleBase, class SelfType>
 void spdlogging<ModuleBase, SelfType>::handle_caught_exception(const std::source_location& location,
-                                                            std::exception_ptr ex_ptr)
+                                                               std::exception_ptr ex_ptr)
 {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
     std::string error_msg;

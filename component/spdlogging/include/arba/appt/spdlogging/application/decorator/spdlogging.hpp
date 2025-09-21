@@ -99,7 +99,8 @@ spdlogging<ApplicationBase, SelfType>::~spdlogging()
 }
 
 template <class ApplicationBase, class SelfType>
-void spdlogging<ApplicationBase, SelfType>::log_critical_message(const std::source_location& location, std::string_view message)
+void spdlogging<ApplicationBase, SelfType>::log_critical_message(const std::source_location& location,
+                                                                 std::string_view message)
 {
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
     spdlog::source_loc src_loc(location.file_name(), location.line(), location.function_name());

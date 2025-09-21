@@ -23,8 +23,8 @@ spdlog::sink_ptr spdlog_helper::make_console_sink_st(std::string_view log_patter
 }
 
 spdlog::sink_ptr spdlog_helper::make_rotating_file_sink_mt(const std::filesystem::path& log_file,
-                                                                std::string_view log_pattern, std::size_t max_size,
-                                                                std::size_t max_nb_log_files)
+                                                           std::string_view log_pattern, std::size_t max_size,
+                                                           std::size_t max_nb_log_files)
 {
     std::shared_ptr sink_ptr =
         std::make_shared<spdlog::sinks::rotating_file_sink_mt>(log_file.string(), max_size, max_nb_log_files);
@@ -33,8 +33,8 @@ spdlog::sink_ptr spdlog_helper::make_rotating_file_sink_mt(const std::filesystem
 }
 
 spdlog::sink_ptr spdlog_helper::make_rotating_file_sink_st(const std::filesystem::path& log_file,
-                                                                std::string_view log_pattern, std::size_t max_size,
-                                                                std::size_t max_nb_log_files)
+                                                           std::string_view log_pattern, std::size_t max_size,
+                                                           std::size_t max_nb_log_files)
 {
     std::shared_ptr sink_ptr =
         std::make_shared<spdlog::sinks::rotating_file_sink_st>(log_file.string(), max_size, max_nb_log_files);

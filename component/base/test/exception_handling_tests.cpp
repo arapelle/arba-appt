@@ -1,10 +1,10 @@
-#include <arba-appt-ut/util/stream_capture.hpp>
-#include <arba-appt-ut/util/text_file_content.hpp>
 #include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/module/decorator/loop.hpp>
 #include <arba/appt/application/module/basic_module.hpp>
+#include <arba/appt/application/module/decorator/loop.hpp>
 
+#include <arba-appt-ut/util/stream_capture.hpp>
+#include <arba-appt-ut/util/text_file_content.hpp>
 #include <gtest/gtest.h>
 
 using multi_task_application = appt::adec::multi_task<appt::basic_application<>>;

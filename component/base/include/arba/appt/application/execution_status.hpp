@@ -25,12 +25,7 @@ public:
     static constexpr execution_status ready = make_enumerator((success > failure ? success : failure).value() + 1);
     static constexpr execution_status executing = make_enumerator(ready.value() + 1);
 
-    static constexpr std::array<std::string_view, 4> enumerator_names{
-        "success",
-        "failure",
-        "ready",
-        "executing"
-    };
+    static constexpr std::array<std::string_view, 4> enumerator_names{ "success", "failure", "ready", "executing" };
 
     static constexpr std::size_t enumerator_index_offset() { return (success < failure ? success : failure).value(); }
     static constexpr std::size_t enumerator_index_factor() { return 1; }
