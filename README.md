@@ -11,7 +11,7 @@ Binaries:
 - CMake 3.26 or later
 
 Libraries:
-- [spdlog](https://github.com/gabime/spdlog) 1.8
+- [spdlog](https://github.com/gabime/spdlog) 1.8  (required only if arba-appt::spdlogging is built)
 
 Testing Libraries (optional):
 - [Google Test](https://github.com/google/googletest) 1.14 or later  (optional)
@@ -24,14 +24,23 @@ git clone https://github.com/arapelle/arba-appt
 
 ## Use with `conan`
 
-Create the conan package.
+- Create the conan package.
 ```
 conan create . --build=missing -c
 ```
-Add a requirement in your conanfile project file.
+You can activate unit testing when creating the conan package with the following:
+```
+conan create . --build=missing -c:a "&:tools.build:skip_test=False"
+```
+- Add a requirement in your conanfile project file.
 ```python
     def requirements(self):
         self.requires("arba-appt/0.18.0")
+```
+If you want to disable a component, update your conan profile or use options with requires:
+```python
+    def requirements(self):
+        self.requires("arba-appt/0.18.0", options={"spdlogging": False})
 ```
 
 ## Quick Install ##
@@ -60,39 +69,23 @@ cmake -P uninstall.cmake
 
 # How to use
 
-## Example - An application with two modules (generate & consume)
+## Example - An application with two modules
 
 ```c++
-#include <arba/appt/application/application.hpp>
+#include <arba/appt/application/basic_application.hpp>
 #include <arba/appt/application/decorator/multi_task.hpp>
-#include <arba/appt/application/decorator/multi_user.hpp>
+#include <arba/appt/application/module/basic_module.hpp>
 #include <arba/appt/application/module/decorator/loop.hpp>
-#include <arba/appt/application/module/decorator/multi_user.hpp>
-#include <arba/appt/application/module/module.hpp>
 
 #include <iostream>
 #include <random>
 
 namespace example
 {
-class user : public appt::user
-{
-public:
-    virtual ~user() = default;
-
-    user(const std::string& name = "") : name_(name) {}
-    const std::string& name() const { return name_; }
-
-public:
-    std::string name_;
-};
-
-using multi_user_application = appt::adec::multi_user<user, appt::application<>>;
-
-class application : public appt::adec::multi_task<multi_user_application, application>
+class application : public appt::multi_task<appt::basic_application<>, application>
 {
 private:
-    using base_ = appt::adec::multi_task<multi_user_application, application>;
+    using base_ = appt::multi_task<appt::basic_application<>, application>;
 
 public:
     using base_::base_;
@@ -105,98 +98,110 @@ struct number_event
     unsigned number;
 };
 
-using module = appt::module<application>;
-using multi_user_module = appt::mdec::multi_user<user, appt::user_sptr_name_hash<user>, module>;
+using module = appt::basic_module<application>;
 template <class module_type>
-using loop_multi_user_module = appt::mdec::loop<multi_user_module, module_type>;
+using loop_module = appt::loop<module, module_type>;
 
-class consumer_module : public loop_multi_user_module<consumer_module>, public evnt::event_listener<number_event>
+class die12_module : public loop_module<die12_module>
 {
 private:
-    using base_ = loop_multi_user_module<consumer_module>;
+    using base_ = loop_module<die12_module>;
 
 public:
-    using base_::base_;
+    die12_module(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name), int_generator_(std::random_device{}())
+    {
+    }
 
-    virtual ~consumer_module() override = default;
+    virtual ~die12_module() override = default;
 
     virtual void init() override
     {
         this->base_::init();
-        event_manager().connect<number_event>(*this);
-        users().reserve(6);
+        numbers_.reserve(4);
     }
 
     void run_loop(appt::dt::seconds)
     {
-        event_manager().emit(event_box());
+        const unsigned number = die12();
+        numbers_.push_back(number);
 
-        std::cout << "[ ";
-        for (const auto& user_sptr : users())
-            std::cout << user_sptr->name() << "  ";
-        std::cout << " ]" << std::endl;
-        if (users().size() >= 6)
+        std::ostringstream oss;
+        oss << name() << ": [ ";
+        for (unsigned n : numbers_)
+            oss << n << " ";
+        oss << " ]\n";
+        std::cout << oss.str() << std::flush;
+
+        if (numbers_.size() == numbers_.capacity())
             stop();
     }
 
     virtual void finish() override
     {
-        std::cout << "consumer finished" << std::endl;
+        std::cout << name() << " finished" << std::endl;
         app().stop_side_modules();
     }
 
-    void receive(number_event& event)
-    {
-        if (users().size() < 6)
-        {
-            std::cout << "received: " << event.number << std::endl;
-            std::string name;
-            {
-                std::ostringstream stream;
-                stream << "User#" << event.number;
-                name = stream.str();
-            }
-            if (users().find_user(name) == users().end())
-                users().create_user(name);
-        }
-    }
-};
-
-class generator_module : public loop_multi_user_module<generator_module>
-{
 private:
-    using base_ = loop_multi_user_module<generator_module>;
-
-public:
-    generator_module(application_type& app) : base_(app, "first_module"), int_generator_(std::random_device{}()) {}
-    virtual ~generator_module() override = default;
-
-    void run_loop(appt::dt::seconds)
+    unsigned die12()
     {
-        number_event event{ die100() };
-        app().event_manager().emit(event);
-    }
-
-    virtual void finish() override { std::cout << "generator finished" << std::endl; }
-
-private:
-    unsigned die100()
-    {
-        static std::uniform_int_distribution<> die(1, 100);
+        static std::uniform_int_distribution<> die(1, 12);
         return die(int_generator_);
     }
 
 private:
     std::mt19937_64 int_generator_;
+    std::vector<unsigned> numbers_;
+};
+
+class die10_module : public loop_module<die10_module>
+{
+private:
+    using base_ = loop_module<die10_module>;
+
+public:
+    die10_module(application_type& app, std::string_view name = std::string_view())
+        : base_(app, name), int_generator_(std::random_device{}())
+    {
+    }
+
+    virtual ~die10_module() override = default;
+
+    void run_loop(appt::dt::seconds)
+    {
+        const unsigned number = die10();
+        numbers_.push_back(number);
+
+        std::ostringstream oss;
+        oss << name() << ": [ ";
+        for (unsigned n : numbers_)
+            oss << n << " ";
+        oss << " ]\n";
+        std::cout << oss.str() << std::flush;
+    }
+
+    virtual void finish() override { std::cout << name() << " finished" << std::endl; }
+
+private:
+    unsigned die10()
+    {
+        static std::uniform_int_distribution<> die(1, 10);
+        return die(int_generator_);
+    }
+
+private:
+    std::mt19937_64 int_generator_;
+    std::vector<unsigned> numbers_;
 };
 
 } // namespace example
 
 int main(int argc, char** argv)
 {
-    example::application app(appt::program_args(argc, argv));
-    app.create_main_module<example::consumer_module>().set_frequency(3);
-    app.create_module<example::generator_module>().set_frequency(2);
+    example::application app(core::program_args(argc, argv));
+    app.create_main_module<example::die12_module>("die12_module").set_frequency(2);
+    app.create_module<example::die10_module>("die10_module").set_frequency(3);
     app.init();
     return app.run();
 }
@@ -204,7 +209,7 @@ int main(int argc, char** argv)
 
 ## Example - Using *arba-appt* in a CMake project
 
-See *basic_cmake_project* in example, and more specifically the *CMakeLists.txt* to see how to use *arba-appt* in your CMake projects.
+See *test_package* and more specifically the *CMakeLists.txt* to see how to use *arba-appt* in your CMake projects.
 
 # License
 

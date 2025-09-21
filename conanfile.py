@@ -76,7 +76,6 @@ class ArbaApptRecipe(ConanFile):
         tc = CMakeToolchain(self)
         upper_name = f"{self.project_context_name}_{self.project_subject_name}".upper()
         tc.variables[f"{upper_name}_LIBRARY_TYPE"] = "SHARED" if self.options.shared else "STATIC"
-        # conan create . --build=missing -c:a "&:tools.build:skip_test=False"
         build_test = not self.conf.get("tools.build:skip_test", default=True)
         if build_test:
             tc.variables[f"{upper_name}_BUILD_TESTS"] = "TRUE"
